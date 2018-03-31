@@ -1,9 +1,13 @@
+using System.Threading.Tasks;
+using FMREST.Responses;
+
 namespace FMREST
 {
-    using System.Threading.Tasks;
-    
     interface IFmsClient
     {
-        Task<FmsAuthResponse> AuthenticateAsync(string username, string password, string layout);
+        Task<FmsAuthResponse> AuthenticateAsync(
+            string username, 
+            string password, 
+            string layout);
     }
 }

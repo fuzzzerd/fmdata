@@ -1,16 +1,17 @@
+using System;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using FMREST.Responses;
+
 namespace FMREST
 {
-    using System;
-    using System.IO;
-    using System.Net;
-    using System.Net.Http;
-    using System.Text;
-    using System.Linq;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-    using System.Threading.Tasks;
-    using System.Collections.Generic;
-
     public class FmsClient : IFmsClient
     {
         private readonly string _fmsUri;
@@ -46,7 +47,6 @@ namespace FMREST
 
             throw new Exception("Could not authenticate.");
         }
-
 
         public async Task<FindResponse> FindAsync()
         {
