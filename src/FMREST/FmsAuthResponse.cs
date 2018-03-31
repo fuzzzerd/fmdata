@@ -1,10 +1,8 @@
-namespace FMREST
+namespace FMREST.Responses
 {
-    public class FmsAuthResponse
+    public class FmsAuthResponse : BaseDataResponse
     {
         public string Token { get; set; }
         public string Layout { get; set; }
-        public string ErrorCode { get; set; }
-        public string Reseult { get; set; }
     }
 }
