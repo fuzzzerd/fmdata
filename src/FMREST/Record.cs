@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace FMREST
 {
     public class Record
