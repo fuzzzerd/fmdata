@@ -8,7 +8,7 @@ Wrapper class/client for FileMaker 16's REST (Data) API.
 
 ## Repository Statistics
 
-[![GitHub commit activity the past week, 4 weeks, year](https://img.shields.io/github/commit-activity/y/RESTFM/fmDotNet.svg?style=flat-square)](https://github.com/fuzzzerd/RESTFM/commits/master)
+[![GitHub commit activity the past week, 4 weeks, year](https://img.shields.io/github/commit-activity/y/RESTFM/RESTFM.svg?style=flat-square)](https://github.com/fuzzzerd/RESTFM/commits/master)
 
 [![GitHub issues](https://img.shields.io/github/issues/fuzzzerd/RESTFM.svg?style=flat-square)](https://github.com/fuzzzerd/RESTFM/issues)
 
