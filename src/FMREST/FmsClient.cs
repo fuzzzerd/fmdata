@@ -12,7 +12,7 @@ using FMREST.Responses;
 
 namespace FMREST
 {
-    public class FmsClient : IFmsClient
+    public class FmsClient : IFmsClient, IDisposable
     {
         private readonly string _fmsUri;
         private readonly string _fileName;
@@ -48,19 +48,10 @@ namespace FMREST
             throw new Exception("Could not authenticate.");
         }
 
-        public async Task<FindResponse> FindAsync()
+        public async Task<FindResponse> FindAsync(List<Dictionary<string,string>> findParameters)
         {
             var req = new FindRequest();
-            req.Query = new List<Dictionary<string, string>>() {
-                new Dictionary<string,string>()
-                {
-                    {"Name","Bross"}
-                },
-                new Dictionary<string,string>()
-                {
-                    {"Name","Admin"},{"omit","true"},
-                }
-            };
+            req.Query = findParameters;
 
             using (var client = new HttpClient())
             {
@@ -79,5 +70,9 @@ namespace FMREST
             throw new Exception("Find Rquest Error");
         }
 
+        public void Dispose()
+        {
+            // TODO: Implement
+        }
     }
 }
