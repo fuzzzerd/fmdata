@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FMREST\FMREST.csproj" />
+    <ProjectReference Include="..\..\src\FMData\FMData.csproj" />
   </ItemGroup>
 
 </Project>
