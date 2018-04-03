@@ -1,6 +1,6 @@
-# FMData
+# FM Data
 
-Wrapper class/client for FileMaker 16's REST (Data) API.
+A client library for FileMaker 16 REST (Data) API.
 
 ## FileMaker REST / Data API Documentation
 
@@ -8,10 +8,10 @@ Wrapper class/client for FileMaker 16's REST (Data) API.
 
 ## Repository Statistics
 
-[![GitHub commit activity the past week, 4 weeks, year](https://img.shields.io/github/commit-activity/y/FMData/FMData.svg?style=flat-square)](https://github.com/fuzzzerd/FMData/commits/master)
+[![GitHub commit activity the past week, 4 weeks, year](https://img.shields.io/github/commit-activity/y/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master)
 
-[![GitHub issues](https://img.shields.io/github/issues/fuzzzerd/FMData.svg?style=flat-square)](https://github.com/fuzzzerd/FMData/issues)
+[![GitHub issues](https://img.shields.io/github/issues/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/issues)
 
-[![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/fuzzzerd/FMData.svg?style=flat-square)](https://github.com/fuzzzerd/FMData/commits/master)
+[![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master)
 
-[![GitHub language count](https://img.shields.io/github/languages/count/fuzzzerd/FMData.svg?style=flat-square)](https://github.com/fuzzzerd/FMData/commits/master)
+[![GitHub language count](https://img.shields.io/github/languages/count/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master)
