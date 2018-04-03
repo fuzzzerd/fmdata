@@ -8,7 +8,14 @@ A C# client library for FileMaker 16 REST (Data) API.
 
 ## Current Status
 
-Proof of concept. Many todos include: support for all CRUD operations, unit testing, and documentation/examples.
+Proof of concept. Many todos including:
+
+- Support for strongly typed resposnes.
+- Additional operations
+  - Create record
+  - Update record
+  - Delete record
+- Portal support
 
 ## Repository Statistics
 
@@ -22,4 +29,4 @@ Proof of concept. Many todos include: support for all CRUD operations, unit test
 
 ## License
 
-[MIT](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE)
+[MIT License](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE)
