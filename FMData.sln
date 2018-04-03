@@ -2,13 +2,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6926CF2C-9411-467D-AC6F-06B18C3A41B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "src\Tester\Tester.csproj", "{4693A37D-F3E7-4647-A417-CD3DBCE5D3A7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMREST", "src\FMREST\FMREST.csproj", "{8C49615E-D332-4526-9221-F8A4C39BB1CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMData", "src\FMData\FMData.csproj", "{8C49615E-D332-4526-9221-F8A4C39BB1CA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FC1158B5-9752-46DE-B885-B8B553E252B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMREST.Tests", "tests\FMREST.Tests\FMREST.Tests.csproj", "{2885F547-00A9-401B-93CA-71873ACDB1F9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMData.Tests", "tests\FMData.Tests\FMData.Tests.csproj", "{2885F547-00A9-401B-93CA-71873ACDB1F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
