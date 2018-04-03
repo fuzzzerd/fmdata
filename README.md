@@ -1,10 +1,14 @@
 # FM Data
 
-A client library for FileMaker 16 REST (Data) API.
+A C# client library for FileMaker 16 REST (Data) API.
 
 ## FileMaker REST / Data API Documentation
 
 - [FileMaker REST API Documentation](https://fmhelp.filemaker.com/docs/16/en/restapi/)
+
+## Current Status
+
+Proof of concept. Many todos include: support for all CRUD operations, unit testing, and documentation/examples.
 
 ## Repository Statistics
 
@@ -15,3 +19,7 @@ A client library for FileMaker 16 REST (Data) API.
 [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master)
 
 [![GitHub language count](https://img.shields.io/github/languages/count/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master)
+
+## License
+
+[MIT](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE)
