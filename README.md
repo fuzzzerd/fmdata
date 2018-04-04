@@ -17,12 +17,14 @@ A C# client library for FileMaker 16 REST (Data) API.
 Proof of concept. Many todos remain including:
 
 - Support for strongly typed resposnes.
-- Additional operations
-  - Create record
-  - Update record
-  - Delete record
-- Paging with range and offset parameters
-- Portal support
+- Batch operations
+- Additional operations from Data API
+  - [Create record](https://fmhelp.filemaker.com/docs/16/en/restapi/#work-with-records_create-record)
+  - [Update record](https://fmhelp.filemaker.com/docs/16/en/restapi/#work-with-records_edit-record)
+  - [Delete record](https://fmhelp.filemaker.com/docs/16/en/restapi/#work-with-records_delete-record)
+  - [Range of Records](https://fmhelp.filemaker.com/docs/16/en/restapi/#work-with-records_get-records)
+  - [Finds with paging with range and offset parameters and portals](https://fmhelp.filemaker.com/docs/16/en/restapi/#perform-find-requests)
+  - [Global fields](https://fmhelp.filemaker.com/docs/16/en/restapi/#set-global-fields)
 
 ## Repository Statistics
 
