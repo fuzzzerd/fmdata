@@ -1,6 +1,6 @@
-namespace FMREST.Responses
+﻿namespace FMREST.Responses
 {
-    public class FmsAuthResponse : BaseDataResponse
+    public class AuthResponse : BaseDataResponse
     {
         public string Token { get; set; }
         public string Layout { get; set; }
