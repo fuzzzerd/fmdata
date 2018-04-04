@@ -68,10 +68,18 @@ namespace FMREST
 
         public async Task<AuthResponse> RefreshTokenAsync(string username, string password, string layout)
         {
+            // parameter checks
+            if (string.IsNullOrEmpty(username)) throw new ArgumentException("Username is a required parameter.");
+            if (string.IsNullOrEmpty(password)) throw new ArgumentException("Password is a required parameter.");
+            if (string.IsNullOrEmpty(layout)) throw new ArgumentException("Layout is a required parameter.");
+
+            // build up the request object/content
             var str = $"{{ \"user\": \"{username}\", \"password\" : \"{password}\", \"layout\": \"{layout}\" }}";
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
+            // run the post action
             var response = await _client.PostAsync(AuthEndpoint, httpContent);
 
+            // process the response
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
@@ -79,7 +87,7 @@ namespace FMREST
                 this.dataToken = responseObject.Token;
                 return responseObject;
             }
-
+            // something bad happened. TODO: improve non-OK response handling
             throw new Exception("Could not authenticate.");
         }
 
