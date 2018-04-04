@@ -2,9 +2,11 @@ namespace FMREST.Tests
 {
     public static partial class DataApiResponses
     {
+        public const string TestToken = "16e798b286a78f6b64e234d8a6eeff7d71ba92f6c882b5ff328";
+        public const string TestLayout = "layout";
         public static string SuccessfulAuthentication(
-            string token = "16e798b286a78f6b64e234d8a6eeff7d71ba92f6c882b5ff328", 
-            string layout = "layout") => $@"{{
+            string token = TestToken, 
+            string layout = TestLayout) => $@"{{
     ""token"": ""{token}"",
     ""layout"": ""{layout}"",
     ""errorCode"": ""0"",
