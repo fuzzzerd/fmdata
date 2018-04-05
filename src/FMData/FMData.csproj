@@ -2,6 +2,19 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>A C#/.NET client library for consuming the FileMaker 16 REST/Dat) API.</Description>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Version>0.0.5</Version>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseUrl>https://github.com/fuzzzerd/fmdata/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>http://fmdata.io/</PackageProjectUrl>
+    <PackageIconUrl></PackageIconUrl>
+    <RepositoryUrl>https://github.com/fuzzzerd/fmdata</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <Authors>Nate Bross</Authors>
+    <Company />
+    <PackageTags>filemaker filemaker-rest filemaker-api netstandard json dotnet-standard</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
