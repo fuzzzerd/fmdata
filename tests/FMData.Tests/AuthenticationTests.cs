@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
 using Xunit;
 
-namespace FMREST.Tests
+namespace FMData.Tests
 {
     public class AuthenticationTests
     {

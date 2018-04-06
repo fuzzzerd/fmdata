@@ -8,9 +8,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using FMREST.Responses;
+using FMData.Responses;
 
-namespace FMREST
+namespace FMData
 {
     /// <summary>
     /// FileMaker Data API Client
@@ -91,10 +91,10 @@ namespace FMREST
             throw new Exception("Could not authenticate.");
         }
 
-        public async Task<FindResponse> FindAsync(List<Dictionary<string, string>> findParameters)
+        public async Task<FindResponse<T>> FindAsync<T>(FindRequest<T> req)
         {
-            var req = new FindRequest();
-            req.Query = findParameters;
+            // var req = new FindRequest<T>();
+            // req.Query = findParameters;
 
             var httpContent = new StringContent(req.ToJson(), Encoding.UTF8, "application/json");
             httpContent.Headers.Add("FM-Data-token", this.dataToken);
@@ -103,7 +103,7 @@ namespace FMREST
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<FindResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<FindResponse<T>>(responseJson);
                 return responseObject;
             }
 

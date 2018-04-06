@@ -1,4 +1,4 @@
-namespace FMREST.Tests
+namespace FMData.Tests
 {
     public static partial class DataApiResponses
     {

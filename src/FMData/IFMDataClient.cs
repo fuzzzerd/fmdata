@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using FMREST.Responses;
+using FMData.Responses;
 
-namespace FMREST
+namespace FMData
 {
     /// <summary>
     /// FileMaker Data API Client

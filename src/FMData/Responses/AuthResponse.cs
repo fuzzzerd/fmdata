@@ -1,4 +1,4 @@
-﻿namespace FMREST.Responses
+﻿namespace FMData.Responses
 {
     public class AuthResponse : BaseDataResponse
     {

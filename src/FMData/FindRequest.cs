@@ -1,20 +1,20 @@
-namespace FMREST
+using System;
+using System.Collections.Generic;
+using System.Net;
+
+using System.Globalization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace FMData
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Net;
-
-    using System.Globalization;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
-
-    public partial class FindRequest
+    public partial class FindRequest<T>
     {
         /// <summary>
         /// The find request dictionary.
         /// </summary>
         [JsonProperty("query")]
-        public IEnumerable<Dictionary<string, string>> Query { get; set; }
+        public IEnumerable<T> Query { get; set; }
 
         /// <summary>
         /// Maximum number of records to return for this request.
@@ -39,7 +39,7 @@ namespace FMREST
         /// </summary>
         /// <param name="json">The incomming Json data to deserialize.</param>
         /// <returns>An instance of the FindRequest object from the provided Json string.</returns>
-        public static FindRequest FromJson(string json) => JsonConvert.DeserializeObject<FindRequest>(json);
+        public static FindRequest<T> FromJson(string json) => JsonConvert.DeserializeObject<FindRequest<T>>(json);
 
         /// <summary>
         /// Convert the this instance to Json.
