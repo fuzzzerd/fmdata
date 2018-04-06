@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace FMREST.Responses
+namespace FMData.Responses
 {
-    public class FindResponse : BaseDataResponse
+    public class FindResponse<T> : BaseDataResponse
     {
-        public IEnumerable<Record> Data { get; set; }
+        public IEnumerable<RecordBase<T,Dictionary<string,string>>> Data { get; set; }
     }
 }
