@@ -21,15 +21,23 @@ namespace FMData
             string layout);
 
         /// <summary>
+        /// Logs the user out and nullifies the token.
+        /// </summary>
+        /// <returns>FileMaker Response</returns>
+        Task<BaseDataResponse> LogoutAsync();
+
+        /// <summary>
         /// Generate the appropriate Authentication endpoint uri for this instance of the data client.
         /// </summary>
-        string AuthEndpoint { get; }
+        /// <param name="fileName">The name of the filemaker file to connect to.</param>
+        /// <returns></returns>
+        string AuthEndpoint(string fileName);
 
         /// <summary>
         /// Generate the appropriate Find endpoint uri for this instance of the data client.
         /// </summary>
+        /// <param name="fileName">The name of the filemaker file to connect to.</param>
         /// <param name="layout">The layout for the find request.</param>
-        string FindEndpoint(string layout);
-
+        string FindEndpoint(string fileName, string layout);
     }
 }
