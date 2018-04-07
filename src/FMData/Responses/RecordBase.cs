@@ -1,9 +1,9 @@
 namespace FMData.Responses
 {
-    public class RecordBase<FD, PD>
+    public class RecordBase<TypeFD, TypePD>
     {
-        public FD FieldData { get; set; }
-        public PD PortalData { get; set; }
+        public TypeFD FieldData { get; set; }
+        public TypePD PortalData { get; set; }
         public int RecordId { get; set; }
         public int ModId { get; set; }
     }

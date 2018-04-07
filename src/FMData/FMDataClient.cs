@@ -63,8 +63,8 @@ namespace FMData
             }
         }
 
-        public string AuthEndpoint => $"{_fmsUri}/fmi/rest/api/auth/{_fileName}";
-        public string FindEndpoint(string layout) => $"{_fmsUri}/fmi/rest/api/find/{_fileName}/{layout}";
+        public string AuthEndpoint(string fileName) => $"{_fmsUri}/fmi/rest/api/auth/{fileName}";
+        public string FindEndpoint(string fileName, string layout) => $"{_fmsUri}/fmi/rest/api/find/{fileName}/{layout}";
 
         public async Task<AuthResponse> RefreshTokenAsync(string username, string password, string layout)
         {
@@ -77,7 +77,7 @@ namespace FMData
             var str = $"{{ \"user\": \"{username}\", \"password\" : \"{password}\", \"layout\": \"{layout}\" }}";
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
             // run the post action
-            var response = await _client.PostAsync(AuthEndpoint, httpContent);
+            var response = await _client.PostAsync(AuthEndpoint(_fileName), httpContent);
 
             // process the response
             if (response.StatusCode == HttpStatusCode.OK)
@@ -91,19 +91,38 @@ namespace FMData
             throw new Exception("Could not authenticate.");
         }
 
-        public async Task<FindResponse<T>> FindAsync<T>(FindRequest<T> req)
+        public async Task<BaseDataResponse> LogoutAsync()
+        {
+            // add a default request header of our data token to nuke
+            _client.DefaultRequestHeaders.Add("FM-Data-token", this.dataToken);
+            var response = await _client.DeleteAsync(AuthEndpoint(_fileName));
+
+            // process the response
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<BaseDataResponse>(responseJson);
+                return responseObject;
+            }
+
+            throw new Exception("Could not logout.");
+        }
+
+        public async Task<FindResponse> FindAsync(FindRequest req)
         {
             // var req = new FindRequest<T>();
             // req.Query = findParameters;
 
+            if(string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
+
             var httpContent = new StringContent(req.ToJson(), Encoding.UTF8, "application/json");
             httpContent.Headers.Add("FM-Data-token", this.dataToken);
-            var response = await _client.PostAsync(FindEndpoint("users"), httpContent);
+            var response = await _client.PostAsync(FindEndpoint(_fileName, req.Layout), httpContent);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<FindResponse<T>>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<FindResponse>(responseJson);
                 return responseObject;
             }
 

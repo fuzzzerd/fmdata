@@ -2,8 +2,10 @@ using System.Collections.Generic;
 
 namespace FMData.Responses
 {
-    public class Record : RecordBase<Dictionary<string, string>, Dictionary<string, string>>
-    {
-
-    }
+    /// <summary>
+    /// FileMaker record with Dictionary<string,string> as field data and portal data.
+    /// </summary>
+    public class Record 
+        : RecordBase<Dictionary<string, string>, Dictionary<string, string>>
+    { }
 }
