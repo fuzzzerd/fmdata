@@ -30,5 +30,10 @@ namespace FMData.Tests
         }}
     ]
 }}";
+
+        public static string SuccessfulCreate() => $@"{{
+  ""errorCode"": ""0"",
+  ""recordId"": ""25""
+}}";
     }
 }

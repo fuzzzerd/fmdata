@@ -108,7 +108,7 @@ namespace FMData
         public string DeleteEndpoint(string layout, object recordid) => $"{_baseEndPoint}/record/{_fileName}/{layout}/{recordid}";
         #endregion
 
-        #region "FM Data Token Management"
+        #region FM Data Token Management
 
         /// <summary>
         /// <see cref="IFMDataClient.RefreshTokenAsync(string, string, string)"/>
@@ -158,6 +158,24 @@ namespace FMData
             throw new Exception("Could not logout.");
         }
         #endregion
+
+        public async Task<BaseDataResponse> CreateRecord(string layout, Dictionary<string,string> data)
+        {
+            var str = JsonConvert.SerializeObject(new { data = data });
+            var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
+            // run the post action
+            var response = await _client.PostAsync(CreateEndpoint(layout), httpContent);
+
+            // process the response
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<BaseDataResponse>(responseJson);
+                return responseObject;
+            }
+            // something bad happened. TODO: improve non-OK response handling
+            throw new Exception("Could not Create new record.");
+        }
 
         public async Task<FindResponse> FindAsync(FindRequest req)
         {
