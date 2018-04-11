@@ -8,15 +8,12 @@ A C# client library for the FileMaker 16 REST (Data) API.
 
 ## Example Usage
 
-    // TODO: write usage docs
     using(var client = new FMDataClient(server, user, pass, layout))
     {
-        client.DoStuff();
+        // TODO: write usage docs
     }
 
-## Current Status / Open Items
-
-Planned Features
+## Planned Features
 
 - Support for strongly typed requests and responses
 - Additional operations from Data API
