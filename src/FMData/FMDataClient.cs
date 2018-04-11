@@ -35,7 +35,9 @@ namespace FMData
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
-        public FMDataClient(string fmsUri, string file, string user, string pass, string initialLayout) : this(new HttpClient(), fmsUri, file, user, pass, initialLayout) { }
+        /// <remarks>Pass through constructor with no real body used for injection.</remarks>
+        public FMDataClient(string fmsUri, string file, string user, string pass, string initialLayout) 
+            : this(new HttpClient(), fmsUri, file, user, pass, initialLayout) { }
 
         /// <summary>
         /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"> instance to the class.
@@ -51,6 +53,11 @@ namespace FMData
             _client = client;
 
             _fmsUri = fmsUri;
+            // trim out the trailing slash if they included it
+            if (_fmsUri.EndsWith("/", StringComparison.CurrentCultureIgnoreCase))
+            {
+                _fmsUri = fmsUri.Substring(0, fmsUri.Length - 1);
+            }
             _fileName = file;
             _userName = user;
             _password = pass;
@@ -64,6 +71,9 @@ namespace FMData
         }
 
         #region API Endpoint Functions
+        /// <summary>
+        /// Note we assume _fmsUri has no trailing slash as its cut off in the constructor.
+        /// </summary>
         private string _baseEndPoint => $"{_fmsUri}/fmi/rest/api";
         /// <summary>
         /// Generate the appropriate Authentication endpoint uri for this instance of the data client.
