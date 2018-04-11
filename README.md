@@ -1,6 +1,6 @@
 # FM Data
 
-A C# client library for FileMaker 16 REST (Data) API.
+A C# client library for the FileMaker 16 REST (Data) API.
 
 ## FileMaker REST / Data API Documentation
 
@@ -9,15 +9,16 @@ A C# client library for FileMaker 16 REST (Data) API.
 ## Example Usage
 
     // TODO: write usage docs
-    var client = new FMDataClient();
-    client.DoStuff();
+    using(var client = new FMDataClient(server, user, pass, layout))
+    {
+        client.DoStuff();
+    }
 
 ## Current Status / Open Items
 
-Proof of concept. Many todos remain including:
+Planned Features
 
-- Support for strongly typed resposnes.
-- Batch operations
+- Support for strongly typed requests and responses
 - Additional operations from Data API
   - [Create record](https://fmhelp.filemaker.com/docs/16/en/restapi/#work-with-records_create-record)
   - [Update record](https://fmhelp.filemaker.com/docs/16/en/restapi/#work-with-records_edit-record)
@@ -25,6 +26,7 @@ Proof of concept. Many todos remain including:
   - [Range of Records](https://fmhelp.filemaker.com/docs/16/en/restapi/#work-with-records_get-records)
   - [Finds with paging with range and offset parameters and portals](https://fmhelp.filemaker.com/docs/16/en/restapi/#perform-find-requests)
   - [Global fields](https://fmhelp.filemaker.com/docs/16/en/restapi/#set-global-fields)
+- Batch operations
 
 ## Repository Statistics
 
