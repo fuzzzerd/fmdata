@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FMData.Responses;
 
@@ -8,6 +9,7 @@ namespace FMData
     /// </summary>
     interface IFMDataClient
     {
+        #region Auth/Data Token Management
         /// <summary>
         /// Refreshes the internally stored authentication token from filemaker server.
         /// </summary>
@@ -24,7 +26,8 @@ namespace FMData
         /// Logs the user out and nullifies the token.
         /// </summary>
         /// <returns>FileMaker Response</returns>
-        Task<BaseDataResponse> LogoutAsync();
+        Task<BaseDataResponse> LogoutAsync(); 
+        #endregion
 
         #region API Endpoint Functions
         /// <summary>
@@ -63,5 +66,7 @@ namespace FMData
         /// <returns>The FileMaker Data API Endpoint for Delete requests.</returns>
         string DeleteEndpoint(string layout, object recordid);
         #endregion
+
+        Task<BaseDataResponse> CreateRecord(string layout, Dictionary<string, string> data);
     }
 }

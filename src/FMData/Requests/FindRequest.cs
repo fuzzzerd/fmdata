@@ -6,16 +6,10 @@ using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace FMData
+namespace FMData.Requests
 {
-    public partial class FindRequest
+    public partial class FindRequest : RequestBase
     {
-        /// <summary>
-        /// Name of the layout to run the request on
-        /// </summary>
-        /// <returns></returns>
-        public string Layout { get; set; }
-        
         /// <summary>
         /// The find request dictionary.
         /// </summary>
