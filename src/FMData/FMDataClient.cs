@@ -63,9 +63,46 @@ namespace FMData
             }
         }
 
-        public string AuthEndpoint(string fileName) => $"{_fmsUri}/fmi/rest/api/auth/{fileName}";
-        public string FindEndpoint(string fileName, string layout) => $"{_fmsUri}/fmi/rest/api/find/{fileName}/{layout}";
+        #region API Endpoint Functions
+        private string _baseEndPoint => $"{_fmsUri}/fmi/rest/api";
+        /// <summary>
+        /// Generate the appropriate Authentication endpoint uri for this instance of the data client.
+        /// </summary>
+        /// <returns>The FileMaker Data API Endpoint for Authentication Requests.</returns>
+        public string AuthEndpoint() => $"{_baseEndPoint}/auth/{_fileName}";
+        /// <summary>
+        /// Generate the appropriate Find endpoint uri for this instance of the data client.
+        /// </summary>
+        /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
+        /// <returns>The FileMaker Data API Endpoint for Find requests.</returns>
+        public string FindEndpoint(string layout) => $"{_baseEndPoint}/find/{_fileName}/{layout}";
+        /// <summary>
+        /// Generate the appropriate Create endpoint uri for this instance of the data client.
+        /// </summary>
+        /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
+        /// <returns>The FileMaker Data API Endpoint for Create requests.</returns>
+        public string CreateEndpoint(string layout) => $"{_baseEndPoint}/record/{_fileName}/{layout}";
+        /// <summary>
+        /// Generate the appropriate Edit/Update endpoint uri for this instance of the data client.
+        /// </summary>
+        /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
+        /// <param name="recordid">The record ID of the record to edit.</param>
+        /// <returns>The FileMaker Data API Endpoint for Update/Edit requests.</returns>
+        public string UpdateEndpoint(string layout, object recordid) => $"{_baseEndPoint}/record/{_fileName}/{layout}/{recordid}";
+        /// <summary>
+        /// Generate the appropriate Delete endpoint uri for this instance of the data client.
+        /// </summary>
+        /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
+        /// <param name="recordid">The record ID of the record to edit.</param>
+        /// <returns>The FileMaker Data API Endpoint for Delete requests.</returns>
+        public string DeleteEndpoint(string layout, object recordid) => $"{_baseEndPoint}/record/{_fileName}/{layout}/{recordid}";
+        #endregion
 
+        #region "FM Data Token Management"
+
+        /// <summary>
+        /// <see cref="IFMDataClient.RefreshTokenAsync(string, string, string)"/>
+        /// </summary>
         public async Task<AuthResponse> RefreshTokenAsync(string username, string password, string layout)
         {
             // parameter checks
@@ -77,7 +114,7 @@ namespace FMData
             var str = $"{{ \"user\": \"{username}\", \"password\" : \"{password}\", \"layout\": \"{layout}\" }}";
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
             // run the post action
-            var response = await _client.PostAsync(AuthEndpoint(_fileName), httpContent);
+            var response = await _client.PostAsync(AuthEndpoint(), httpContent);
 
             // process the response
             if (response.StatusCode == HttpStatusCode.OK)
@@ -91,11 +128,14 @@ namespace FMData
             throw new Exception("Could not authenticate.");
         }
 
+        /// <summary>
+        /// <see cref="IFMDataClient.LogoutAsync"/>
+        /// </summary>
         public async Task<BaseDataResponse> LogoutAsync()
         {
             // add a default request header of our data token to nuke
             _client.DefaultRequestHeaders.Add("FM-Data-token", this.dataToken);
-            var response = await _client.DeleteAsync(AuthEndpoint(_fileName));
+            var response = await _client.DeleteAsync(AuthEndpoint());
 
             // process the response
             if (response.StatusCode == HttpStatusCode.OK)
@@ -107,6 +147,7 @@ namespace FMData
 
             throw new Exception("Could not logout.");
         }
+        #endregion
 
         public async Task<FindResponse> FindAsync(FindRequest req)
         {
@@ -117,7 +158,7 @@ namespace FMData
 
             var httpContent = new StringContent(req.ToJson(), Encoding.UTF8, "application/json");
             httpContent.Headers.Add("FM-Data-token", this.dataToken);
-            var response = await _client.PostAsync(FindEndpoint(_fileName, req.Layout), httpContent);
+            var response = await _client.PostAsync(FindEndpoint(req.Layout), httpContent);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
