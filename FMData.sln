@@ -10,6 +10,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FC1158B5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FMData.Tests", "tests\FMData.Tests\FMData.Tests.csproj", "{2885F547-00A9-401B-93CA-71873ACDB1F9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{DB948E4A-24C8-4615-B0E4-B73F651D8308}"
+	ProjectSection(SolutionItems) = preProject
+		_config.yml = _config.yml
+		CNAME = CNAME
+		global.json = global.json
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
