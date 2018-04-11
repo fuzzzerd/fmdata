@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FMData.Requests;
 using RichardSzalay.MockHttp;
 using Xunit;
 
@@ -8,7 +9,7 @@ namespace FMData.Tests
 {
     public class CreateRequestTests
     {
-        [Fact(DisplayName ="Create should generate a new record id.")]
+        [Fact(DisplayName = "Create should generate a new record id.")]
         public async Task CreateShould_ReturnRecordId()
         {
             var mockHttp = new MockHttpMessageHandler();
@@ -27,9 +28,16 @@ namespace FMData.Tests
 
             var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
 
-            var response = await fdc.CreateRecord("layout",
-                new Dictionary<string, string>() { { "Name", "Fuzzerd" }, { "AnotherField", "Another Valuee" } }
-            );
+            var req = new CreateRequest()
+            {
+                Layout = "layout",
+                Data = new Dictionary<string, string>()
+                {
+                    { "Name", "Fuzzerd" },
+                    { "AnotherField", "Another Valuee" }
+                }
+            };
+            var response = await fdc.CreateRecord(req);
 
             Assert.NotNull(response);
             Assert.NotNull(response.RecordId);
