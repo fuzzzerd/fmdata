@@ -10,7 +10,27 @@ namespace FMData.Tests
 {
     public class AuthenticationTests
     {
-        [Fact]
+        [Fact(DisplayName = "Trailing slash should get removed")]
+        public void NewUp_DataClient_WithTrailingSlash_ShouldBeAuthenticated()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost/";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "layout";
+
+            // note the lack of slash here vs other tests to ensure the actual auth endpoint is correctly mocked/hit
+            mockHttp.When($"{server}fmi/rest/api/auth/{file}")
+                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+
+            Assert.True(fdc.IsAuthenticated);
+        }
+
+        [Fact(DisplayName = "New client instance should authenticate")]
         public void NewUp_DataClient_ShouldBeAuthenticated()
         {
             var mockHttp = new MockHttpMessageHandler();
@@ -29,7 +49,7 @@ namespace FMData.Tests
             Assert.True(fdc.IsAuthenticated);
         }
 
-        [Fact]
+        [Fact(DisplayName = "Refresh Token should generate a new token")]
         public async Task RefreshToken_ShouldGet_NewToken()
         {
             var mockHttp = new MockHttpMessageHandler();
@@ -48,8 +68,8 @@ namespace FMData.Tests
             var response = await fdc.RefreshTokenAsync("integration", "test", "someLayout");
             Assert.Equal("someOtherToken", response.Token);
         }
-
-        [Theory]
+        
+        [Theory(DisplayName = "Refresh Token Requres All Parameters")]
         [InlineData("", "test", "layout")]
         [InlineData("integration", "", "layout")]
         [InlineData("integration", "test", "")]
