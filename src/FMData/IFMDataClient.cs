@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FMData.Requests;
 using FMData.Responses;
 
 namespace FMData
@@ -67,6 +68,6 @@ namespace FMData
         string DeleteEndpoint(string layout, object recordid);
         #endregion
 
-        Task<BaseDataResponse> CreateRecord(string layout, Dictionary<string, string> data);
+        Task<BaseDataResponse> CreateRecord(CreateRequest req);
     }
 }

@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using FMData.Responses;
+using FMData.Requests;
 
 namespace FMData
 {
@@ -159,12 +160,13 @@ namespace FMData
         }
         #endregion
 
-        public async Task<BaseDataResponse> CreateRecord(string layout, Dictionary<string,string> data)
+        public async Task<BaseDataResponse> CreateRecord(CreateRequest req)
         {
-            var str = JsonConvert.SerializeObject(new { data = data });
+            // wrap in anonymouse type with data paramater since thats the input format of the json data 
+            var str = JsonConvert.SerializeObject(req);
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
             // run the post action
-            var response = await _client.PostAsync(CreateEndpoint(layout), httpContent);
+            var response = await _client.PostAsync(CreateEndpoint(req.Layout), httpContent);
 
             // process the response
             if (response.StatusCode == HttpStatusCode.OK)
