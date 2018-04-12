@@ -10,7 +10,7 @@ namespace FMData.Tests
 {
     public class AuthenticationTests
     {
-        [Fact(DisplayName = "Trailing slash should get removed")]
+        [Fact]
         public void NewUp_DataClient_WithTrailingSlash_ShouldBeAuthenticated()
         {
             var mockHttp = new MockHttpMessageHandler();
@@ -30,7 +30,7 @@ namespace FMData.Tests
             Assert.True(fdc.IsAuthenticated);
         }
 
-        [Fact(DisplayName = "New client instance should authenticate")]
+        [Fact]
         public void NewUp_DataClient_ShouldBeAuthenticated()
         {
             var mockHttp = new MockHttpMessageHandler();
@@ -49,7 +49,7 @@ namespace FMData.Tests
             Assert.True(fdc.IsAuthenticated);
         }
 
-        [Fact(DisplayName = "Refresh Token should generate a new token")]
+        [Fact]
         public async Task RefreshToken_ShouldGet_NewToken()
         {
             var mockHttp = new MockHttpMessageHandler();
@@ -69,7 +69,7 @@ namespace FMData.Tests
             Assert.Equal("someOtherToken", response.Token);
         }
         
-        [Theory(DisplayName = "Refresh Token Requres All Parameters")]
+        [Theory]
         [InlineData("", "test", "layout")]
         [InlineData("integration", "", "layout")]
         [InlineData("integration", "test", "")]

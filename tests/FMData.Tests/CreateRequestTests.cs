@@ -9,7 +9,7 @@ namespace FMData.Tests
 {
     public class CreateRequestTests
     {
-        [Fact(DisplayName = "Create should generate a new record id.")]
+        [Fact]
         public async Task CreateShould_ReturnRecordId()
         {
             var mockHttp = new MockHttpMessageHandler();
