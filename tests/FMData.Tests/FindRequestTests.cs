@@ -9,7 +9,7 @@ namespace FMData.Tests
 {
     public class FindRequestTests
     {
-        [Fact(DisplayName ="Find should return data")]
+        [Fact]
         public async Task FindShould_ReturnData()
         {
             var mockHttp = new MockHttpMessageHandler();
