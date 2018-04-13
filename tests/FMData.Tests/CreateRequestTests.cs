@@ -26,22 +26,24 @@ namespace FMData.Tests
             mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}")
                 .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
-
-            var req = new CreateRequest()
+            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
             {
-                Layout = "layout",
-                Data = new Dictionary<string, string>()
-                {
-                    { "Name", "Fuzzerd" },
-                    { "AnotherField", "Another Valuee" }
-                }
-            };
-            var response = await fdc.CreateRecord(req);
 
-            Assert.NotNull(response);
-            Assert.NotNull(response.RecordId);
-            Assert.True(response.RecordId != "0");
+                var req = new CreateRequest()
+                {
+                    Layout = "layout",
+                    Data = new Dictionary<string, string>()
+                    {
+                        { "Name", "Fuzzerd" },
+                        { "AnotherField", "Another Valuee" }
+                    }
+                };
+                var response = await fdc.CreateRecord(req);
+
+                Assert.NotNull(response);
+                Assert.NotNull(response.RecordId);
+                Assert.True(response.RecordId != "0");
+            }
         }
     }
 }

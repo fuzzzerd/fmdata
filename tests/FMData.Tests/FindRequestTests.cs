@@ -26,25 +26,28 @@ namespace FMData.Tests
             mockHttp.When($"{server}/fmi/rest/api/find/{file}/{layout}")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
-
-            var response = await fdc.FindAsync(new FindRequest()
+            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
             {
-                Query = new List<Dictionary<string, string>>() {
-                    new Dictionary<string,string>()
-                    {
-                        {"Name","Bross"}
+
+                var response = await fdc.FindAsync(new FindRequest()
+                {
+                    Query = new List<Dictionary<string, string>>() {
+                        new Dictionary<string,string>()
+                        {
+                            {"Name","fuzzzerd"}
+                        },
+                        new Dictionary<string,string>()
+                        {
+                            {"Name","Admin"}, {"omit","true"},
+                        }
                     },
-                    new Dictionary<string,string>()
-                    {
-                        {"Name","Admin"}, {"omit","true"},
-                    }
-                }, Layout = layout
-            });
+                    Layout = layout
+                });
 
-            var responseDataContainsResult = response.Data.Any(r => r.FieldData.Any(v => v.Value.Contains("Bross")));
+                var responseDataContainsResult = response.Data.Any(r => r.FieldData.Any(v => v.Value.Contains("Bross")));
 
-            Assert.True(responseDataContainsResult);
+                Assert.True(responseDataContainsResult);
+            }
         }
     }
 }
