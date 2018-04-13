@@ -13,21 +13,23 @@ namespace FMData.Tests
         [Fact]
         public void NewUp_DataClient_WithTrailingSlash_ShouldBeAuthenticated()
         {
-            var mockHttp = new MockHttpMessageHandler();
-
-            var server = "http://localhost/";
-            var file = "test-file";
-            var user = "unit";
-            var pass = "test";
-            var layout = "layout";
-
-            // note the lack of slash here vs other tests to ensure the actual auth endpoint is correctly mocked/hit
-            mockHttp.When($"{server}fmi/rest/api/auth/{file}")
-                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
-
-            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            using (var mockHttp = new MockHttpMessageHandler())
             {
-                Assert.True(fdc.IsAuthenticated);
+
+                var server = "http://localhost/";
+                var file = "test-file";
+                var user = "unit";
+                var pass = "test";
+                var layout = "layout";
+
+                // note the lack of slash here vs other tests to ensure the actual auth endpoint is correctly mocked/hit
+                mockHttp.When($"{server}fmi/rest/api/auth/{file}")
+                        .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+                using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+                {
+                    Assert.True(fdc.IsAuthenticated);
+                }
             }
         }
 
@@ -87,7 +89,7 @@ namespace FMData.Tests
                     .Respond("application/json", DataApiResponses.SuccessfulAuthentication("someOtherToken"));
 
             // pass in actual values here since we DON'T want this to blow up on constructor 
-            using(var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, "user", "pass", "layout"))
+            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, "user", "pass", "layout"))
             {
                 await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.RefreshTokenAsync(user, pass, layout));
             }
