@@ -2,6 +2,10 @@
 
 A C# client library for the FileMaker 16 REST (Data) API.
 
+| Build Status | Activity | Nuget | License |
+|---|---|---|---|
+|[![filemaker MyGet Build Status](https://www.myget.org/BuildSource/Badge/filemaker?identifier=656ddd5c-8aca-4d86-ba00-1508dd519999)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![FMData repository/commit activity](https://img.shields.io/github/commit-activity/w/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master) | (coming soon) | [![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE) |
+
 ## FileMaker REST / Data API Documentation
 
 - [FileMaker REST API Documentation](https://fmhelp.filemaker.com/docs/16/en/restapi/)
