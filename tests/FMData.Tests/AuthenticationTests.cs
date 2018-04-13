@@ -25,9 +25,10 @@ namespace FMData.Tests
             mockHttp.When($"{server}fmi/rest/api/auth/{file}")
                     .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
-
-            Assert.True(fdc.IsAuthenticated);
+            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            {
+                Assert.True(fdc.IsAuthenticated);
+            }
         }
 
         [Fact]
@@ -44,9 +45,10 @@ namespace FMData.Tests
             mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
                     .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
-
-            Assert.True(fdc.IsAuthenticated);
+            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            {
+                Assert.True(fdc.IsAuthenticated);
+            }
         }
 
         [Fact]
@@ -63,12 +65,13 @@ namespace FMData.Tests
             mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
                     .Respond("application/json", DataApiResponses.SuccessfulAuthentication("someOtherToken"));
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
-
-            var response = await fdc.RefreshTokenAsync("integration", "test", "someLayout");
-            Assert.Equal("someOtherToken", response.Token);
+            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            {
+                var response = await fdc.RefreshTokenAsync("integration", "test", "someLayout");
+                Assert.Equal("someOtherToken", response.Token);
+            }
         }
-        
+
         [Theory]
         [InlineData("", "test", "layout")]
         [InlineData("integration", "", "layout")]
@@ -84,9 +87,10 @@ namespace FMData.Tests
                     .Respond("application/json", DataApiResponses.SuccessfulAuthentication("someOtherToken"));
 
             // pass in actual values here since we DON'T want this to blow up on constructor 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, "user", "pass", "layout");
-
-            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.RefreshTokenAsync(user, pass, layout));
+            using(var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, "user", "pass", "layout"))
+            {
+                await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.RefreshTokenAsync(user, pass, layout));
+            }
         }
     }
 }
