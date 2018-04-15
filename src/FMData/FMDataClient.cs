@@ -165,6 +165,7 @@ namespace FMData
             // wrap in anonymouse type with data paramater since thats the input format of the json data 
             var str = JsonConvert.SerializeObject(req);
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
+            httpContent.Headers.Add("FM-Data-token", this.dataToken);
             // run the post action
             var response = await _client.PostAsync(CreateEndpoint(req.Layout), httpContent);
 
@@ -177,6 +178,43 @@ namespace FMData
             }
             // something bad happened. TODO: improve non-OK response handling
             throw new Exception("Could not Create new record.");
+        }
+
+        public async Task<BaseDataResponse> EditRecord(EditRequest req)
+        {
+            // wrap in anonymouse type with data paramater since thats the input format of the json data 
+            var str = JsonConvert.SerializeObject(req);
+            var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
+            httpContent.Headers.Add("FM-Data-token", this.dataToken);
+            // run the post action
+            var response = await _client.PutAsync(UpdateEndpoint(req.Layout, req.RecordId), httpContent);
+
+            // process the response
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<BaseDataResponse>(responseJson);
+                return responseObject;
+            }
+            // something bad happened. TODO: improve non-OK response handling
+            throw new Exception("Could not edit existing record.");
+        }
+
+        public async Task<BaseDataResponse> DeleteRecord(DeleteRequest req)
+        {
+            // add a default request header of our data token to nuke
+            _client.DefaultRequestHeaders.Add("FM-Data-token", this.dataToken);
+            var response = await _client.DeleteAsync(DeleteEndpoint(req.Layout, req.RecordId));
+
+            // process the response
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<BaseDataResponse>(responseJson);
+                return responseObject;
+            }
+
+            throw new Exception("Could not logout.");
         }
 
         public async Task<FindResponse> FindAsync(FindRequest req)
@@ -210,5 +248,7 @@ namespace FMData
                 _client.Dispose();
             }
         }
+
+
     }
 }

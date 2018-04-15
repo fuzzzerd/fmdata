@@ -69,5 +69,9 @@ namespace FMData
         #endregion
 
         Task<BaseDataResponse> CreateRecord(CreateRequest req);
+
+        Task<BaseDataResponse> EditRecord(EditRequest req);
+
+        Task<BaseDataResponse> DeleteRecord(DeleteRequest req);
     }
 }
