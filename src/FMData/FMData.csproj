@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>A C#/.NET client library for consuming the FileMaker 16 REST/Dat) API.</Description>
+    <Description>A C#/.NET client library for consuming the FileMaker 16 REST/Data) API.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Version>0.0.5</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -20,10 +20,6 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="System.Net.Http" Version="4.3.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Requests\" />
   </ItemGroup>
 
 </Project>
