@@ -24,6 +24,7 @@ namespace FMData.Tests
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}")
+                .WithPartialContent("data") // make sure that the body content contains the 'data' object expected by fms
                 .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
             var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
