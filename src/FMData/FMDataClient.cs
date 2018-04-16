@@ -165,9 +165,17 @@ namespace FMData
 
         public Task<BaseDataResponse> Create<T>(T input)
         {
-            // try to get the 'layout' name out of the 'table' attribute.
-            // not the best but tries to utilize a built in component that is fairly standard vs a custom component dirtying up consumers pocos
-            var lay = typeof(T).GetTypeInfo().GetCustomAttribute<TableAttribute>().Name;
+            string lay;
+            try
+            {
+                // try to get the 'layout' name out of the 'table' attribute.
+                // not the best but tries to utilize a built in component that is fairly standard vs a custom component dirtying up consumers pocos
+                lay = typeof(T).GetTypeInfo().GetCustomAttribute<TableAttribute>().Name;
+            }
+            catch
+            {
+                throw new ArgumentException($"Could not load Layout name from TableAttribute on {typeof(T).Name}.");
+            }
             var req = new CreateRequest<T>() { Data = input, Layout = lay };
             return ExecuteCreate(req);
         }
