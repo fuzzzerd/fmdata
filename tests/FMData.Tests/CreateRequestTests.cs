@@ -2,48 +2,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FMData.Requests;
-//using RichardSzalay.MockHttp;
+using RichardSzalay.MockHttp;
 using Xunit;
 
 namespace FMData.Tests
 {
     public class CreateRequestTests
     {
-        //[Fact]
-        //public async Task CreateShould_ReturnRecordId()
-        //{
-        //    var mockHttp = new MockHttpMessageHandler();
+        [Fact]
+        public async Task CreateShould_ReturnRecordId()
+        {
+            var mockHttp = new MockHttpMessageHandler();
 
-        //    var server = "http://localhost";
-        //    var file = "test-file";
-        //    var user = "unit";
-        //    var pass = "test";
-        //    var layout = "layout";
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "layout";
 
-        //    mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
-        //        .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+            mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
+                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-        //    mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}")
-        //        .Respond("application/json", DataApiResponses.SuccessfulCreate());
+            mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}")
+                .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
-        //    using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
-        //    {
+            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            {
 
-        //        var req = new CreateRequest()
-        //        {
-        //            Layout = "layout",
-        //            Data = new Dictionary<string, string>()
-        //            {
-        //                { "Name", "Fuzzerd" },
-        //                { "AnotherField", "Another Valuee" }
-        //            }
-        //        };
-        //        var response = await fdc.CreateRecord(req);
+                var req = new CreateRequest()
+                {
+                    Layout = "layout",
+                    Data = new Dictionary<string, string>()
+                    {
+                        { "Name", "Fuzzerd" },
+                        { "AnotherField", "Another Valuee" }
+                    }
+                };
+                var response = await fdc.CreateRecord(req);
 
-        //        Assert.NotNull(response);
-        //        Assert.NotNull(response.RecordId);
-        //        Assert.True(response.RecordId != "0");
-        //    }
-        //}
+                Assert.NotNull(response);
+                Assert.NotNull(response.RecordId);
+                Assert.True(response.RecordId != "0");
+            }
+        }
     }
 }
