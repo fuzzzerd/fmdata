@@ -160,12 +160,14 @@ namespace FMData
         }
         #endregion
 
-        public async Task<BaseDataResponse> CreateRecord(CreateRequest req)
+        public async Task<BaseDataResponse> ExecuteCreate(CreateRequest req)
         {
-            // wrap in anonymouse type with data paramater since thats the input format of the json data 
+            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
+
             var str = JsonConvert.SerializeObject(req);
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
             httpContent.Headers.Add("FM-Data-token", this.dataToken);
+            
             // run the post action
             var response = await _client.PostAsync(CreateEndpoint(req.Layout), httpContent);
 
@@ -180,12 +182,15 @@ namespace FMData
             throw new Exception("Could not Create new record.");
         }
 
-        public async Task<BaseDataResponse> EditRecord(EditRequest req)
+        public async Task<BaseDataResponse> ExecuteEdit(EditRequest req)
         {
-            // wrap in anonymouse type with data paramater since thats the input format of the json data 
+            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
+            if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
+
             var str = JsonConvert.SerializeObject(req);
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
             httpContent.Headers.Add("FM-Data-token", this.dataToken);
+            
             // run the post action
             var response = await _client.PutAsync(UpdateEndpoint(req.Layout, req.RecordId), httpContent);
 
@@ -200,8 +205,11 @@ namespace FMData
             throw new Exception("Could not edit existing record.");
         }
 
-        public async Task<BaseDataResponse> DeleteRecord(DeleteRequest req)
+        public async Task<BaseDataResponse> ExecuteDelete(DeleteRequest req)
         {
+            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
+            if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
+
             // add a default request header of our data token to nuke
             _client.DefaultRequestHeaders.Add("FM-Data-token", this.dataToken);
             var response = await _client.DeleteAsync(DeleteEndpoint(req.Layout, req.RecordId));
@@ -214,14 +222,11 @@ namespace FMData
                 return responseObject;
             }
 
-            throw new Exception("Could not logout.");
+            throw new Exception("Could not delete record.");
         }
 
-        public async Task<FindResponse> FindAsync(FindRequest req)
+        public async Task<FindResponse> ExecuteFind(FindRequest req)
         {
-            // var req = new FindRequest<T>();
-            // req.Query = findParameters;
-
             if(string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
 
             var httpContent = new StringContent(req.ToJson(), Encoding.UTF8, "application/json");
@@ -248,7 +253,5 @@ namespace FMData
                 _client.Dispose();
             }
         }
-
-
     }
 }

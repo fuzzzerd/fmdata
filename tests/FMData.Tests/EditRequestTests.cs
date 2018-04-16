@@ -28,17 +28,17 @@ namespace FMData.Tests
 
             using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
             {
-
                 var req = new EditRequest()
                 {
                     Layout = "layout",
+                    RecordId = "264",
                     Data = new Dictionary<string, string>()
                     {
                         { "Name", "Fuzzerd-Updated" },
                         { "AnotherField", "Another-Updated" }
                     }
                 };
-                var response = await fdc.EditRecord(req);
+                var response = await fdc.ExecuteEdit(req);
 
                 Assert.NotNull(response);
                 Assert.NotNull(response.RecordId);
