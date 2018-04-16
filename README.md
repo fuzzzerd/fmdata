@@ -12,10 +12,29 @@ A C# client library for the FileMaker 16 REST (Data) API.
 
 ## Example Usage
 
+There are two styles of interaction supported in the client. The strongly typed methods and the "execute" methods which deal with dictionaries. The "execute" way has coverage for more of the underlying data API and the strongly typed implemenations are built on these methods.
+
+### The Execute Way
+
+    // create a record
     using(var client = new FMDataClient(server, user, pass, layout))
     {
-        // TODO: write usage docs
+        // the execute methods use Dictionary<string,string> to match the expected FileMaker specificaitons
+        var req = new CreateRequest<Dictionary<string, string>>()
+        {
+            Layout = "layout",
+            Data = new Dictionary<string, string>()
+            {
+                { "Name", "Fuzzerd" },
+                { "AnotherField", "Another Valuee" }
+            }
+        };
+        var response = await fdc.ExecuteCreate(req);
     }
+
+### The Strongly Typed Way
+
+    // TODO: Add examples
 
 ## Planned Features
 
