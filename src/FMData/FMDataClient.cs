@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using FMData.Responses;
 using FMData.Requests;
+using System.Reflection;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FMData
 {
@@ -160,7 +162,23 @@ namespace FMData
         }
         #endregion
 
-        public async Task<BaseDataResponse> ExecuteCreate(CreateRequest req)
+
+        public Task<BaseDataResponse> Create<T>(T input)
+        {
+            // try to get the 'layout' name out of the 'table' attribute.
+            // not the best but tries to utilize a built in component that is fairly standard vs a custom component dirtying up consumers pocos
+            var lay = typeof(T).GetTypeInfo().GetCustomAttribute<TableAttribute>().Name;
+            var req = new CreateRequest<T>() { Data = input, Layout = lay };
+            return ExecuteCreate(req);
+        }
+
+        public Task<BaseDataResponse> Create<T>(string layout, T input)
+        {
+            var req = new CreateRequest<T>() { Data = input, Layout = layout };
+            return ExecuteCreate(req);
+        }
+
+        public async Task<BaseDataResponse> ExecuteCreate<T>(CreateRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
