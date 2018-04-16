@@ -9,41 +9,41 @@ namespace FMData.Tests
 {
     public class EditRequestTests
     {
-        [Fact]
-        public async Task EditShould_UpdateRecord_WithId()
-        {
-            var mockHttp = new MockHttpMessageHandler();
+        //[Fact]
+        //public async Task EditShould_UpdateRecord_WithId()
+        //{
+        //    var mockHttp = new MockHttpMessageHandler();
 
-            var server = "http://localhost";
-            var file = "test-file";
-            var user = "unit";
-            var pass = "test";
-            var layout = "layout";
+        //    var server = "http://localhost";
+        //    var file = "test-file";
+        //    var user = "unit";
+        //    var pass = "test";
+        //    var layout = "layout";
 
-            mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
-                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+        //    mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
+        //        .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}/*")
-                .Respond("application/json", DataApiResponses.SuccessfulEdit());
+        //    mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}/*")
+        //        .Respond("application/json", DataApiResponses.SuccessfulEdit());
 
-            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
-            {
+        //    using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+        //    {
 
-                var req = new EditRequest()
-                {
-                    Layout = "layout",
-                    Data = new Dictionary<string, string>()
-                    {
-                        { "Name", "Fuzzerd-Updated" },
-                        { "AnotherField", "Another-Updated" }
-                    }
-                };
-                var response = await fdc.EditRecord(req);
+        //        var req = new EditRequest()
+        //        {
+        //            Layout = "layout",
+        //            Data = new Dictionary<string, string>()
+        //            {
+        //                { "Name", "Fuzzerd-Updated" },
+        //                { "AnotherField", "Another-Updated" }
+        //            }
+        //        };
+        //        var response = await fdc.EditRecord(req);
 
-                Assert.NotNull(response);
-                Assert.NotNull(response.RecordId);
-                Assert.True(response.RecordId != "0");
-            }
-        }
+        //        Assert.NotNull(response);
+        //        Assert.NotNull(response.RecordId);
+        //        Assert.True(response.RecordId != "0");
+        //    }
+        //}
     }
 }
