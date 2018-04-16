@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
 using Xunit;
 
+// this is apparently necessary to work in appveyor / myget
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace FMData.Tests
