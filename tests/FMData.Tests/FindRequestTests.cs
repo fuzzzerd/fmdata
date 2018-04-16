@@ -44,7 +44,7 @@ namespace FMData.Tests
                     Layout = layout
                 });
 
-                var responseDataContainsResult = response.Data.Any(r => r.FieldData.Any(v => v.Value.Contains("buzz")));
+                var responseDataContainsResult = response.Data.Any(r => r.FieldData.Any(v => v.Value.Contains("Buzz")));
 
                 Assert.True(responseDataContainsResult);
             }
