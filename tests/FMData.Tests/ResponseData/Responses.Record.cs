@@ -9,7 +9,7 @@ namespace FMData.Tests
         {{
             ""fieldData"": {{
                 ""Id"": ""4"",
-                ""Name"": ""Bross"",
+                ""Name"": ""fuzzzerd"",
                 ""Created"": ""03/29/2018 15:22:09"",
                 ""Modified"": ""03/29/2018 15:22:12""
             }},
@@ -20,7 +20,7 @@ namespace FMData.Tests
         {{
             ""fieldData"": {{
                 ""Id"": ""1"",
-                ""Name"": ""Nate Bross"",
+                ""Name"": ""Fuzzzerd Buzz"",
                 ""Created"": ""03/07/2018 16:54:34"",
                 ""Modified"": ""04/05/2018 21:34:55""
             }},
