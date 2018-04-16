@@ -40,5 +40,10 @@ namespace FMData.Tests
   ""errorCode"": ""0"",
   ""recordId"": ""53""
 }";
+
+        public static string SuccessfulDelete() => @"{
+  ""errorCode"": ""0"",
+  ""recordId"": ""53""
+}";
     }
 }
