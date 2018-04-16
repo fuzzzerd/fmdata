@@ -33,25 +33,25 @@ namespace FMData.Tests
             }
         }
 
-        //[Fact]
-        //public void NewUp_DataClient_ShouldBeAuthenticated()
-        //{
-        //    var mockHttp = new MockHttpMessageHandler();
+        [Fact]
+        public void NewUp_DataClient_ShouldBeAuthenticated()
+        {
+            var mockHttp = new MockHttpMessageHandler();
 
-        //    var server = "http://localhost";
-        //    var file = "test-file";
-        //    var user = "unit";
-        //    var pass = "test";
-        //    var layout = "layout";
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "layout";
 
-        //    mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
-        //            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+            mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
+                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-        //    using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
-        //    {
-        //        Assert.True(fdc.IsAuthenticated);
-        //    }
-        //}
+            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            {
+                Assert.True(fdc.IsAuthenticated);
+            }
+        }
 
         //[Fact]
         //public async Task RefreshToken_ShouldGet_NewToken()
