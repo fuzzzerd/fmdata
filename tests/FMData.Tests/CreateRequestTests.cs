@@ -38,7 +38,7 @@ namespace FMData.Tests
                         { "AnotherField", "Another Valuee" }
                     }
                 };
-                var response = await fdc.CreateRecord(req);
+                var response = await fdc.ExecuteCreate(req);
 
                 Assert.NotNull(response);
                 Assert.NotNull(response.RecordId);

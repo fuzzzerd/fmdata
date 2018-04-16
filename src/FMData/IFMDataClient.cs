@@ -68,10 +68,28 @@ namespace FMData
         string DeleteEndpoint(string layout, object recordid);
         #endregion
 
-        Task<BaseDataResponse> CreateRecord(CreateRequest req);
+        /// <summary>
+        /// Creates a new record.
+        /// </summary>
+        /// <param name="req">New record request.</param>
+        Task<BaseDataResponse> ExecuteCreate(CreateRequest req);
 
-        Task<BaseDataResponse> EditRecord(EditRequest req);
+        /// <summary>
+        /// Find a records.
+        /// </summary>
+        /// <param name="req">Find request.</param
+        Task<FindResponse> ExecuteFind(FindRequest req);
 
-        Task<BaseDataResponse> DeleteRecord(DeleteRequest req);
+        /// <summary>
+        /// Edit record.
+        /// </summary>
+        /// <param name="req">Edit record request.</param>
+        Task<BaseDataResponse> ExecuteEdit(EditRequest req);
+
+        /// <summary>
+        /// Delete record
+        /// </summary>
+        /// <param name="req">Delete record request.</param>
+        Task<BaseDataResponse> ExecuteDelete(DeleteRequest req);
     }
 }

@@ -29,7 +29,7 @@ namespace FMData.Tests
             using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
             {
 
-                var response = await fdc.FindAsync(new FindRequest()
+                var response = await fdc.ExecuteFind(new FindRequest()
                 {
                     Query = new List<Dictionary<string, string>>() {
                         new Dictionary<string,string>()
