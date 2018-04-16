@@ -68,11 +68,30 @@ namespace FMData
         string DeleteEndpoint(string layout, object recordid);
         #endregion
 
+
+        /// <summary>
+        /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout.
+        /// </summary>
+        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
+        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
+        /// <returns>The newly created RecordId and/or an error response code.</returns>
+        Task<BaseDataResponse> Create<T>(T input);
+
+        /// <summary>
+        /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout.
+        /// </summary>
+        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
+        /// <param name="layout"></param>
+        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
+        /// <returns>The newly created RecordId and/or an error response code.</returns>
+        Task<BaseDataResponse> Create<T>(string layout, T input);
+
+
         /// <summary>
         /// Creates a new record.
         /// </summary>
         /// <param name="req">New record request.</param>
-        Task<BaseDataResponse> ExecuteCreate(CreateRequest req);
+        Task<BaseDataResponse> ExecuteCreate<T>(CreateRequest<T> req);
 
         /// <summary>
         /// Find a records.

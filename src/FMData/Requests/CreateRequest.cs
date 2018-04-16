@@ -1,11 +1,10 @@
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace FMData.Requests
 {
-    public class CreateRequest : RequestBase
+    public class CreateRequest<T> : RequestBase
     {
         [JsonProperty("data")]
-        public Dictionary<string, string> Data { get; set; }
+        public T Data { get; set; }
     }
 }

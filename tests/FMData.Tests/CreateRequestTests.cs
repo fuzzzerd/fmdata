@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,8 +10,7 @@ namespace FMData.Tests
 {
     public class CreateRequestTests
     {
-        [Fact]
-        public async Task CreateShould_ReturnRecordId()
+        private static FMDataClient GetMockedFDC()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -26,24 +26,46 @@ namespace FMData.Tests
             mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}")
                 .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
-            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            return fdc;
+        }
+
+        [Fact]
+        public async Task CreateShould_ReturnRecordId()
+        {
+            FMDataClient fdc = GetMockedFDC();
+
+            var req = new CreateRequest<Dictionary<string, string>>()
             {
-
-                var req = new CreateRequest()
+                Layout = "layout",
+                Data = new Dictionary<string, string>()
                 {
-                    Layout = "layout",
-                    Data = new Dictionary<string, string>()
-                    {
-                        { "Name", "Fuzzerd" },
-                        { "AnotherField", "Another Valuee" }
-                    }
-                };
-                var response = await fdc.ExecuteCreate(req);
+                    { "Name", "Fuzzerd" },
+                    { "AnotherField", "Another Valuee" }
+                }
+            };
+            var response = await fdc.ExecuteCreate(req);
 
-                Assert.NotNull(response);
-                Assert.NotNull(response.RecordId);
-                Assert.True(response.RecordId != "0");
-            }
+            Assert.NotNull(response);
+            Assert.NotNull(response.RecordId);
+            Assert.True(response.RecordId != "0");
+        }
+
+        [Fact]
+        public async Task Create_WithoutLayout_ThrowsArgumentException()
+        {
+            FMDataClient fdc = GetMockedFDC();
+
+            var req = new CreateRequest<Dictionary<string, string>>()
+            {
+                Data = new Dictionary<string, string>()
+                {
+                    { "Name", "Fuzzerd" },
+                    { "AnotherField", "Another Valuee" }
+                }
+            };
+
+            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.ExecuteCreate(req));
         }
     }
 }
