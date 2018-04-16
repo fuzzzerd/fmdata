@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FMData.Responses;
-//using RichardSzalay.MockHttp;
+using RichardSzalay.MockHttp;
 using Xunit;
 
 namespace FMData.Tests
@@ -13,26 +13,24 @@ namespace FMData.Tests
         [Fact]
         public void NewUp_DataClient_WithTrailingSlash_ShouldBeAuthenticated()
         {
-            //using (var mockHttp = new MockHttpMessageHandler())
-            //{
+            using (var mockHttp = new MockHttpMessageHandler())
+            {
+                var server = "http://localhost/";
+                var file = "test-file";
+                var user = "unit";
+                var pass = "test";
+                var layout = "layout";
 
-                //var server = "http://localhost/";
-                //var file = "test-file";
-                //var user = "unit";
-                //var pass = "test";
-                //var layout = "layout";
+                // note the lack of slash here vs other tests to ensure the actual auth endpoint is correctly mocked/hit
+                mockHttp.When($"{server}fmi/rest/api/auth/{file}")
+                        .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-                //// note the lack of slash here vs other tests to ensure the actual auth endpoint is correctly mocked/hit
-                //mockHttp.When($"{server}fmi/rest/api/auth/{file}")
-                //        .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+                {
+                    Assert.True(fdc.IsAuthenticated);
+                }
 
-                //using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
-                //{
-                //    Assert.True(fdc.IsAuthenticated);
-                //}
-
-                Assert.True(true);
-            //}
+            }
         }
 
         //[Fact]
