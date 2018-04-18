@@ -112,6 +112,14 @@ namespace FMData
         /// <param name="request">The object to utilize for the find request parameters.</param>
         /// <returns></returns>
         Task<IEnumerable<T>> FindAsync<T>(T request);
+        
+        /// <summary>
+        /// Finds a record or records matching the properties of the input request object.
+        /// </summary>
+        /// <param name="layout">Overrides the TableAttribute for the name of the layout to run this request on.</param>
+        /// <param name="request">The object to utilize for the find request parameters.</param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> FindAsync<T>(string layout, T request);
 
         /// <summary>
         /// Edit record.

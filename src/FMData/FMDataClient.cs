@@ -261,14 +261,26 @@ namespace FMData
             throw new Exception("Could not delete record.");
         }
 
-        public async Task<FindResponse<Dictionary<string, string>>> FindAsync(FindRequest<Dictionary<string, string>> req)
+        /// <summary>
+        /// Utility method to handle processing of find requests.
+        /// </summary>
+        /// <param name="req">The incomming find request.</param>
+        /// <returns>The task that will return the http response from this</returns>
+        private Task<HttpResponseMessage> GetFindHttpResponseAsync<T>(FindRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
             if (req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
 
             var httpContent = new StringContent(req.ToJson(), Encoding.UTF8, "application/json");
             httpContent.Headers.Add("FM-Data-token", this.dataToken);
-            var response = await _client.PostAsync(FindEndpoint(req.Layout), httpContent);
+            var response = _client.PostAsync(FindEndpoint(req.Layout), httpContent);
+
+            return response;
+        }
+
+        public async Task<FindResponse<Dictionary<string, string>>> FindAsync(FindRequest<Dictionary<string, string>> req)
+        {
+            var response = await GetFindHttpResponseAsync(req);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -282,12 +294,7 @@ namespace FMData
 
         public async Task<IEnumerable<T>> FindAsync<T>(FindRequest<T> req)
         {
-            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
-            if (req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
-
-            var httpContent = new StringContent(req.ToJson(), Encoding.UTF8, "application/json");
-            httpContent.Headers.Add("FM-Data-token", this.dataToken);
-            var response = await _client.PostAsync(FindEndpoint(req.Layout), httpContent);
+            var response = await GetFindHttpResponseAsync(req);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -310,14 +317,18 @@ namespace FMData
                 return searchResults;
             }
 
+            // not found, so return empty list
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return new List<T>();
+            }
+
+            // other error TODO: Improve handling
             throw new Exception("Find request error");
         }
 
-        public Task<IEnumerable<T>> FindAsync<T>(T input)
-        {
-            var lay = GetTableName(input);
-            return FindAsync(new FindRequest<T>() { Layout = lay, Query = new List<T>() { input } });
-        }
+        public Task<IEnumerable<T>> FindAsync<T>(T input) => FindAsync(GetTableName(input), input);
+        public Task<IEnumerable<T>> FindAsync<T>(string layout, T input) => FindAsync(new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
 
         /// <summary>
         /// Dispose resources opened for this instance of the data client.
