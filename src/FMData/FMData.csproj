@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyTitle>FMData</AssemblyTitle>
+    <AssemblyName>FMData</AssemblyName>
     <Description>A C#/.NET client library for consuming the FileMaker 16 REST/Data) API.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Version>0.0.5</Version>
