@@ -37,7 +37,7 @@ namespace FMData.Tests
             {
                 new User()
                 {
-                    Name ="fuzzzerd"
+                    Id =1
                 }
             },
             Layout = "layout"
@@ -87,6 +87,32 @@ namespace FMData.Tests
             // assert
             var responseDataContainsResult = response.Any(r => r.Name.Contains("Buzz"));
             Assert.True(responseDataContainsResult);
+        }
+
+        [Fact]
+        public void FindRequest_Numbers_ShouldSerialize_ToStrings_ForFileMaker()
+        {
+            //arrange 
+            var r = FindReq;
+
+            // act
+            var json = r.ToJson();
+
+            //assert
+            Assert.Contains("\"Id\":\"1\"", json);
+        }
+
+        [Fact]
+        public void FindRequest_Numbers_ShouldNotSerialize_ToNumbers()
+        {
+            //arrange 
+            var r = FindReq;
+
+            // act
+            var json = r.ToJson();
+
+            //assert
+            Assert.DoesNotContain("\"Id\":1", json);
         }
     }
 }
