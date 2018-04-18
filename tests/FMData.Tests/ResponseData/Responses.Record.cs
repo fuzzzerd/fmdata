@@ -33,17 +33,17 @@ namespace FMData.Tests
 
         public static string SuccessfulCreate() => @"{
   ""errorCode"": ""0"",
-  ""recordId"": ""25""
+  ""result"": ""OK""
 }";
 
         public static string SuccessfulEdit() => @"{
   ""errorCode"": ""0"",
-  ""recordId"": ""53""
+  ""result"": ""OK""
 }";
 
         public static string SuccessfulDelete() => @"{
   ""errorCode"": ""0"",
-  ""recordId"": ""53""
+  ""result"": ""OK""
 }";
     }
 }

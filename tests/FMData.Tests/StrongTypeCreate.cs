@@ -57,8 +57,7 @@ namespace FMData.Tests
             var response = await fdc.CreateAsync(newModel);
 
             Assert.NotNull(response);
-            Assert.NotNull(response.RecordId);
-            Assert.True(response.RecordId != "0");
+            Assert.Equal("OK", response.Result);
         }
 
         [Fact]
@@ -75,8 +74,7 @@ namespace FMData.Tests
             var response = await fdc.CreateAsync("layout", newModel);
 
             Assert.NotNull(response);
-            Assert.NotNull(response.RecordId);
-            Assert.True(response.RecordId != "0");
+            Assert.Equal("OK", response.Result);
         }
 
         [Fact]

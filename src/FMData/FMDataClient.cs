@@ -298,6 +298,11 @@ namespace FMData
             return searchResults;
         }
 
+        public async Task<IEnumerable<T>> FindAsync<T>(T request)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Dispose resources opened for this instance of the data client.
         /// </summary>

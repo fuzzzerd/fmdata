@@ -107,6 +107,13 @@ namespace FMData
         Task<IEnumerable<T>> FindAsync<T>(FindRequest req);
 
         /// <summary>
+        /// Finds a record or records matching the properties of the input request object.
+        /// </summary>
+        /// <param name="request">The object to utilize for the find request parameters.</param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> FindAsync<T>(T request);
+
+        /// <summary>
         /// Edit record.
         /// </summary>
         /// <param name="req">Edit record request.</param>
