@@ -254,6 +254,7 @@ namespace FMData
         public async Task<FindResponse> ExecuteFind(FindRequest req)
         {
             if(string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
+            if(req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
 
             var httpContent = new StringContent(req.ToJson(), Encoding.UTF8, "application/json");
             httpContent.Headers.Add("FM-Data-token", this.dataToken);

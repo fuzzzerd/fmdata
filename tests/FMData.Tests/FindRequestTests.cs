@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using FMData.Requests;
 using RichardSzalay.MockHttp;
@@ -9,8 +11,7 @@ namespace FMData.Tests
 {
     public class FindRequestTests
     {
-        [Fact]
-        public async Task FindShould_ReturnData()
+        private static FMDataClient GetMockedFDC()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -20,18 +21,25 @@ namespace FMData.Tests
             var pass = "test";
             var layout = "layout";
 
-            mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/auth/{file}")
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When($"{server}/fmi/rest/api/find/{file}/{layout}")
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/*")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
-            {
+            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            return fdc;
+        }
 
-                var response = await fdc.ExecuteFind(new FindRequest()
-                {
-                    Query = new List<Dictionary<string, string>>() {
+        [Fact]
+        public async Task FindShould_ReturnData()
+        {
+            var fdc = GetMockedFDC();
+
+            var response = await fdc.ExecuteFind(new FindRequest()
+            {
+                Query = new List<Dictionary<string, string>>() {
                         new Dictionary<string,string>()
                         {
                             {"Name","fuzzzerd"}
@@ -41,13 +49,20 @@ namespace FMData.Tests
                             {"Name","Admin"}, {"omit","true"},
                         }
                     },
-                    Layout = layout
-                });
+                Layout = "layout"
+            });
 
-                var responseDataContainsResult = response.Data.Any(r => r.FieldData.Any(v => v.Value.Contains("Buzz")));
+            var responseDataContainsResult = response.Data.Any(r => r.FieldData.Any(v => v.Value.Contains("Buzz")));
 
-                Assert.True(responseDataContainsResult);
-            }
+            Assert.True(responseDataContainsResult);
+        }
+
+         [Fact]
+        public async Task FindWithoutQuery_ShouldThrowArgumentException()
+        {
+            var fdc = GetMockedFDC();
+
+            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.ExecuteFind(new FindRequest() { Layout = "layout" }));
         }
     }
 }
