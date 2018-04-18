@@ -8,7 +8,7 @@ namespace FMData
     /// <summary>
     /// FileMaker Data API Client
     /// </summary>
-    interface IFMDataClient
+    public interface IFMDataClient
     {
         #region Auth/Data Token Management
         /// <summary>
