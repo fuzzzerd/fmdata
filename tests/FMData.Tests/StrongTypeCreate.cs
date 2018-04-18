@@ -54,7 +54,7 @@ namespace FMData.Tests
                 AnotherField = "Different Value"
             };
 
-            var response = await fdc.Create(newModel);
+            var response = await fdc.CreateAsync(newModel);
 
             Assert.NotNull(response);
             Assert.NotNull(response.RecordId);
@@ -72,7 +72,7 @@ namespace FMData.Tests
                 AnotherField = "Different Value"
             };
 
-            var response = await fdc.Create("layout", newModel);
+            var response = await fdc.CreateAsync("layout", newModel);
 
             Assert.NotNull(response);
             Assert.NotNull(response.RecordId);
@@ -90,7 +90,7 @@ namespace FMData.Tests
                 AnotherField = "Different Value"
             };
 
-            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.Create(newModel));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.CreateAsync(newModel));
         }
 
     }

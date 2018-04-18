@@ -75,7 +75,7 @@ namespace FMData
         /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
         /// <returns>The newly created RecordId and/or an error response code.</returns>
-        Task<BaseDataResponse> Create<T>(T input);
+        Task<BaseDataResponse> CreateAsync<T>(T input);
 
         /// <summary>
         /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout.
@@ -84,38 +84,38 @@ namespace FMData
         /// <param name="layout"></param>
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
         /// <returns>The newly created RecordId and/or an error response code.</returns>
-        Task<BaseDataResponse> Create<T>(string layout, T input);
+        Task<BaseDataResponse> CreateAsync<T>(string layout, T input);
 
 
         /// <summary>
         /// Creates a new record.
         /// </summary>
         /// <param name="req">New record request.</param>
-        Task<BaseDataResponse> ExecuteCreate<T>(CreateRequest<T> req);
+        Task<BaseDataResponse> ExecuteCreateAsync<T>(CreateRequest<T> req);
 
         /// <summary>
         /// Find a record or records matching the request.
         /// </summary>
         /// <param name="req">Find request.</param>
-        Task<FindResponse> ExecuteFind(FindRequest req);
+        Task<FindResponse> ExecuteFindAsync(FindRequest req);
 
         /// <summary>
         /// Find a record or records matching the request.
         /// </summary>
         /// <param name="req">Find request</param>
         /// <returns></returns>
-        Task<IEnumerable<T>> Find<T>(FindRequest req);
+        Task<IEnumerable<T>> FindAsync<T>(FindRequest req);
 
         /// <summary>
         /// Edit record.
         /// </summary>
         /// <param name="req">Edit record request.</param>
-        Task<BaseDataResponse> ExecuteEdit(EditRequest req);
+        Task<BaseDataResponse> ExecuteEditAsync(EditRequest req);
 
         /// <summary>
         /// Delete record
         /// </summary>
         /// <param name="req">Delete record request.</param>
-        Task<BaseDataResponse> ExecuteDelete(DeleteRequest req);
+        Task<BaseDataResponse> ExecuteDeleteAsync(DeleteRequest req);
     }
 }
