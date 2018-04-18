@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace FMData.Responses
 {
-    public class FindResponse : BaseDataResponse
+    public class FindResponse<TResponseType> : BaseDataResponse
     {
-        public IEnumerable<Record> Data { get; set; }
+        public IEnumerable<RecordBase<TResponseType, Dictionary<string,string>>> Data { get; set; }
     }
 }

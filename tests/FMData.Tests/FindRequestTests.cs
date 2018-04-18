@@ -33,7 +33,7 @@ namespace FMData.Tests
             return fdc;
         }
 
-        private FindRequest FindReq => new FindRequest()
+        private FindRequest<Dictionary<string, string>> FindReq => new FindRequest<Dictionary<string, string>>()
         {
             Query = new List<Dictionary<string, string>>()
             {
@@ -54,7 +54,7 @@ namespace FMData.Tests
         {
             var fdc = GetMockedFDC();
 
-            var response = await fdc.ExecuteFindAsync(FindReq);
+            var response = await fdc.FindAsync(FindReq);
 
             var responseDataContainsResult = response.Data.Any(r => r.FieldData.Any(v => v.Value.Contains("Buzz")));
 
@@ -66,7 +66,7 @@ namespace FMData.Tests
         {
             var fdc = GetMockedFDC();
 
-            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.ExecuteFindAsync(new FindRequest() { Layout = "layout" }));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.FindAsync(new FindRequest<Dictionary<string,string>>() { Layout = "layout" }));
         }
     }
 }
