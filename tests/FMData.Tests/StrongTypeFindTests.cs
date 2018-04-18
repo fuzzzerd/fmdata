@@ -1,16 +1,15 @@
-using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FMData.Requests;
+using FMData.Tests.TestModels;
 using RichardSzalay.MockHttp;
 using Xunit;
+using System.Linq;
 
 namespace FMData.Tests
 {
-    public class FindRequestTests
+    public class StrongTypeFindTests
     {
         private static FMDataClient GetMockedFDC()
         {
@@ -32,7 +31,6 @@ namespace FMData.Tests
             var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
             return fdc;
         }
-
         private FindRequest FindReq => new FindRequest()
         {
             Query = new List<Dictionary<string, string>>()
@@ -50,23 +48,17 @@ namespace FMData.Tests
         };
 
         [Fact]
-        public async Task FindShould_ReturnData()
+        public async Task StrongType_FindShould_ReturnData()
         {
+            // arrange
             var fdc = GetMockedFDC();
 
-            var response = await fdc.ExecuteFind(FindReq);
+            // act
+            var response = await fdc.Find<User>(FindReq);
 
-            var responseDataContainsResult = response.Data.Any(r => r.FieldData.Any(v => v.Value.Contains("Buzz")));
-
+            // assert
+            var responseDataContainsResult = response.Any(r => r.Name.Contains("Buzz"));
             Assert.True(responseDataContainsResult);
-        }
-
-        [Fact]
-        public async Task FindWithoutQuery_ShouldThrowArgumentException()
-        {
-            var fdc = GetMockedFDC();
-
-            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.ExecuteFind(new FindRequest() { Layout = "layout" }));
         }
     }
 }

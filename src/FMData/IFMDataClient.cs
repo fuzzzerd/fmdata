@@ -27,7 +27,7 @@ namespace FMData
         /// Logs the user out and nullifies the token.
         /// </summary>
         /// <returns>FileMaker Response</returns>
-        Task<BaseDataResponse> LogoutAsync(); 
+        Task<BaseDataResponse> LogoutAsync();
         #endregion
 
         #region API Endpoint Functions
@@ -94,10 +94,17 @@ namespace FMData
         Task<BaseDataResponse> ExecuteCreate<T>(CreateRequest<T> req);
 
         /// <summary>
-        /// Find a records.
+        /// Find a record or records matching the request.
         /// </summary>
-        /// <param name="req">Find request.</param
+        /// <param name="req">Find request.</param>
         Task<FindResponse> ExecuteFind(FindRequest req);
+
+        /// <summary>
+        /// Find a record or records matching the request.
+        /// </summary>
+        /// <param name="req">Find request</param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> Find<T>(FindRequest req);
 
         /// <summary>
         /// Edit record.
