@@ -270,6 +270,34 @@ namespace FMData
             throw new Exception("Find Rquest Error");
         }
 
+        public async Task<IEnumerable<T>> Find<T>(FindRequest req)
+        {
+            if(string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
+            if(req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
+
+            var httpContent = new StringContent(req.ToJson(), Encoding.UTF8, "application/json");
+            httpContent.Headers.Add("FM-Data-token", this.dataToken);
+            var response = await _client.PostAsync(FindEndpoint(req.Layout), httpContent);
+
+            var responseJson = await response.Content.ReadAsStringAsync();
+
+            JObject joResponse = JObject.Parse(responseJson);
+
+            // get JSON result objects into a list
+            IList<JToken> results = joResponse["data"].Children()["fieldData"].ToList();
+            
+            // serialize JSON results into .NET objects
+            IList<T> searchResults = new List<T>();
+            foreach (JToken result in results)
+            {
+                // JToken.ToObject is a helper method that uses JsonSerializer internally
+                T searchResult = result.ToObject<T>();
+                searchResults.Add(searchResult);
+            }
+
+            return searchResults;
+        }
+
         /// <summary>
         /// Dispose resources opened for this instance of the data client.
         /// </summary>
