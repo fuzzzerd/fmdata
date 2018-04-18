@@ -39,7 +39,7 @@ namespace FMData
         /// <param name="pass">Account to connect with.</param>
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
         /// <remarks>Pass through constructor with no real body used for injection.</remarks>
-        public FMDataClient(string fmsUri, string file, string user, string pass, string initialLayout) 
+        public FMDataClient(string fmsUri, string file, string user, string pass, string initialLayout)
             : this(new HttpClient(), fmsUri, file, user, pass, initialLayout) { }
 
         /// <summary>
@@ -111,6 +111,27 @@ namespace FMData
         public string DeleteEndpoint(string layout, object recordid) => $"{_baseEndPoint}/record/{_fileName}/{layout}/{recordid}";
         #endregion
 
+        /// <summary>
+        /// Utility method to get the TableAttribute name to be used for the layout option in the request.
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        private string GetTableName<T>(T instance)
+        {
+            string lay;
+            try
+            {
+                // try to get the 'layout' name out of the 'table' attribute.
+                // not the best but tries to utilize a built in component that is fairly standard vs a custom component dirtying up consumers pocos
+                lay = typeof(T).GetTypeInfo().GetCustomAttribute<TableAttribute>().Name;
+            }
+            catch
+            {
+                throw new ArgumentException($"Could not load Layout name from TableAttribute on {typeof(T).Name}.");
+            }
+            return lay;
+        }
+
         #region FM Data Token Management
 
         /// <summary>
@@ -162,20 +183,9 @@ namespace FMData
         }
         #endregion
 
-
         public Task<BaseDataResponse> CreateAsync<T>(T input)
         {
-            string lay;
-            try
-            {
-                // try to get the 'layout' name out of the 'table' attribute.
-                // not the best but tries to utilize a built in component that is fairly standard vs a custom component dirtying up consumers pocos
-                lay = typeof(T).GetTypeInfo().GetCustomAttribute<TableAttribute>().Name;
-            }
-            catch
-            {
-                throw new ArgumentException($"Could not load Layout name from TableAttribute on {typeof(T).Name}.");
-            }
+            var lay = GetTableName(input);
             var req = new CreateRequest<T>() { Data = input, Layout = lay };
             return ExecuteCreateAsync(req);
         }
@@ -193,7 +203,7 @@ namespace FMData
             var str = JsonConvert.SerializeObject(req);
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
             httpContent.Headers.Add("FM-Data-token", this.dataToken);
-            
+
             // run the post action
             var response = await _client.PostAsync(CreateEndpoint(req.Layout), httpContent);
 
@@ -216,7 +226,7 @@ namespace FMData
             var str = JsonConvert.SerializeObject(req);
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
             httpContent.Headers.Add("FM-Data-token", this.dataToken);
-            
+
             // run the post action
             var response = await _client.PutAsync(UpdateEndpoint(req.Layout, req.RecordId), httpContent);
 
@@ -251,10 +261,10 @@ namespace FMData
             throw new Exception("Could not delete record.");
         }
 
-        public async Task<FindResponse> ExecuteFindAsync(FindRequest req)
+        public async Task<FindResponse<Dictionary<string, string>>> FindAsync(FindRequest<Dictionary<string, string>> req)
         {
-            if(string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
-            if(req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
+            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
+            if (req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
 
             var httpContent = new StringContent(req.ToJson(), Encoding.UTF8, "application/json");
             httpContent.Headers.Add("FM-Data-token", this.dataToken);
@@ -263,44 +273,50 @@ namespace FMData
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<FindResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<FindResponse<Dictionary<string, string>>>(responseJson);
                 return responseObject;
             }
 
             throw new Exception("Find Rquest Error");
         }
 
-        public async Task<IEnumerable<T>> FindAsync<T>(FindRequest req)
+        public async Task<IEnumerable<T>> FindAsync<T>(FindRequest<T> req)
         {
-            if(string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
-            if(req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
+            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
+            if (req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
 
             var httpContent = new StringContent(req.ToJson(), Encoding.UTF8, "application/json");
             httpContent.Headers.Add("FM-Data-token", this.dataToken);
             var response = await _client.PostAsync(FindEndpoint(req.Layout), httpContent);
 
-            var responseJson = await response.Content.ReadAsStringAsync();
-
-            JObject joResponse = JObject.Parse(responseJson);
-
-            // get JSON result objects into a list
-            IList<JToken> results = joResponse["data"].Children()["fieldData"].ToList();
-            
-            // serialize JSON results into .NET objects
-            IList<T> searchResults = new List<T>();
-            foreach (JToken result in results)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                // JToken.ToObject is a helper method that uses JsonSerializer internally
-                T searchResult = result.ToObject<T>();
-                searchResults.Add(searchResult);
+                var responseJson = await response.Content.ReadAsStringAsync();
+
+                JObject joResponse = JObject.Parse(responseJson);
+
+                // get JSON result objects into a list
+                IList<JToken> results = joResponse["data"].Children()["fieldData"].ToList();
+
+                // serialize JSON results into .NET objects
+                IList<T> searchResults = new List<T>();
+                foreach (JToken result in results)
+                {
+                    // JToken.ToObject is a helper method that uses JsonSerializer internally
+                    T searchResult = result.ToObject<T>();
+                    searchResults.Add(searchResult);
+                }
+
+                return searchResults;
             }
 
-            return searchResults;
+            throw new Exception("Find request error");
         }
 
-        public async Task<IEnumerable<T>> FindAsync<T>(T request)
+        public Task<IEnumerable<T>> FindAsync<T>(T input)
         {
-            throw new NotImplementedException();
+            var lay = GetTableName(input);
+            return FindAsync(new FindRequest<T>() { Layout = lay, Query = new List<T>() { input } });
         }
 
         /// <summary>

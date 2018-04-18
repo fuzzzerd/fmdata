@@ -8,13 +8,13 @@ using Newtonsoft.Json.Converters;
 
 namespace FMData.Requests
 {
-    public partial class FindRequest : RequestBase
+    public partial class FindRequest<TRequestType> : RequestBase
     {
         /// <summary>
         /// The find request dictionary.
         /// </summary>
         [JsonProperty("query")]
-        public IEnumerable<Dictionary<string, string>> Query { get; set; }
+        public IEnumerable<TRequestType> Query { get; set; }
 
         /// <summary>
         /// Maximum number of records to return for this request.
@@ -39,7 +39,7 @@ namespace FMData.Requests
         /// </summary>
         /// <param name="json">The incomming Json data to deserialize.</param>
         /// <returns>An instance of the FindRequest object from the provided Json string.</returns>
-        public static FindRequest FromJson(string json) => JsonConvert.DeserializeObject<FindRequest>(json);
+        public static FindRequest<T> FromJson<T>(string json) => JsonConvert.DeserializeObject<FindRequest<T>>(json);
 
         /// <summary>
         /// Convert the this instance to Json.

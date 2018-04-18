@@ -97,14 +97,14 @@ namespace FMData
         /// Find a record or records matching the request.
         /// </summary>
         /// <param name="req">Find request.</param>
-        Task<FindResponse> ExecuteFindAsync(FindRequest req);
+        Task<FindResponse<Dictionary<string,string>>> FindAsync(FindRequest<Dictionary<string,string>> req);
 
         /// <summary>
         /// Find a record or records matching the request.
         /// </summary>
         /// <param name="req">Find request</param>
         /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(FindRequest req);
+        Task<IEnumerable<T>> FindAsync<T>(FindRequest<T> req);
 
         /// <summary>
         /// Finds a record or records matching the properties of the input request object.
