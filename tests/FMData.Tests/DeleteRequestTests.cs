@@ -37,8 +37,7 @@ namespace FMData.Tests
                 var response = await fdc.ExecuteDeleteAsync(req);
 
                 Assert.NotNull(response);
-                Assert.NotNull(response.RecordId);
-                Assert.True(response.RecordId != "0");
+                Assert.Equal("OK", response.Result);
             }
         }
     }

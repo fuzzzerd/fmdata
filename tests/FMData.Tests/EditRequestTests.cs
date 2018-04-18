@@ -41,8 +41,7 @@ namespace FMData.Tests
                 var response = await fdc.ExecuteEditAsync(req);
 
                 Assert.NotNull(response);
-                Assert.NotNull(response.RecordId);
-                Assert.True(response.RecordId != "0");
+                Assert.Equal("OK", response.Result);
             }
         }
     }
