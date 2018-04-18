@@ -163,7 +163,7 @@ namespace FMData
         #endregion
 
 
-        public Task<BaseDataResponse> Create<T>(T input)
+        public Task<BaseDataResponse> CreateAsync<T>(T input)
         {
             string lay;
             try
@@ -177,16 +177,16 @@ namespace FMData
                 throw new ArgumentException($"Could not load Layout name from TableAttribute on {typeof(T).Name}.");
             }
             var req = new CreateRequest<T>() { Data = input, Layout = lay };
-            return ExecuteCreate(req);
+            return ExecuteCreateAsync(req);
         }
 
-        public Task<BaseDataResponse> Create<T>(string layout, T input)
+        public Task<BaseDataResponse> CreateAsync<T>(string layout, T input)
         {
             var req = new CreateRequest<T>() { Data = input, Layout = layout };
-            return ExecuteCreate(req);
+            return ExecuteCreateAsync(req);
         }
 
-        public async Task<BaseDataResponse> ExecuteCreate<T>(CreateRequest<T> req)
+        public async Task<BaseDataResponse> ExecuteCreateAsync<T>(CreateRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
@@ -208,7 +208,7 @@ namespace FMData
             throw new Exception("Could not Create new record.");
         }
 
-        public async Task<BaseDataResponse> ExecuteEdit(EditRequest req)
+        public async Task<BaseDataResponse> ExecuteEditAsync(EditRequest req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
@@ -231,7 +231,7 @@ namespace FMData
             throw new Exception("Could not edit existing record.");
         }
 
-        public async Task<BaseDataResponse> ExecuteDelete(DeleteRequest req)
+        public async Task<BaseDataResponse> ExecuteDeleteAsync(DeleteRequest req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
@@ -251,7 +251,7 @@ namespace FMData
             throw new Exception("Could not delete record.");
         }
 
-        public async Task<FindResponse> ExecuteFind(FindRequest req)
+        public async Task<FindResponse> ExecuteFindAsync(FindRequest req)
         {
             if(string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
             if(req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
@@ -270,7 +270,7 @@ namespace FMData
             throw new Exception("Find Rquest Error");
         }
 
-        public async Task<IEnumerable<T>> Find<T>(FindRequest req)
+        public async Task<IEnumerable<T>> FindAsync<T>(FindRequest req)
         {
             if(string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
             if(req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");

@@ -54,7 +54,7 @@ namespace FMData.Tests
             var fdc = GetMockedFDC();
 
             // act
-            var response = await fdc.Find<User>(FindReq);
+            var response = await fdc.FindAsync<User>(FindReq);
 
             // assert
             var responseDataContainsResult = response.Any(r => r.Name.Contains("Buzz"));
