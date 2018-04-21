@@ -91,7 +91,7 @@ namespace FMData
         /// Creates a new record.
         /// </summary>
         /// <param name="req">New record request.</param>
-        Task<BaseDataResponse> ExecuteCreateAsync<T>(CreateRequest<T> req);
+        Task<BaseDataResponse> CreateAsync<T>(CreateRequest<T> req);
 
         /// <summary>
         /// Find a record or records matching the request.
@@ -125,12 +125,12 @@ namespace FMData
         /// Edit record.
         /// </summary>
         /// <param name="req">Edit record request.</param>
-        Task<BaseDataResponse> ExecuteEditAsync(EditRequest req);
+        Task<BaseDataResponse> EditAsync(EditRequest req);
 
         /// <summary>
         /// Delete record
         /// </summary>
         /// <param name="req">Delete record request.</param>
-        Task<BaseDataResponse> ExecuteDeleteAsync(DeleteRequest req);
+        Task<BaseDataResponse> DeleteAsync(DeleteRequest req);
     }
 }

@@ -38,7 +38,7 @@ namespace FMData.Tests
                         { "AnotherField", "Another-Updated" }
                     }
                 };
-                var response = await fdc.ExecuteEditAsync(req);
+                var response = await fdc.EditAsync(req);
 
                 Assert.NotNull(response);
                 Assert.Equal("OK", response.Result);

@@ -187,16 +187,16 @@ namespace FMData
         {
             var lay = GetTableName(input);
             var req = new CreateRequest<T>() { Data = input, Layout = lay };
-            return ExecuteCreateAsync(req);
+            return CreateAsync(req);
         }
 
         public Task<BaseDataResponse> CreateAsync<T>(string layout, T input)
         {
             var req = new CreateRequest<T>() { Data = input, Layout = layout };
-            return ExecuteCreateAsync(req);
+            return CreateAsync(req);
         }
 
-        public async Task<BaseDataResponse> ExecuteCreateAsync<T>(CreateRequest<T> req)
+        public async Task<BaseDataResponse> CreateAsync<T>(CreateRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
@@ -218,7 +218,7 @@ namespace FMData
             throw new Exception("Could not Create new record.");
         }
 
-        public async Task<BaseDataResponse> ExecuteEditAsync(EditRequest req)
+        public async Task<BaseDataResponse> EditAsync(EditRequest req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
@@ -241,7 +241,7 @@ namespace FMData
             throw new Exception("Could not edit existing record.");
         }
 
-        public async Task<BaseDataResponse> ExecuteDeleteAsync(DeleteRequest req)
+        public async Task<BaseDataResponse> DeleteAsync(DeleteRequest req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
@@ -338,6 +338,10 @@ namespace FMData
         {
             if (_client != null)
             {
+                // end our token
+                LogoutAsync().Wait();
+
+                // dispose our injected http client
                 _client.Dispose();
             }
         }

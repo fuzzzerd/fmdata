@@ -45,7 +45,7 @@ namespace FMData.Tests
                     { "AnotherField", "Another Valuee" }
                 }
             };
-            var response = await fdc.ExecuteCreateAsync(req);
+            var response = await fdc.CreateAsync(req);
 
             Assert.NotNull(response);
             Assert.Equal("OK", response.Result);
@@ -65,7 +65,7 @@ namespace FMData.Tests
                 }
             };
 
-            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.ExecuteCreateAsync(req));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.CreateAsync(req));
         }
     }
 }
