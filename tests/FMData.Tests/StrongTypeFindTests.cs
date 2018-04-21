@@ -58,6 +58,34 @@ namespace FMData.Tests
         }
 
         [Fact]
+        public async Task DictionaryRequest_ForStrongType_ShouldReturn()
+        {
+            // arrange
+            var fdc = GetMockedFDC();
+
+            // act
+            var response = await fdc.FindAsync<User>(new FindRequest<Dictionary<string, string>>()
+            {
+                Query = new List<Dictionary<string, string>>()
+            {
+                new Dictionary<string,string>()
+                {
+                    {"Name","fuzzzerd"}
+                },
+                new Dictionary<string,string>()
+                {
+                    {"Name","Admin"}, {"omit","true"},
+                }
+            },
+                Layout = "layout"
+            });
+
+            // assert
+            var responseDataContainsResult = response.Any(r => r.Name.Contains("Buzz"));
+            Assert.True(responseDataContainsResult);
+        }
+
+        [Fact]
         public async Task StrongType_Find_WithoutExplicitRequest_ShouldReturnData()
         {
             // arrange

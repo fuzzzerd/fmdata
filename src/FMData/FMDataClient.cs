@@ -30,6 +30,7 @@ namespace FMData
 
         public bool IsAuthenticated => !String.IsNullOrEmpty(dataToken);
 
+        #region Constructors
         /// <summary>
         /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"/> instance to the class.
         /// </summary>
@@ -71,7 +72,8 @@ namespace FMData
             {
                 dataToken = authResponse.Result.Token;
             }
-        }
+        } 
+        #endregion
 
         #region API Endpoint Functions
         /// <summary>
@@ -110,27 +112,6 @@ namespace FMData
         /// <returns>The FileMaker Data API Endpoint for Delete requests.</returns>
         public string DeleteEndpoint(string layout, object recordid) => $"{_baseEndPoint}/record/{_fileName}/{layout}/{recordid}";
         #endregion
-
-        /// <summary>
-        /// Utility method to get the TableAttribute name to be used for the layout option in the request.
-        /// </summary>
-        /// <param name="instance"></param>
-        /// <returns></returns>
-        private string GetTableName<T>(T instance)
-        {
-            string lay;
-            try
-            {
-                // try to get the 'layout' name out of the 'table' attribute.
-                // not the best but tries to utilize a built in component that is fairly standard vs a custom component dirtying up consumers pocos
-                lay = typeof(T).GetTypeInfo().GetCustomAttribute<TableAttribute>().Name;
-            }
-            catch
-            {
-                throw new ArgumentException($"Could not load Layout name from TableAttribute on {typeof(T).Name}.");
-            }
-            return lay;
-        }
 
         #region FM Data Token Management
 
@@ -262,23 +243,10 @@ namespace FMData
         }
 
         /// <summary>
-        /// Utility method to handle processing of find requests.
+        /// General purpose Find Request method. Supports additional syntaxes like the { "omit" : "true" } operation.
         /// </summary>
-        /// <param name="req">The incomming find request.</param>
-        /// <returns>The task that will return the http response from this</returns>
-        private Task<HttpResponseMessage> GetFindHttpResponseAsync<T>(FindRequest<T> req)
-        {
-            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
-            if (req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
-
-            var json = req.ToJson();
-            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-            httpContent.Headers.Add("FM-Data-token", this.dataToken);
-            var response = _client.PostAsync(FindEndpoint(req.Layout), httpContent);
-
-            return response;
-        }
-
+        /// <param name="req">The find request field/value dictionary to pass into FileMaker server.</param>
+        /// <returns>A <see cref="Dictionary{String,String}"/> wrapped in a FindResponse containing both record data and portal data.</returns>
         public async Task<FindResponse<Dictionary<string, string>>> FindAsync(FindRequest<Dictionary<string, string>> req)
         {
             var response = await GetFindHttpResponseAsync(req);
@@ -293,6 +261,33 @@ namespace FMData
             throw new Exception("Find Rquest Error");
         }
 
+        /// <summary>
+        /// General purpose Find Request method. Supports additional syntaxes like the { "omit" : "true" } operation.
+        /// This method returns a strongly typed <see cref="IEnumerable{T}"/> but accepts a the more flexible <see cref="Dictionary{string,string}"/> request parameters.
+        /// </summary>
+        /// <typeparam name="T">the type of response objects to return.</typeparam>
+        /// <param name="req">The find request dictionary.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
+        public async Task<IEnumerable<T>> FindAsync<T>(FindRequest<Dictionary<string, string>> req)
+        {
+            var response = await GetFindHttpResponseAsync(req);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<FindResponse<T>>(responseJson);
+                return responseObject.Data.Select(d => d.FieldData);
+            }
+
+            throw new Exception("Find Rquest Error");
+        }
+
+        /// <summary>
+        /// Strongly typed find request.
+        /// </summary>
+        /// <typeparam name="T">The type of response objects to return.</typeparam>
+        /// <param name="req">The find request parameters.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         public async Task<IEnumerable<T>> FindAsync<T>(FindRequest<T> req)
         {
             var response = await GetFindHttpResponseAsync(req);
@@ -328,8 +323,68 @@ namespace FMData
             throw new Exception("Find request error");
         }
 
+        /// <summary>
+        /// Strongly typed find request.
+        /// </summary>
+        /// <typeparam name="T">The type of response objects to return.</typeparam>
+        /// <param name="input">The object with properties to map to the find request.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         public Task<IEnumerable<T>> FindAsync<T>(T input) => FindAsync(GetTableName(input), input);
+
+        /// <summary>
+        /// Strongly typed find request.
+        /// </summary>
+        /// <typeparam name="T">The type of response objects to return.</typeparam>
+        /// <param name="layout">The name of the layout to run this request on.</param>
+        /// <param name="input">The object with properties to map to the find request.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         public Task<IEnumerable<T>> FindAsync<T>(string layout, T input) => FindAsync(new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
+
+
+        #region Private Helpers and utility methods
+
+        /// <summary>
+        /// Utility method to handle processing of find requests.
+        /// </summary>
+        /// <param name="req">The incomming find request.</param>
+        /// <returns>The task that will return the http response from this</returns>
+        private Task<HttpResponseMessage> GetFindHttpResponseAsync<T>(FindRequest<T> req)
+        {
+            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
+            if (req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
+
+            var json = req.ToJson();
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            httpContent.Headers.Add("FM-Data-token", this.dataToken);
+            var response = _client.PostAsync(FindEndpoint(req.Layout), httpContent);
+
+            return response;
+        }
+
+        /// <summary>
+        /// Utility method to get the TableAttribute name to be used for the layout option in the request.
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns>The specified in the Table Attribute</returns>
+        private string GetTableName<T>(T instance)
+        {
+            string lay;
+            try
+            {
+                // try to get the 'layout' name out of the 'table' attribute.
+                // not the best but tries to utilize a built in component that is fairly standard vs a custom component dirtying up consumers pocos
+                lay = typeof(T).GetTypeInfo().GetCustomAttribute<TableAttribute>().Name;
+            }
+            catch
+            {
+                throw new ArgumentException($"Could not load Layout name from TableAttribute on {typeof(T).Name}.");
+            }
+            return lay;
+        }
+
+        #endregion
+
+        #region IDisposable Implementation
 
         /// <summary>
         /// Dispose resources opened for this instance of the data client.
@@ -344,6 +399,8 @@ namespace FMData
                 // dispose our injected http client
                 _client.Dispose();
             }
-        }
+        } 
+
+        #endregion
     }
 }
