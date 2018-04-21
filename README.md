@@ -1,6 +1,6 @@
 # FM Data
 
-A C# client library for accessing FileMaker data.
+A client library for accessing FileMaker data.
 
 | Build Status | Activity | MyGet | Nuget | License |
 |---|---|---|---|---|
@@ -17,15 +17,11 @@ A C# client library for accessing FileMaker data.
 
 ## Planned Features
 
-- Support for strongly typed requests and responses
-- Additional operations from Data API
-  - [Create record](https://fmhelp.filemaker.com/docs/16/en/restapi/#work-with-records_create-record)
-  - [Update record](https://fmhelp.filemaker.com/docs/16/en/restapi/#work-with-records_edit-record)
-  - [Delete record](https://fmhelp.filemaker.com/docs/16/en/restapi/#work-with-records_delete-record)
-  - [Range of Records](https://fmhelp.filemaker.com/docs/16/en/restapi/#work-with-records_get-records)
-  - [Finds with paging with range and offset parameters and portals](https://fmhelp.filemaker.com/docs/16/en/restapi/#perform-find-requests)
-  - [Global fields](https://fmhelp.filemaker.com/docs/16/en/restapi/#set-global-fields)
+- [Range of Records](https://fmhelp.filemaker.com/docs/16/en/restapi/#work-with-records_get-records)
+- [Finds with paging with range and offset parameters](https://fmhelp.filemaker.com/docs/16/en/restapi/#perform-find-requests)
+- [Global fields](https://fmhelp.filemaker.com/docs/16/en/restapi/#set-global-fields)
 - Batch operations
+- Portals / Related records
 
 ## FileMaker REST / Data API Documentation
 
