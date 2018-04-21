@@ -1,17 +1,16 @@
-using System;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Linq;
+using FMData.Requests;
+using FMData.Responses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
+using System;
 using System.Collections.Generic;
-using FMData.Responses;
-using FMData.Requests;
-using System.Reflection;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FMData
 {
@@ -163,6 +162,8 @@ namespace FMData
             throw new Exception("Could not logout.");
         }
         #endregion
+
+        #region Data Minipulation Functions
 
         public Task<BaseDataResponse> CreateAsync<T>(T input)
         {
@@ -340,6 +341,7 @@ namespace FMData
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         public Task<IEnumerable<T>> FindAsync<T>(string layout, T input) => FindAsync(new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
 
+        #endregion
 
         #region Private Helpers and utility methods
 
