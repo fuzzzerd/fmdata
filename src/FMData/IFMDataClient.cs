@@ -68,6 +68,10 @@ namespace FMData
         string DeleteEndpoint(string layout, object recordid);
         #endregion
 
+        /// <summary>
+        /// Indicates if the client is authenticated or not.
+        /// </summary>
+        bool IsAuthenticated { get; }
 
         /// <summary>
         /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout.
@@ -86,7 +90,6 @@ namespace FMData
         /// <returns>The newly created RecordId and/or an error response code.</returns>
         Task<BaseDataResponse> CreateAsync<T>(string layout, T input);
 
-
         /// <summary>
         /// Creates a new record.
         /// </summary>
@@ -98,6 +101,14 @@ namespace FMData
         /// </summary>
         /// <param name="req">Find request.</param>
         Task<FindResponse<Dictionary<string,string>>> FindAsync(FindRequest<Dictionary<string,string>> req);
+
+        /// <summary>
+        /// Find a record with a custom dictionary of request parameters.
+        /// </summary>
+        /// <typeparam name="T">The type of object to project and return.</typeparam>
+        /// <param name="req">The request parameters to send to FileMaker Server.</param>
+        /// <returns>An IEnumerable of type T.</returns>
+        Task<IEnumerable<T>> FindAsync<T>(FindRequest<Dictionary<string, string>> req);
 
         /// <summary>
         /// Find a record or records matching the request.
