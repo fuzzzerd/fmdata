@@ -165,19 +165,29 @@ namespace FMData
 
         #region Data Minipulation Functions
 
-        public Task<BaseDataResponse> CreateAsync<T>(T input)
-        {
-            var lay = GetTableName(input);
-            var req = new CreateRequest<T>() { Data = input, Layout = lay };
-            return CreateAsync(req);
-        }
+        /// <summary>
+        /// Create a record in the database utilizing the TableAttribute to target the layout.
+        /// </summary>
+        /// <typeparam name="T">The type parameter to be created.</typeparam>
+        /// <param name="input">Object containing the data to be on the newly created record.</param>
+        /// <returns></returns>
+        public Task<BaseDataResponse> CreateAsync<T>(T input) => CreateAsync(GetTableName(input), input);
 
-        public Task<BaseDataResponse> CreateAsync<T>(string layout, T input)
-        {
-            var req = new CreateRequest<T>() { Data = input, Layout = layout };
-            return CreateAsync(req);
-        }
+        /// <summary>
+        /// Create a record in the database utilizing the TableAttribute to target the layout.
+        /// </summary>
+        /// <typeparam name="T">The type parameter to be created.</typeparam>
+        /// <param name="layout">Explicitly define the layout to use for this request.</param>
+        /// <param name="input">Object containing the data to be on the newly created record.</param>
+        /// <returns></returns>
+        public Task<BaseDataResponse> CreateAsync<T>(string layout, T input) => CreateAsync(new CreateRequest<T>() { Data = input, Layout = layout });
 
+        /// <summary>
+        /// Create a record in the database using the CreateRequest object.
+        /// </summary>
+        /// <typeparam name="T">The underlying type of record being created.</typeparam>
+        /// <param name="req">The request object containing the data to be sent.</param>
+        /// <returns></returns>
         public async Task<BaseDataResponse> CreateAsync<T>(CreateRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
@@ -200,17 +210,54 @@ namespace FMData
             throw new Exception("Could not Create new record.");
         }
 
-        public async Task<BaseDataResponse> EditAsync(EditRequest req)
+        /// <summary>
+        /// Edit a record.
+        /// </summary>
+        /// <typeparam name="T">Type parameter for this edit.</typeparam>
+        /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
+        /// <param name="input">Object with the updated values.</param>
+        /// <returns></returns>
+        public Task<BaseDataResponse> EditAsync<T>(int recordId, T input) => EditAsync(GetTableName(input), recordId, input);
+
+        /// <summary>
+        /// Edit a record.
+        /// </summary>
+        /// <typeparam name="T">Type parameter for this edit.</typeparam>
+        /// <param name="layout">Explicitly define the layout to use.</param>
+        /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
+        /// <param name="input">Object with the updated values.</param>
+        /// <returns></returns>
+        public Task<BaseDataResponse> EditAsync<T>(string layout, int recordId, T input) => EditAsync(new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() });
+
+        /// <summary>
+        /// Edit a record utilizing a dictionary of key/values for the data field.
+        /// </summary>
+        /// <param name="req">The edit request object.</param>
+        /// <returns></returns>
+        public async Task<BaseDataResponse> EditAsync(EditRequest<Dictionary<string, string>> req)
         {
-            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
-            if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
+            HttpResponseMessage response = await GetEditHttpResponse(req);
 
-            var str = JsonConvert.SerializeObject(req);
-            var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
-            httpContent.Headers.Add("FM-Data-token", this.dataToken);
+            // process the response
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<BaseDataResponse>(responseJson);
+                return responseObject;
+            }
+            // something bad happened. TODO: improve non-OK response handling
+            throw new Exception("Could not edit existing record.");
+        }
 
-            // run the post action
-            var response = await _client.PutAsync(UpdateEndpoint(req.Layout, req.RecordId), httpContent);
+        /// <summary>
+        /// Edit a record utilizing a generic parameter type to house the fields to be edited.
+        /// </summary>
+        /// <typeparam name="T">Type parameter for this edit.</typeparam>
+        /// <param name="req">The edit request object.</param>
+        /// <returns></returns>
+        public async Task<BaseDataResponse> EditAsync<T>(EditRequest<T> req)
+        {
+            HttpResponseMessage response = await GetEditHttpResponse(req);
 
             // process the response
             if (response.StatusCode == HttpStatusCode.OK)
@@ -348,7 +395,8 @@ namespace FMData
         /// <summary>
         /// Utility method to handle processing of find requests.
         /// </summary>
-        /// <param name="req">The incomming find request.</param>
+        /// <typeparam name="T">The type parameter of the data request.</typeparam>
+        /// <param name="req">The request object to send.</param>
         /// <returns>The task that will return the http response from this</returns>
         private Task<HttpResponseMessage> GetFindHttpResponseAsync<T>(FindRequest<T> req)
         {
@@ -360,6 +408,26 @@ namespace FMData
             httpContent.Headers.Add("FM-Data-token", this.dataToken);
             var response = _client.PostAsync(FindEndpoint(req.Layout), httpContent);
 
+            return response;
+        }
+
+        /// <summary>
+        /// Utility method to handle processing of edit requests.
+        /// </summary>
+        /// <typeparam name="T">The type parameter of the data request.</typeparam>
+        /// <param name="req">The request object to send.</param>
+        /// <returns></returns>
+        private async Task<HttpResponseMessage> GetEditHttpResponse<T>(EditRequest<T> req)
+        {
+            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
+            if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
+
+            var str = JsonConvert.SerializeObject(req);
+            var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
+            httpContent.Headers.Add("FM-Data-token", this.dataToken);
+
+            // run the post action
+            var response = await _client.PutAsync(UpdateEndpoint(req.Layout, req.RecordId), httpContent);
             return response;
         }
 
