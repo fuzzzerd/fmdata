@@ -53,8 +53,6 @@ namespace FMData.Tests
         {
             var fdc = GetMockedClient();
 
-            var toDelete = new TestModels.User();
-
             var response = await fdc.DeleteAsync(2, "layout");
 
             Assert.NotNull(response);
@@ -85,11 +83,27 @@ namespace FMData.Tests
             var fdc = new FMDataClient(mockedClient, server, file, user, pass, layout);
 
             var toDelete = new TestModels.User();
-// act
+            // act
             var response = await fdc.DeleteAsync(2, toDelete);
-// assert
+            // assert
             Assert.NotNull(response);
             Assert.Equal("OK", response.Result);
+        }
+
+        [Fact]
+        public async Task DeleteByWrongLayout_Should_ReturnFourOhFour()
+        {
+            // arrange 
+            var fdc = GetMockedClient();
+            var toDelete = new TestModels.User();
+
+            // act
+            var response = await fdc.DeleteAsync(2, toDelete);
+
+            // assert
+            Assert.NotNull(response);
+            Assert.Equal("404", response.ErrorCode);
+            Assert.Equal("Error", response.Result);
         }
     }
 }
