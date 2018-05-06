@@ -58,6 +58,34 @@ namespace FMData.Tests
         }
 
         [Fact]
+        public async Task DictionaryRequest_ForStrongType_ShouldReturn()
+        {
+            // arrange
+            var fdc = GetMockedFDC();
+
+            // act
+            var response = await fdc.FindAsync<User>(new FindRequest<Dictionary<string, string>>()
+            {
+                Query = new List<Dictionary<string, string>>()
+            {
+                new Dictionary<string,string>()
+                {
+                    {"Name","fuzzzerd"}
+                },
+                new Dictionary<string,string>()
+                {
+                    {"Name","Admin"}, {"omit","true"},
+                }
+            },
+                Layout = "layout"
+            });
+
+            // assert
+            var responseDataContainsResult = response.Any(r => r.Name.Contains("Buzz"));
+            Assert.True(responseDataContainsResult);
+        }
+
+        [Fact]
         public async Task StrongType_Find_WithoutExplicitRequest_ShouldReturnData()
         {
             // arrange
@@ -90,29 +118,57 @@ namespace FMData.Tests
         }
 
         [Fact]
-        public void FindRequest_Numbers_ShouldSerialize_ToStrings_ForFileMaker()
+        public async Task FindNotFound_Should_ReturnEmpty()
         {
-            //arrange 
-            var r = FindReq;
+            // arrange
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "layout";
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/auth/{file}")
+                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/nottherequestbelow")
+                .Respond("application/json", DataApiResponses.SuccessfulFind());
+
+            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
 
             // act
-            var json = r.ToJson();
+            var response = await fdc.FindAsync<User>(FindReq);
 
-            //assert
-            Assert.Contains("\"Id\":\"1\"", json);
+            // assert
+            Assert.Equal(0, response.Count());
         }
 
-        [Fact]
-        public void FindRequest_Numbers_ShouldNotSerialize_ToNumbers()
+        public async Task FindStrongType_NotFound_Should_ReturnEmpty()
         {
-            //arrange 
-            var r = FindReq;
+            // arrange
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "layout";
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/auth/{file}")
+                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/nottherequestbelow")
+                .Respond("application/json", DataApiResponses.SuccessfulFind());
+
+            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
 
             // act
-            var json = r.ToJson();
+            var toFind = new User() { Id = 35 };
+            var response = await fdc.FindAsync<User>(toFind);
 
-            //assert
-            Assert.DoesNotContain("\"Id\":1", json);
+            // assert
+            Assert.Equal(0, response.Count());
         }
     }
 }
