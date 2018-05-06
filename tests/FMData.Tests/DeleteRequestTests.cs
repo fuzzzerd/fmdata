@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using FMData.Requests;
 using RichardSzalay.MockHttp;
 using Xunit;
+using Moq;
 
 namespace FMData.Tests
 {
     public class DeleteRequestTests
     {
-        [Fact]
-        public async Task DeleteShould_NukeRecordId()
+        private IFMDataClient GetMockedClient()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -26,19 +26,39 @@ namespace FMData.Tests
             mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}/*")
                 .Respond("application/json", DataApiResponses.SuccessfulDelete());
 
-            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            var mockedClient = mockHttp.ToHttpClient();
+
+            var fdc = new FMDataClient(mockedClient, server, file, user, pass, layout);
+            return fdc;
+        }
+
+        [Fact]
+        public async Task DeleteShould_ReturnOK()
+        {
+            var fdc = GetMockedClient();
+
+            var req = new DeleteRequest()
             {
+                Layout = "layout",
+                RecordId = "1234"
+            };
+            var response = await fdc.DeleteAsync(req);
 
-                var req = new DeleteRequest()
-                {
-                    Layout = "layout",
-                    RecordId = "1234"
-                };
-                var response = await fdc.DeleteAsync(req);
+            Assert.NotNull(response);
+            Assert.Equal("OK", response.Result);
+        }
 
-                Assert.NotNull(response);
-                Assert.Equal("OK", response.Result);
-            }
+        [Fact]
+        public async Task DeleteByIdandLayout_Should_ReturnOK()
+        {
+            var fdc = GetMockedClient();
+
+            var toDelete = new TestModels.User();
+
+            var response = await fdc.DeleteAsync(2, "layout");
+
+            Assert.NotNull(response);
+            Assert.Equal("OK", response.Result);
         }
     }
 }
