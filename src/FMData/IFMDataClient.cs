@@ -143,5 +143,23 @@ namespace FMData
         /// </summary>
         /// <param name="req">Delete record request.</param>
         Task<BaseDataResponse> DeleteAsync(DeleteRequest req);
+
+        /// <summary>
+        /// Delete a record
+        /// </summary>
+        /// <param name="recId">The filemaker RecordId to delete.</param>
+        /// <param name="delete">Used to pull the [TableAttribute] value to determine the layout to use.</param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        Task<BaseDataResponse> DeleteAsync<T>(int recId, T delete);
+
+        /// <summary>
+        /// Delete a record.
+        /// </summary>
+        /// <param name="recId">The FileMaker RecordId to delete.</param>
+        /// <param name="layout">The layout to use for the delete.</param>
+        /// <returns></returns>
+        Task<BaseDataResponse> DeleteAsync(int recId, string layout);
+        
     }
 }

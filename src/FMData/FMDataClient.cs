@@ -223,6 +223,10 @@ namespace FMData
             throw new Exception("Could not edit existing record.");
         }
 
+        public Task<BaseDataResponse> DeleteAsync<T>(int recId, T delete) => DeleteAsync(recId, GetTableName(delete));
+
+        public Task<BaseDataResponse> DeleteAsync(int recId, string layout)=> DeleteAsync(new DeleteRequest { Layout = layout, RecordId = recId.ToString() });
+
         public async Task<BaseDataResponse> DeleteAsync(DeleteRequest req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
