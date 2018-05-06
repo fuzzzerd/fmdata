@@ -28,7 +28,7 @@ namespace FMData.Tests
 
             using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
             {
-                var req = new EditRequest()
+                var req = new EditRequest<Dictionary<string, string>>()
                 {
                     Layout = "layout",
                     RecordId = "264",
@@ -38,7 +38,7 @@ namespace FMData.Tests
                         { "AnotherField", "Another-Updated" }
                     }
                 };
-                var response = await fdc.ExecuteEditAsync(req);
+                var response = await fdc.EditAsync(req);
 
                 Assert.NotNull(response);
                 Assert.Equal("OK", response.Result);

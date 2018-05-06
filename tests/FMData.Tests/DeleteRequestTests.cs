@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FMData.Requests;
 using RichardSzalay.MockHttp;
@@ -9,8 +7,7 @@ namespace FMData.Tests
 {
     public class DeleteRequestTests
     {
-        [Fact]
-        public async Task DeleteShould_NukeRecordId()
+        private IFMDataClient GetMockedClient()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -26,19 +23,84 @@ namespace FMData.Tests
             mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}/*")
                 .Respond("application/json", DataApiResponses.SuccessfulDelete());
 
-            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            var mockedClient = mockHttp.ToHttpClient();
+
+            var fdc = new FMDataClient(mockedClient, server, file, user, pass, layout);
+            return fdc;
+        }
+
+        [Fact]
+        public async Task DeleteShould_ReturnOK()
+        {
+            var fdc = GetMockedClient();
+
+            var req = new DeleteRequest()
             {
+                Layout = "layout",
+                RecordId = "1234"
+            };
+            var response = await fdc.DeleteAsync(req);
 
-                var req = new DeleteRequest()
-                {
-                    Layout = "layout",
-                    RecordId = "1234"
-                };
-                var response = await fdc.ExecuteDeleteAsync(req);
+            Assert.NotNull(response);
+            Assert.Equal("OK", response.Result);
+        }
 
-                Assert.NotNull(response);
-                Assert.Equal("OK", response.Result);
-            }
+        [Fact]
+        public async Task DeleteByIdandLayout_Should_ReturnOK()
+        {
+            var fdc = GetMockedClient();
+
+            var response = await fdc.DeleteAsync(2, "layout");
+
+            Assert.NotNull(response);
+            Assert.Equal("OK", response.Result);
+        }
+
+        [Fact]
+        public async Task DeleteByModel_Should_ReturnOK()
+        {
+            // arrange 
+            // NOT DRY, but used to specify special request endpoints
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "Users";
+
+            mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
+                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}/*")
+                .Respond("application/json", DataApiResponses.SuccessfulDelete());
+
+            var mockedClient = mockHttp.ToHttpClient();
+
+            var fdc = new FMDataClient(mockedClient, server, file, user, pass, layout);
+
+            var toDelete = new TestModels.User();
+            // act
+            var response = await fdc.DeleteAsync(2, toDelete);
+            // assert
+            Assert.NotNull(response);
+            Assert.Equal("OK", response.Result);
+        }
+
+        [Fact]
+        public async Task DeleteByWrongLayout_Should_ReturnFourOhFour()
+        {
+            // arrange 
+            var fdc = GetMockedClient();
+            var toDelete = new TestModels.User();
+
+            // act
+            var response = await fdc.DeleteAsync(2, toDelete);
+
+            // assert
+            Assert.NotNull(response);
+            Assert.Equal("404", response.ErrorCode);
+            Assert.Equal("Error", response.Result);
         }
     }
 }
