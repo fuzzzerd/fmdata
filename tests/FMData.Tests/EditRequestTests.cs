@@ -28,7 +28,7 @@ namespace FMData.Tests
 
             using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
             {
-                var req = new EditRequest()
+                var req = new EditRequest<Dictionary<string, string>>()
                 {
                     Layout = "layout",
                     RecordId = "264",

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace FMData.Requests
 {
-    public class EditRequest : RequestBase
+    public class EditRequest<T> : RequestBase
     {
         [JsonProperty("data")]
-        public Dictionary<string, string> Data { get; set; }
+        public T Data { get; set; }
 
         [JsonIgnore]
         public string RecordId { get; set; }
