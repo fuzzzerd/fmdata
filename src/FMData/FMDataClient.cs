@@ -71,7 +71,7 @@ namespace FMData
             {
                 dataToken = authResponse.Result.Token;
             }
-        } 
+        }
         #endregion
 
         #region API Endpoint Functions
@@ -225,7 +225,7 @@ namespace FMData
 
         public Task<BaseDataResponse> DeleteAsync<T>(int recId, T delete) => DeleteAsync(recId, GetTableName(delete));
 
-        public Task<BaseDataResponse> DeleteAsync(int recId, string layout)=> DeleteAsync(new DeleteRequest { Layout = layout, RecordId = recId.ToString() });
+        public Task<BaseDataResponse> DeleteAsync(int recId, string layout) => DeleteAsync(new DeleteRequest { Layout = layout, RecordId = recId.ToString() });
 
         public async Task<BaseDataResponse> DeleteAsync(DeleteRequest req)
         {
@@ -242,6 +242,11 @@ namespace FMData
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<BaseDataResponse>(responseJson);
                 return responseObject;
+            }
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return new BaseDataResponse() { ErrorCode = "404", Result = "Error" };
             }
 
             throw new Exception("Could not delete record.");
@@ -263,6 +268,13 @@ namespace FMData
                 return responseObject;
             }
 
+            if(response.StatusCode == HttpStatusCode.NotFound)
+            {
+                // on 404 return empty set instead of throwing an exception
+                // since this is an expected case
+                return new FindResponse<Dictionary<string,string>>();
+            }
+
             throw new Exception("Find Rquest Error");
         }
 
@@ -282,6 +294,13 @@ namespace FMData
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<FindResponse<T>>(responseJson);
                 return responseObject.Data.Select(d => d.FieldData);
+            }
+
+            if(response.StatusCode == HttpStatusCode.NotFound)
+            {
+                // on 404 return empty set instead of throwing an exception
+                // since this is an expected case
+                return new List<T>();
             }
 
             throw new Exception("Find Rquest Error");
@@ -405,7 +424,7 @@ namespace FMData
                 // dispose our injected http client
                 _client.Dispose();
             }
-        } 
+        }
 
         #endregion
     }
