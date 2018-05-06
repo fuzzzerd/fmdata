@@ -60,5 +60,36 @@ namespace FMData.Tests
             Assert.NotNull(response);
             Assert.Equal("OK", response.Result);
         }
+
+        [Fact]
+        public async Task DeleteByModel_Should_ReturnOK()
+        {
+            // arrange 
+            // NOT DRY, but used to specify special request endpoints
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "Users";
+
+            mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
+                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}/*")
+                .Respond("application/json", DataApiResponses.SuccessfulDelete());
+
+            var mockedClient = mockHttp.ToHttpClient();
+
+            var fdc = new FMDataClient(mockedClient, server, file, user, pass, layout);
+
+            var toDelete = new TestModels.User();
+// act
+            var response = await fdc.DeleteAsync(2, toDelete);
+// assert
+            Assert.NotNull(response);
+            Assert.Equal("OK", response.Result);
+        }
     }
 }
