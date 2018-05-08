@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;net46</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyTitle>FMData</AssemblyTitle>
     <AssemblyName>FMData</AssemblyName>
@@ -23,12 +23,12 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework) != 'net45'">
+  <ItemGroup Condition="$(TargetFramework) == 'netstandard1.3'">
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
     <PackageReference Include="System.Net.Http" Version="4.3.3" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework) == 'net45'">
+  <ItemGroup Condition="$(TargetFramework) != 'netstandard1.3'">
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Net.Http" />
   </ItemGroup>
