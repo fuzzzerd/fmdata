@@ -141,9 +141,10 @@ namespace FMData.Tests
             var response = await fdc.FindAsync<User>(FindReq);
 
             // assert
-            Assert.Equal(0, response.Count());
+            Assert.Empty(response);
         }
 
+        [Fact]
         public async Task FindStrongType_NotFound_Should_ReturnEmpty()
         {
             // arrange
@@ -168,7 +169,7 @@ namespace FMData.Tests
             var response = await fdc.FindAsync<User>(toFind);
 
             // assert
-            Assert.Equal(0, response.Count());
+            Assert.Empty(response);
         }
     }
 }
