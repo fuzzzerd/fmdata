@@ -17,7 +17,7 @@ namespace FMData.Rest
     /// <summary>
     /// FileMaker Data API Client
     /// </summary>
-    public class FMDataClient : IFMDataClient, IFileMakerRestClient, IDisposable
+    public class FMDataClient : IFileMakerApiClient, IFileMakerRestClient, IDisposable
     {
         private readonly HttpClient _client;
         private readonly string _fmsUri;
@@ -115,7 +115,7 @@ namespace FMData.Rest
         #region FM Data Token Management
 
         /// <summary>
-        /// <see cref="IFMDataClient.RefreshTokenAsync(string, string, string)"/>
+        /// <see cref="IFileMakerApiClient.RefreshTokenAsync(string, string, string)"/>
         /// </summary>
         public async Task<AuthResponse> RefreshTokenAsync(string username, string password, string layout)
         {
@@ -143,7 +143,7 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// <see cref="IFMDataClient.LogoutAsync"/>
+        /// <see cref="IFileMakerApiClient.LogoutAsync"/>
         /// </summary>
         public async Task<IResponse> LogoutAsync()
         {

@@ -8,7 +8,7 @@ namespace FMData.Tests
 {
     public class DeleteRequestTests
     {
-        private IFMDataClient GetMockedClient()
+        private IFileMakerApiClient GetMockedClient()
         {
             var mockHttp = new MockHttpMessageHandler();
 

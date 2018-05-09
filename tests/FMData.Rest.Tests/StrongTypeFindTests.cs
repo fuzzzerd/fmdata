@@ -12,7 +12,7 @@ namespace FMData.Tests
 {
     public class StrongTypeFindTests
     {
-        private static IFMDataClient GetMockedFDC()
+        private static IFileMakerApiClient GetMockedFDC()
         {
             var mockHttp = new MockHttpMessageHandler();
 

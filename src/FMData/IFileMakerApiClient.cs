@@ -4,12 +4,10 @@ using System.Threading.Tasks;
 namespace FMData
 {
     /// <summary>
-    /// FileMaker Data API Client
+    /// FileMaker API Client
     /// </summary>
-    public interface IFMDataClient
+    public interface IFileMakerApiClient
     {
-        
-
         /// <summary>
         /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout.
         /// </summary>
