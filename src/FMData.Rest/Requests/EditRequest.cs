@@ -1,9 +1,8 @@
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
-namespace FMData.Requests
+namespace FMData.Rest.Requests
 {
-    public class EditRequest<T> : RequestBase
+    public class EditRequest<T> : IEditRequest<T>
     {
         [JsonProperty("data")]
         public T Data { get; set; }
@@ -13,5 +12,8 @@ namespace FMData.Requests
 
         [JsonProperty("modId")]
         public string ModId { get; set; }
+
+        [JsonIgnore]
+        public string Layout { get; set; }
     }
 }

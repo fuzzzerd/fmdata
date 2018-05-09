@@ -4,37 +4,12 @@ using System.Net;
 
 using System.Globalization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-
-namespace FMData.Requests
+namespace FMData.Rest.Requests
 {
-    /// <summary>
-    /// Ensure that numbers are written out to the json object as strings for FileMaker Data API compatibility.
-    /// </summary>
-    /// <remarks>Source: https://stackoverflow.com/a/39526179/86860</remarks>
-    sealed class FormatNumbersAsTextConverter : JsonConverter
-    {
-        public override bool CanRead => false;
-        public override bool CanWrite => true;
-        public override bool CanConvert(Type type) => type == typeof(int);
-
-        public override void WriteJson(
-            JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            int number = (int)value;
-            writer.WriteValue(number.ToString(CultureInfo.InvariantCulture));
-        }
-
-        public override object ReadJson(JsonReader reader, Type type, object existingValue, JsonSerializer serializer)
-        {
-            throw new NotSupportedException();
-        }
-    }
-
     /// <summary>
     /// The object that contains the parameters to serialize for a find request.
     /// </summary>
-    public partial class FindRequest<TRequestType> : RequestBase
+    public partial class FindRequest<TRequestType> : RequestBase, IFindRequest<TRequestType>
     {
         /// <summary>
         /// The find request dictionary.
@@ -58,7 +33,7 @@ namespace FMData.Requests
         /// The sort fields and directions for this request.
         /// </summary>
         [JsonProperty("sort")]
-        public IEnumerable<Sort> Sort { get; set; }
+        public IEnumerable<ISort> Sort { get; set; }
 
         /// <summary>
         /// Create a find request from Json
@@ -73,7 +48,7 @@ namespace FMData.Requests
         /// <returns>Json serialization of this instance.</returns>
         public string ToJson() => JsonConvert.SerializeObject(
             this,
-            Newtonsoft.Json.Formatting.None,
+            Formatting.None,
             new JsonSerializerSettings 
             { 
                 NullValueHandling = NullValueHandling.Ignore, 
@@ -82,7 +57,7 @@ namespace FMData.Requests
             });
     }
 
-    public partial class Sort
+    public partial class Sort : ISort
     {
         [JsonProperty("fieldName")]
         public string FieldName { get; set; }

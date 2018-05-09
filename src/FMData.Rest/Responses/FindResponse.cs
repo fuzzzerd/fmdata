@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace FMData.Responses
+namespace FMData.Rest.Responses
 {
-    public class FindResponse<TResponseType> : BaseDataResponse
+    public class FindResponse<TResponseType> : BaseResponse, IResponse, IFindResponse<TResponseType>
     {
         public IEnumerable<RecordBase<TResponseType, Dictionary<string,string>>> Data { get; set; }
     }

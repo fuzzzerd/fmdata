@@ -4,7 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FMData.Requests;
+using FMData.Rest;
+using FMData.Rest.Requests;
 using RichardSzalay.MockHttp;
 using Xunit;
 
@@ -12,7 +13,7 @@ namespace FMData.Tests
 {
     public class FindRequestTests
     {
-        private static FMDataClient GetMockedFDC()
+        private static DataClient GetMockedFDC()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -29,11 +30,11 @@ namespace FMData.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/*")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
             return fdc;
         }
 
-        private FindRequest<Dictionary<string, string>> FindReq => new FindRequest<Dictionary<string, string>>()
+        private IFindRequest<Dictionary<string, string>> FindReq => (IFindRequest<Dictionary<string,string>>)new FindRequest<Dictionary<string, string>>()
         {
             Query = new List<Dictionary<string, string>>()
             {

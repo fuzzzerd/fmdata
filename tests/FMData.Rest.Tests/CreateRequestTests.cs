@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FMData.Requests;
+using FMData;
+using FMData.Rest;
+using FMData.Rest.Requests;
 using RichardSzalay.MockHttp;
 using Xunit;
 
@@ -10,7 +12,7 @@ namespace FMData.Tests
 {
     public class CreateRequestTests
     {
-        private static FMDataClient GetMockedFDC()
+        private static IFileMakerApiClient GetMockedFDC()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -27,14 +29,14 @@ namespace FMData.Tests
                 .WithPartialContent("data") // make sure that the body content contains the 'data' object expected by fms
                 .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
             return fdc;
         }
 
         [Fact]
         public async Task CreateShould_ReturnRecordId()
         {
-            FMDataClient fdc = GetMockedFDC();
+            IFileMakerApiClient fdc = GetMockedFDC();
 
             var req = new CreateRequest<Dictionary<string, string>>()
             {
@@ -45,7 +47,9 @@ namespace FMData.Tests
                     { "AnotherField", "Another Valuee" }
                 }
             };
-            var response = await fdc.CreateAsync(req);
+
+            // requires cast to call correct method -- maybe needs renamed since overloading isn't working out so well
+            var response = await fdc.CreateAsync((ICreateRequest<Dictionary<string,string>>)req);
 
             Assert.NotNull(response);
             Assert.Equal("OK", response.Result);
@@ -54,7 +58,7 @@ namespace FMData.Tests
         [Fact]
         public async Task Create_WithoutLayout_ThrowsArgumentException()
         {
-            FMDataClient fdc = GetMockedFDC();
+            IFileMakerApiClient fdc = GetMockedFDC();
 
             var req = new CreateRequest<Dictionary<string, string>>()
             {

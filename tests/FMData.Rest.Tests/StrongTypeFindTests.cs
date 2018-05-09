@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FMData.Requests;
+using FMData.Rest.Requests;
 using FMData.Tests.TestModels;
 using RichardSzalay.MockHttp;
 using Xunit;
 using System.Linq;
+using FMData.Rest;
 
 namespace FMData.Tests
 {
     public class StrongTypeFindTests
     {
-        private static FMDataClient GetMockedFDC()
+        private static IFileMakerApiClient GetMockedFDC()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -28,10 +29,10 @@ namespace FMData.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/*")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
             return fdc;
         }
-        private FindRequest<User> FindReq => new FindRequest<User>()
+        private IFindRequest<User> FindReq => (IFindRequest<User>)new FindRequest<User>()
         {
             Query = new List<User>()
             {
@@ -64,7 +65,7 @@ namespace FMData.Tests
             var fdc = GetMockedFDC();
 
             // act
-            var response = await fdc.FindAsync<User>(new FindRequest<Dictionary<string, string>>()
+            var response = await fdc.FindAsync<User>((IFindRequest<Dictionary<string,string>>)new FindRequest<Dictionary<string, string>>()
             {
                 Query = new List<Dictionary<string, string>>()
             {
@@ -104,7 +105,7 @@ namespace FMData.Tests
                 .WithPartialContent("fuzzzerd") // ensure the request contains the expected content
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
 
             // act
             var response = await fdc.FindAsync<User>(new User()
@@ -135,7 +136,7 @@ namespace FMData.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/nottherequestbelow")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
 
             // act
             var response = await fdc.FindAsync<User>(FindReq);
@@ -162,7 +163,7 @@ namespace FMData.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/nottherequestbelow")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
 
             // act
             var toFind = new User() { Id = 35 };

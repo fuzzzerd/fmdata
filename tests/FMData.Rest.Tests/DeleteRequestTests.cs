@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
-using FMData.Requests;
+using FMData.Rest;
+using FMData.Rest.Requests;
 using RichardSzalay.MockHttp;
 using Xunit;
 
@@ -7,7 +8,7 @@ namespace FMData.Tests
 {
     public class DeleteRequestTests
     {
-        private IFMDataClient GetMockedClient()
+        private IFileMakerApiClient GetMockedClient()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -25,7 +26,7 @@ namespace FMData.Tests
 
             var mockedClient = mockHttp.ToHttpClient();
 
-            var fdc = new FMDataClient(mockedClient, server, file, user, pass, layout);
+            var fdc = new DataClient(mockedClient, server, file, user, pass, layout);
             return fdc;
         }
 
@@ -77,7 +78,7 @@ namespace FMData.Tests
 
             var mockedClient = mockHttp.ToHttpClient();
 
-            var fdc = new FMDataClient(mockedClient, server, file, user, pass, layout);
+            var fdc = new DataClient(mockedClient, server, file, user, pass, layout);
 
             var toDelete = new TestModels.User();
             // act
