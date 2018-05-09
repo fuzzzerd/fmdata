@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace FMData.Requests
+namespace FMData
 {
     public class RequestBase
     {

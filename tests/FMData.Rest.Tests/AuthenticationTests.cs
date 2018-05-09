@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
 using Xunit;
+using FMData.Rest;
 
 // this is apparently necessary to work in appveyor / myget
 [assembly: CollectionBehavior(DisableTestParallelization = true)]

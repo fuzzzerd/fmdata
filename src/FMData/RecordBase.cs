@@ -1,4 +1,4 @@
-namespace FMData.Responses
+namespace FMData
 {
     public class RecordBase<TypeFD, TypePD>
     {

@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 
-namespace FMData.Requests
+namespace FMData.Rest.Requests
 {
-    public class DeleteRequest : RequestBase
+    public class DeleteRequest : RequestBase, IDeleteRequest
     {
         [JsonProperty("recordId")]
         public string RecordId { get; set; }

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
-using FMData.Requests;
+using FMData.Rest;
+using FMData.Rest.Requests;
 using RichardSzalay.MockHttp;
 using Xunit;
 
@@ -39,7 +40,7 @@ namespace FMData.Tests
                 Layout = "layout",
                 RecordId = "1234"
             };
-            var response = await fdc.DeleteAsync(req);
+            var response = await fdc.DeleteAsync((IDeleteRequest)req);
 
             Assert.NotNull(response);
             Assert.Equal("OK", response.Result);

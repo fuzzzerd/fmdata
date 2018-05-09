@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;net46</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyTitle>FMData</AssemblyTitle>
-    <AssemblyName>FMData</AssemblyName>
+    <AssemblyTitle>FMData.Rest</AssemblyTitle>
+    <AssemblyName>FMData.Rest</AssemblyName>
     <Description>A client library for accessing FileMaker data.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Version>1.0.5</Version>
@@ -19,12 +19,22 @@
     <PackageTags>filemaker filemaker-rest filemaker-api netstandard json dotnet-standard</PackageTags>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+  </ItemGroup>
+
   <ItemGroup Condition="$(TargetFramework) == 'netstandard1.3'">
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
+    <PackageReference Include="System.Net.Http" Version="4.3.3" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework) != 'netstandard1.3'">
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FMData\FMData.csproj" />
+  </ItemGroup>
+  
 </Project>
