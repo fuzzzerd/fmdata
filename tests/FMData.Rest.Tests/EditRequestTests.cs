@@ -29,7 +29,7 @@ namespace FMData.Tests
 
             IEnumerable<int> x = new List<int>();
 
-            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            using (var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
             {
                 var req = new EditRequest<Dictionary<string, string>>()
                 {

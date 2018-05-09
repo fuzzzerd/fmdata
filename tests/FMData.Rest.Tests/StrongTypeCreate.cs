@@ -40,7 +40,7 @@ namespace FMData.Tests
                 .WithPartialContent("data") // make sure that the body content contains the 'data' object expected by fms
                 .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
             return fdc;
         }
 

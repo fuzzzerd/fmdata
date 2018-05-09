@@ -15,9 +15,9 @@ using System.Threading.Tasks;
 namespace FMData.Rest
 {
     /// <summary>
-    /// FileMaker Data API Client
+    /// FileMaker Data API Client Implementation
     /// </summary>
-    public class FMDataClient : IFileMakerApiClient, IFileMakerRestClient, IDisposable
+    public class DataClient : IFileMakerApiClient, IFileMakerRestClient, IDisposable
     {
         private readonly HttpClient _client;
         private readonly string _fmsUri;
@@ -39,7 +39,7 @@ namespace FMData.Rest
         /// <param name="pass">Account to connect with.</param>
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
         /// <remarks>Pass through constructor with no real body used for injection.</remarks>
-        public FMDataClient(string fmsUri, string file, string user, string pass, string initialLayout)
+        public DataClient(string fmsUri, string file, string user, string pass, string initialLayout)
             : this(new HttpClient(), fmsUri, file, user, pass, initialLayout) { }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace FMData.Rest
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
-        public FMDataClient(HttpClient client, string fmsUri, string file, string user, string pass, string initialLayout)
+        public DataClient(HttpClient client, string fmsUri, string file, string user, string pass, string initialLayout)
         {
             _client = client;
 
