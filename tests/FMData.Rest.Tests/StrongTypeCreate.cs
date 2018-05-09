@@ -23,7 +23,7 @@ namespace FMData.Tests
             public string AnotherField { get; set; }
         }
 
-        private static IFMDataClient GetMockedFDC()
+        private static IFileMakerApiClient GetMockedFDC()
         {
             var mockHttp = new MockHttpMessageHandler();
 

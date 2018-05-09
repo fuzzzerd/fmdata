@@ -12,7 +12,7 @@ namespace FMData.Tests
 {
     public class CreateRequestTests
     {
-        private static IFMDataClient GetMockedFDC()
+        private static IFileMakerApiClient GetMockedFDC()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -36,7 +36,7 @@ namespace FMData.Tests
         [Fact]
         public async Task CreateShould_ReturnRecordId()
         {
-            IFMDataClient fdc = GetMockedFDC();
+            IFileMakerApiClient fdc = GetMockedFDC();
 
             var req = new CreateRequest<Dictionary<string, string>>()
             {
@@ -58,7 +58,7 @@ namespace FMData.Tests
         [Fact]
         public async Task Create_WithoutLayout_ThrowsArgumentException()
         {
-            IFMDataClient fdc = GetMockedFDC();
+            IFileMakerApiClient fdc = GetMockedFDC();
 
             var req = new CreateRequest<Dictionary<string, string>>()
             {
