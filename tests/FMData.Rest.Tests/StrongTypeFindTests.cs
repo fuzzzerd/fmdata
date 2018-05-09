@@ -29,7 +29,7 @@ namespace FMData.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/*")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
             return fdc;
         }
         private IFindRequest<User> FindReq => (IFindRequest<User>)new FindRequest<User>()
@@ -105,7 +105,7 @@ namespace FMData.Tests
                 .WithPartialContent("fuzzzerd") // ensure the request contains the expected content
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
 
             // act
             var response = await fdc.FindAsync<User>(new User()
@@ -136,7 +136,7 @@ namespace FMData.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/nottherequestbelow")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
 
             // act
             var response = await fdc.FindAsync<User>(FindReq);
@@ -163,7 +163,7 @@ namespace FMData.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/nottherequestbelow")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
 
             // act
             var toFind = new User() { Id = 35 };

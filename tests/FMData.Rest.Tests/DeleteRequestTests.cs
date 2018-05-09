@@ -26,7 +26,7 @@ namespace FMData.Tests
 
             var mockedClient = mockHttp.ToHttpClient();
 
-            var fdc = new FMDataClient(mockedClient, server, file, user, pass, layout);
+            var fdc = new DataClient(mockedClient, server, file, user, pass, layout);
             return fdc;
         }
 
@@ -78,7 +78,7 @@ namespace FMData.Tests
 
             var mockedClient = mockHttp.ToHttpClient();
 
-            var fdc = new FMDataClient(mockedClient, server, file, user, pass, layout);
+            var fdc = new DataClient(mockedClient, server, file, user, pass, layout);
 
             var toDelete = new TestModels.User();
             // act
