@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using FMData.Requests;
+using FMData.Rest.Requests;
 using FMData.Tests.TestModels;
 using Xunit;
 

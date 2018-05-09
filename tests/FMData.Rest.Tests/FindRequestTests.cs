@@ -4,7 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FMData.Requests;
+using FMData.Rest;
+using FMData.Rest.Requests;
 using RichardSzalay.MockHttp;
 using Xunit;
 
@@ -33,7 +34,7 @@ namespace FMData.Tests
             return fdc;
         }
 
-        private FindRequest<Dictionary<string, string>> FindReq => new FindRequest<Dictionary<string, string>>()
+        private IFindRequest<Dictionary<string, string>> FindReq => (IFindRequest<Dictionary<string,string>>)new FindRequest<Dictionary<string, string>>()
         {
             Query = new List<Dictionary<string, string>>()
             {

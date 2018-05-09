@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FMData.Requests;
+using FMData.Rest;
+using FMData.Rest.Requests;
 using RichardSzalay.MockHttp;
 using Xunit;
 
@@ -28,7 +29,7 @@ namespace FMData.Tests
 
             using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
             {
-                var req = new EditRequest<Dictionary<string, string>>()
+                var req = (IEditRequest < Dictionary<string, string>>)new EditRequest<Dictionary<string, string>>()
                 {
                     Layout = "layout",
                     RecordId = "264",

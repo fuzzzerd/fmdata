@@ -1,3 +1,4 @@
+using FMData.Rest;
 using RichardSzalay.MockHttp;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,7 +23,7 @@ namespace FMData.Tests
             public string AnotherField { get; set; }
         }
 
-        private static FMDataClient GetMockedFDC()
+        private static IFMDataClient GetMockedFDC()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -46,7 +47,7 @@ namespace FMData.Tests
         [Fact]
         public async Task StrongCreate_Should_ReturnDataFromCreation()
         {
-            FMDataClient fdc = GetMockedFDC();
+            var fdc = GetMockedFDC();
 
             var newModel = new TableModelTest()
             {
@@ -63,7 +64,7 @@ namespace FMData.Tests
         [Fact]
         public async Task StrongCreateSpecificLayout_Should_ReturnDataFromCreation()
         {
-            FMDataClient fdc = GetMockedFDC();
+            var fdc = GetMockedFDC();
 
             var newModel = new ModelTest()
             {
@@ -80,7 +81,7 @@ namespace FMData.Tests
         [Fact]
         public async Task Create_TablelessModel_Should_Throw_ArgumentException()
         {
-            FMDataClient fdc = GetMockedFDC();
+            var fdc = GetMockedFDC();
 
             var newModel = new ModelTest()
             {

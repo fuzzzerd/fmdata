@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 
-namespace FMData.Requests
+namespace FMData.Rest.Requests
 {
-    public class CreateRequest<T> : RequestBase
+    public class CreateRequest<T> : RequestBase, ICreateRequest<T>
     {
         [JsonProperty("data")]
         public T Data { get; set; }

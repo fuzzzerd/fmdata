@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace FMData.Responses
+namespace FMData
 {
     /// <summary>
     /// FileMaker record with Dictionary<string,string> as field data and portal data.

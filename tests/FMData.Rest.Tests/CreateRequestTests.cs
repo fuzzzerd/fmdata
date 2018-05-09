@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FMData.Requests;
+using FMData;
+using FMData.Rest;
+using FMData.Rest.Requests;
 using RichardSzalay.MockHttp;
 using Xunit;
 
@@ -10,7 +12,7 @@ namespace FMData.Tests
 {
     public class CreateRequestTests
     {
-        private static FMDataClient GetMockedFDC()
+        private static IFMDataClient GetMockedFDC()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -34,7 +36,7 @@ namespace FMData.Tests
         [Fact]
         public async Task CreateShould_ReturnRecordId()
         {
-            FMDataClient fdc = GetMockedFDC();
+            IFMDataClient fdc = GetMockedFDC();
 
             var req = new CreateRequest<Dictionary<string, string>>()
             {
@@ -54,7 +56,7 @@ namespace FMData.Tests
         [Fact]
         public async Task Create_WithoutLayout_ThrowsArgumentException()
         {
-            FMDataClient fdc = GetMockedFDC();
+            IFMDataClient fdc = GetMockedFDC();
 
             var req = new CreateRequest<Dictionary<string, string>>()
             {
