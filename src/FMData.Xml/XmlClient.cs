@@ -1,14 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Reflection;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FMData.Xml
 {
     public class XmlClient : IFileMakerApiClient
     {
-        public Task<IResponse> CreateAsync<T>(T input)
+        private readonly HttpClient _client;
+        private readonly string _fmsUri;
+        private readonly string _fileName;
+        private readonly string _userName;
+        private readonly string _password;
+
+        #region Constructors
+        /// <summary>
+        /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"/> instance to the class.
+        /// </summary>
+        /// <param name="fmsUri">FileMaker Server HTTP Uri Endpoint.</param>
+        /// <param name="file">Name of the FileMaker Database to connect to.</param>
+        /// <param name="user">Account to connect with.</param>
+        /// <param name="pass">Account to connect with.</param>
+        /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
+        /// <remarks>Pass through constructor with no real body used for injection.</remarks>
+        public XmlClient(string fmsUri, string file, string user, string pass, string initialLayout)
+            : this(new HttpClient(), fmsUri, file, user, pass, initialLayout) { }
+
+        /// <summary>
+        /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"> instance to the class.
+        /// </summary>
+        /// <param name="client">An <see ref="HttpClient"/> instance to utilize for the liftime of this Data Client.</param>
+        /// <param name="fmsUri">FileMaker Server HTTP Uri Endpoint.</param>
+        /// <param name="file">Name of the FileMaker Database to connect to.</param>
+        /// <param name="user">Account to connect with.</param>
+        /// <param name="pass">Account to connect with.</param>
+        /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
+        public XmlClient(HttpClient client, string fmsUri, string file, string user, string pass, string initialLayout)
         {
-            throw new NotImplementedException();
+            _client = client;
+
+            _fmsUri = fmsUri;
+            // trim out the trailing slash if they included it
+            if (_fmsUri.EndsWith("/", StringComparison.CurrentCultureIgnoreCase))
+            {
+                _fmsUri = fmsUri.Substring(0, fmsUri.Length - 1);
+            }
+            _fileName = file;
+            _userName = user;
+            _password = pass;
+        }
+        #endregion
+
+        public async Task<IResponse> CreateAsync<T>(T input)
+        {
+            // setup 
+            var layout = "layout";
+
+            var dictionary = input.GetType().GetTypeInfo().DeclaredProperties
+                .ToDictionary(prop => prop.Name, prop => prop.GetValue(input, null));
+
+            var url = _fmsUri + "/fmi/xml/fmresultset.xml";
+
+            var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeUriString(i.Key)}={Uri.EscapeUriString(i.Value.ToString())}"));
+            var httpRequestContent = new StringContent($"-db={_fileName}&-lay={layout}{stringContent}");
+
+            var response = await _client.PostAsync(url, httpRequestContent);
+
+            return null;
+            // response
         }
 
         public Task<IResponse> CreateAsync<T>(string layout, T input)
