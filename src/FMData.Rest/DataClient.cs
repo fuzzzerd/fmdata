@@ -1,5 +1,5 @@
-using FMData.Requests;
-using FMData.Responses;
+using FMData.Rest.Requests;
+using FMData.Rest.Responses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -12,12 +12,12 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FMData
+namespace FMData.Rest
 {
     /// <summary>
-    /// FileMaker Data API Client
+    /// FileMaker Data API Client Implementation
     /// </summary>
-    public class FMDataClient : IFMDataClient, IDisposable
+    public class DataClient : IFileMakerApiClient, IFileMakerRestClient, IDisposable
     {
         private readonly HttpClient _client;
         private readonly string _fmsUri;
@@ -39,7 +39,7 @@ namespace FMData
         /// <param name="pass">Account to connect with.</param>
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
         /// <remarks>Pass through constructor with no real body used for injection.</remarks>
-        public FMDataClient(string fmsUri, string file, string user, string pass, string initialLayout)
+        public DataClient(string fmsUri, string file, string user, string pass, string initialLayout)
             : this(new HttpClient(), fmsUri, file, user, pass, initialLayout) { }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace FMData
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
-        public FMDataClient(HttpClient client, string fmsUri, string file, string user, string pass, string initialLayout)
+        public DataClient(HttpClient client, string fmsUri, string file, string user, string pass, string initialLayout)
         {
             _client = client;
 
@@ -115,7 +115,7 @@ namespace FMData
         #region FM Data Token Management
 
         /// <summary>
-        /// <see cref="IFMDataClient.RefreshTokenAsync(string, string, string)"/>
+        /// <see cref="IFileMakerApiClient.RefreshTokenAsync(string, string, string)"/>
         /// </summary>
         public async Task<AuthResponse> RefreshTokenAsync(string username, string password, string layout)
         {
@@ -143,9 +143,9 @@ namespace FMData
         }
 
         /// <summary>
-        /// <see cref="IFMDataClient.LogoutAsync"/>
+        /// <see cref="IFileMakerApiClient.LogoutAsync"/>
         /// </summary>
-        public async Task<BaseDataResponse> LogoutAsync()
+        public async Task<IResponse> LogoutAsync()
         {
             // add a default request header of our data token to nuke
             _client.DefaultRequestHeaders.Add("FM-Data-token", this.dataToken);
@@ -155,7 +155,7 @@ namespace FMData
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<BaseDataResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
 
@@ -171,7 +171,7 @@ namespace FMData
         /// <typeparam name="T">The type parameter to be created.</typeparam>
         /// <param name="input">Object containing the data to be on the newly created record.</param>
         /// <returns></returns>
-        public Task<BaseDataResponse> CreateAsync<T>(T input) => CreateAsync(GetTableName(input), input);
+        public Task<IResponse> CreateAsync<T>(T input) => CreateAsync(GetTableName(input), input);
 
         /// <summary>
         /// Create a record in the database utilizing the TableAttribute to target the layout.
@@ -180,7 +180,8 @@ namespace FMData
         /// <param name="layout">Explicitly define the layout to use for this request.</param>
         /// <param name="input">Object containing the data to be on the newly created record.</param>
         /// <returns></returns>
-        public Task<BaseDataResponse> CreateAsync<T>(string layout, T input) => CreateAsync(new CreateRequest<T>() { Data = input, Layout = layout });
+        /// // explicit cast to interface to route to correct generic method.
+        public Task<IResponse> CreateAsync<T>(string layout, T input) => CreateAsync((ICreateRequest<T>)new CreateRequest<T>() { Data = input, Layout = layout });
 
         /// <summary>
         /// Create a record in the database using the CreateRequest object.
@@ -188,7 +189,7 @@ namespace FMData
         /// <typeparam name="T">The underlying type of record being created.</typeparam>
         /// <param name="req">The request object containing the data to be sent.</param>
         /// <returns></returns>
-        public async Task<BaseDataResponse> CreateAsync<T>(CreateRequest<T> req)
+        public async Task<IResponse> CreateAsync<T>(ICreateRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
@@ -203,7 +204,7 @@ namespace FMData
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<BaseDataResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
             // something bad happened. TODO: improve non-OK response handling
@@ -217,7 +218,7 @@ namespace FMData
         /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
         /// <param name="input">Object with the updated values.</param>
         /// <returns></returns>
-        public Task<BaseDataResponse> EditAsync<T>(int recordId, T input) => EditAsync(GetTableName(input), recordId, input);
+        public Task<IResponse> EditAsync<T>(int recordId, T input) => EditAsync(GetTableName(input), recordId, input);
 
         /// <summary>
         /// Edit a record.
@@ -227,14 +228,18 @@ namespace FMData
         /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
         /// <param name="input">Object with the updated values.</param>
         /// <returns></returns>
-        public Task<BaseDataResponse> EditAsync<T>(string layout, int recordId, T input) => EditAsync(new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() });
+        public Task<IResponse> EditAsync<T>(string layout, int recordId, T input)
+        {
+            EditRequest<T> editRequest = new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() };
+            return EditAsync(editRequest);
+        }
 
         /// <summary>
         /// Edit a record utilizing a dictionary of key/values for the data field.
         /// </summary>
         /// <param name="req">The edit request object.</param>
         /// <returns></returns>
-        public async Task<BaseDataResponse> EditAsync(EditRequest<Dictionary<string, string>> req)
+        public async Task<IResponse> EditAsync(IEditRequest<Dictionary<string, string>> req)
         {
             HttpResponseMessage response = await GetEditHttpResponse(req);
 
@@ -242,7 +247,7 @@ namespace FMData
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<BaseDataResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
             // something bad happened. TODO: improve non-OK response handling
@@ -255,7 +260,7 @@ namespace FMData
         /// <typeparam name="T">Type parameter for this edit.</typeparam>
         /// <param name="req">The edit request object.</param>
         /// <returns></returns>
-        public async Task<BaseDataResponse> EditAsync<T>(EditRequest<T> req)
+        public async Task<IResponse> EditAsync<T>(IEditRequest<T> req)
         {
             HttpResponseMessage response = await GetEditHttpResponse(req);
 
@@ -263,18 +268,18 @@ namespace FMData
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<BaseDataResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
             // something bad happened. TODO: improve non-OK response handling
             throw new Exception("Could not edit existing record.");
         }
 
-        public Task<BaseDataResponse> DeleteAsync<T>(int recId, T delete) => DeleteAsync(recId, GetTableName(delete));
+        public Task<IResponse> DeleteAsync<T>(int recId, T delete) => DeleteAsync(recId, GetTableName(delete));
 
-        public Task<BaseDataResponse> DeleteAsync(int recId, string layout) => DeleteAsync(new DeleteRequest { Layout = layout, RecordId = recId.ToString() });
+        public Task<IResponse> DeleteAsync(int recId, string layout) => DeleteAsync((IDeleteRequest)new DeleteRequest { Layout = layout, RecordId = recId.ToString() });
 
-        public async Task<BaseDataResponse> DeleteAsync(DeleteRequest req)
+        public async Task<IResponse> DeleteAsync(IDeleteRequest req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
@@ -287,13 +292,13 @@ namespace FMData
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<BaseDataResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                return new BaseDataResponse() { ErrorCode = "404", Result = "Error" };
+                return new BaseResponse() { ErrorCode = "404", Result = "Error" };
             }
 
             throw new Exception("Could not delete record.");
@@ -304,7 +309,7 @@ namespace FMData
         /// </summary>
         /// <param name="req">The find request field/value dictionary to pass into FileMaker server.</param>
         /// <returns>A <see cref="Dictionary{String,String}"/> wrapped in a FindResponse containing both record data and portal data.</returns>
-        public async Task<FindResponse<Dictionary<string, string>>> FindAsync(FindRequest<Dictionary<string, string>> req)
+        public async Task<IFindResponse<Dictionary<string, string>>> FindAsync(IFindRequest<Dictionary<string, string>> req)
         {
             var response = await GetFindHttpResponseAsync(req);
 
@@ -332,7 +337,7 @@ namespace FMData
         /// <typeparam name="T">the type of response objects to return.</typeparam>
         /// <param name="req">The find request dictionary.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public async Task<IEnumerable<T>> FindAsync<T>(FindRequest<Dictionary<string, string>> req)
+        public async Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req)
         {
             var response = await GetFindHttpResponseAsync(req);
 
@@ -359,7 +364,7 @@ namespace FMData
         /// <typeparam name="T">The type of response objects to return.</typeparam>
         /// <param name="req">The find request parameters.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public async Task<IEnumerable<T>> FindAsync<T>(FindRequest<T> req)
+        public async Task<IEnumerable<T>> FindAsync<T>(IFindRequest<T> req)
         {
             var response = await GetFindHttpResponseAsync(req);
 
@@ -409,7 +414,7 @@ namespace FMData
         /// <param name="layout">The name of the layout to run this request on.</param>
         /// <param name="input">The object with properties to map to the find request.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public Task<IEnumerable<T>> FindAsync<T>(string layout, T input) => FindAsync(new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
+        public Task<IEnumerable<T>> FindAsync<T>(string layout, T input) => FindAsync((IFindRequest<T>)new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
 
         #endregion
 
@@ -421,7 +426,7 @@ namespace FMData
         /// <typeparam name="T">The type parameter of the data request.</typeparam>
         /// <param name="req">The request object to send.</param>
         /// <returns>The task that will return the http response from this</returns>
-        private Task<HttpResponseMessage> GetFindHttpResponseAsync<T>(FindRequest<T> req)
+        private Task<HttpResponseMessage> GetFindHttpResponseAsync<T>(IFindRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
             if (req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
@@ -440,7 +445,7 @@ namespace FMData
         /// <typeparam name="T">The type parameter of the data request.</typeparam>
         /// <param name="req">The request object to send.</param>
         /// <returns></returns>
-        private async Task<HttpResponseMessage> GetEditHttpResponse<T>(EditRequest<T> req)
+        private async Task<HttpResponseMessage> GetEditHttpResponse<T>(IEditRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");

@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FMData.Requests;
+using FMData.Rest;
+using FMData.Rest.Requests;
 using RichardSzalay.MockHttp;
 using Xunit;
 
@@ -26,7 +27,9 @@ namespace FMData.Tests
             mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}/*")
                 .Respond("application/json", DataApiResponses.SuccessfulEdit());
 
-            using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            IEnumerable<int> x = new List<int>();
+
+            using (var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
             {
                 var req = new EditRequest<Dictionary<string, string>>()
                 {
