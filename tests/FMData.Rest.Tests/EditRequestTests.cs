@@ -27,9 +27,11 @@ namespace FMData.Tests
             mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}/*")
                 .Respond("application/json", DataApiResponses.SuccessfulEdit());
 
+            IEnumerable<int> x = new List<int>();
+
             using (var fdc = new FMDataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
             {
-                var req = (IEditRequest < Dictionary<string, string>>)new EditRequest<Dictionary<string, string>>()
+                var req = new EditRequest<Dictionary<string, string>>()
                 {
                     Layout = "layout",
                     RecordId = "264",

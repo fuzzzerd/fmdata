@@ -40,7 +40,7 @@ namespace FMData.Tests
                 Layout = "layout",
                 RecordId = "1234"
             };
-            var response = await fdc.DeleteAsync((IDeleteRequest)req);
+            var response = await fdc.DeleteAsync(req);
 
             Assert.NotNull(response);
             Assert.Equal("OK", response.Result);

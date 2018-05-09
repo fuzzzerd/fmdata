@@ -33,7 +33,7 @@ namespace FMData.Rest.Requests
         /// The sort fields and directions for this request.
         /// </summary>
         [JsonProperty("sort")]
-        public IEnumerable<Sort> Sort { get; set; }
+        public IEnumerable<ISort> Sort { get; set; }
 
         /// <summary>
         /// Create a find request from Json

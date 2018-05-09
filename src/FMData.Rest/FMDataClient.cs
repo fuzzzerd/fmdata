@@ -155,7 +155,7 @@ namespace FMData.Rest
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<IResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
 
@@ -203,7 +203,7 @@ namespace FMData.Rest
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<IResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
             // something bad happened. TODO: improve non-OK response handling
@@ -227,7 +227,11 @@ namespace FMData.Rest
         /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
         /// <param name="input">Object with the updated values.</param>
         /// <returns></returns>
-        public Task<IResponse> EditAsync<T>(string layout, int recordId, T input) => EditAsync<T>((IEditRequest<T>)new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() });
+        public Task<IResponse> EditAsync<T>(string layout, int recordId, T input)
+        {
+            EditRequest<T> editRequest = new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() };
+            return EditAsync(editRequest);
+        }
 
         /// <summary>
         /// Edit a record utilizing a dictionary of key/values for the data field.
@@ -242,7 +246,7 @@ namespace FMData.Rest
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<IResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
             // something bad happened. TODO: improve non-OK response handling
@@ -263,7 +267,7 @@ namespace FMData.Rest
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<IResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
             // something bad happened. TODO: improve non-OK response handling
@@ -287,7 +291,7 @@ namespace FMData.Rest
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<IResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
 
@@ -339,7 +343,7 @@ namespace FMData.Rest
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<IFindResponse<T>>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<FindResponse<T>>(responseJson);
                 return responseObject.Data.Select(d => d.FieldData);
             }
 
