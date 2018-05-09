@@ -47,7 +47,9 @@ namespace FMData.Tests
                     { "AnotherField", "Another Valuee" }
                 }
             };
-            var response = await fdc.CreateAsync(req);
+
+            // requires cast to call correct method -- maybe needs renamed since overloading isn't working out so well
+            var response = await fdc.CreateAsync((ICreateRequest<Dictionary<string,string>>)req);
 
             Assert.NotNull(response);
             Assert.Equal("OK", response.Result);

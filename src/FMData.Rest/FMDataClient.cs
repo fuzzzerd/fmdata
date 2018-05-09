@@ -180,7 +180,8 @@ namespace FMData.Rest
         /// <param name="layout">Explicitly define the layout to use for this request.</param>
         /// <param name="input">Object containing the data to be on the newly created record.</param>
         /// <returns></returns>
-        public Task<IResponse> CreateAsync<T>(string layout, T input) => CreateAsync(new CreateRequest<T>() { Data = input, Layout = layout });
+        /// // explicit cast to interface to route to correct generic method.
+        public Task<IResponse> CreateAsync<T>(string layout, T input) => CreateAsync((ICreateRequest<T>)new CreateRequest<T>() { Data = input, Layout = layout });
 
         /// <summary>
         /// Create a record in the database using the CreateRequest object.
@@ -315,7 +316,7 @@ namespace FMData.Rest
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<IFindResponse<Dictionary<string, string>>>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<FindResponse<Dictionary<string, string>>>(responseJson);
                 return responseObject;
             }
 
@@ -323,7 +324,7 @@ namespace FMData.Rest
             {
                 // on 404 return empty set instead of throwing an exception
                 // since this is an expected case
-                return (IFindResponse<Dictionary<string,string>>)new FindResponse<Dictionary<string,string>>();
+                return new FindResponse<Dictionary<string,string>>();
             }
 
             throw new Exception("Find Rquest Error");
