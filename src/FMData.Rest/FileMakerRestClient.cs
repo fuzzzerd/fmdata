@@ -17,7 +17,7 @@ namespace FMData.Rest
     /// <summary>
     /// FileMaker Data API Client Implementation
     /// </summary>
-    public class DataClient : IFileMakerApiClient, IFileMakerRestClient, IDisposable
+    public class FileMakerRestClient : IFileMakerRestClient, IDisposable
     {
         private readonly HttpClient _client;
         private readonly string _fmsUri;
@@ -39,7 +39,7 @@ namespace FMData.Rest
         /// <param name="pass">Account to connect with.</param>
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
         /// <remarks>Pass through constructor with no real body used for injection.</remarks>
-        public DataClient(string fmsUri, string file, string user, string pass, string initialLayout)
+        public FileMakerRestClient(string fmsUri, string file, string user, string pass, string initialLayout)
             : this(new HttpClient(), fmsUri, file, user, pass, initialLayout) { }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace FMData.Rest
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
-        public DataClient(HttpClient client, string fmsUri, string file, string user, string pass, string initialLayout)
+        public FileMakerRestClient(HttpClient client, string fmsUri, string file, string user, string pass, string initialLayout)
         {
             _client = client;
 
