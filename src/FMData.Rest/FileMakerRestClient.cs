@@ -228,11 +228,7 @@ namespace FMData.Rest
         /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
         /// <param name="input">Object with the updated values.</param>
         /// <returns></returns>
-        public Task<IResponse> EditAsync<T>(string layout, int recordId, T input)
-        {
-            EditRequest<T> editRequest = new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() };
-            return EditAsync(editRequest);
-        }
+        public Task<IResponse> EditAsync<T>(string layout, int recordId, T input) => EditAsync(new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() });
 
         /// <summary>
         /// Edit a record utilizing a dictionary of key/values for the data field.
