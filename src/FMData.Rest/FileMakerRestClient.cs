@@ -193,7 +193,7 @@ namespace FMData.Rest
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
-            var str = JsonConvert.SerializeObject(req);
+            var str = req.SerializeRequest();
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
             httpContent.Headers.Add("FM-Data-token", this.dataToken);
 

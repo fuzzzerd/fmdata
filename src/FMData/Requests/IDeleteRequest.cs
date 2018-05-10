@@ -1,8 +1,7 @@
 ﻿namespace FMData
 {
-    public interface IDeleteRequest
+    public interface IDeleteRequest : IFileMakerRequest
     {
         string RecordId { get; set; }
-        string Layout { get; set; }
     }
 }
