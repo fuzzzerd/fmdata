@@ -1,10 +1,9 @@
 ﻿namespace FMData
 {
-    public interface IEditRequest<T>
+    public interface IEditRequest<T> : IFileMakerRequest
     {
         T Data { get; set; }
         string ModId { get; set; }
         string RecordId { get; set; }
-        string Layout { get; set; }
     }
 }

@@ -1,8 +1,7 @@
 ﻿namespace FMData
 {
-    public interface ICreateRequest<T>
+    public interface ICreateRequest<T> : IFileMakerRequest
     {
         T Data { get; set; }
-        string Layout { get; set; }
     }
 }

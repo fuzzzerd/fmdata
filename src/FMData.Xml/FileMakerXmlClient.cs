@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FMData.Xml
 {
-    public class XmlClient : IFileMakerApiClient
+    public class FileMakerXmlClient : IFileMakerApiClient
     {
         private readonly HttpClient _client;
         private readonly string _fmsUri;
@@ -25,7 +25,7 @@ namespace FMData.Xml
         /// <param name="pass">Account to connect with.</param>
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
         /// <remarks>Pass through constructor with no real body used for injection.</remarks>
-        public XmlClient(string fmsUri, string file, string user, string pass, string initialLayout)
+        public FileMakerXmlClient(string fmsUri, string file, string user, string pass, string initialLayout)
             : this(new HttpClient(), fmsUri, file, user, pass, initialLayout) { }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace FMData.Xml
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
-        public XmlClient(HttpClient client, string fmsUri, string file, string user, string pass, string initialLayout)
+        public FileMakerXmlClient(HttpClient client, string fmsUri, string file, string user, string pass, string initialLayout)
         {
             _client = client;
 
@@ -68,8 +68,8 @@ namespace FMData.Xml
 
             var response = await _client.PostAsync(url, httpRequestContent);
 
-            return null;
             // response
+            return new BaseResponse { Result = "OK", ErrorCode = "" };
         }
 
         public Task<IResponse> CreateAsync<T>(string layout, T input)

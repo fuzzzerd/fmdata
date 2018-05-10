@@ -2,10 +2,8 @@
 
 namespace FMData
 {
-    public interface IFindRequest<TRequestType>
+    public interface IFindRequest<TRequestType> : IFileMakerRequest
     {
-        string Layout { get; set; }
-
         int Offset { get; set; }
 
         IEnumerable<TRequestType> Query { get; set; }
