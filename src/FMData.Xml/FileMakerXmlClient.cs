@@ -68,8 +68,14 @@ namespace FMData.Xml
 
             var response = await _client.PostAsync(url, httpRequestContent);
 
-            // response
-            return new BaseResponse { Result = "OK", ErrorCode = "" };
+            if (response.IsSuccessStatusCode)
+            {
+                // process response data return OK
+                return new BaseResponse { Result = "OK", ErrorCode = "" };
+            }
+
+            throw new Exception("Unable to complete request");
+            
         }
 
         public Task<IResponse> CreateAsync<T>(string layout, T input)
