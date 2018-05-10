@@ -13,7 +13,7 @@ namespace FMData.Tests
 {
     public class FindRequestTests
     {
-        private static DataClient GetMockedFDC()
+        private static FileMakerRestClient GetMockedFDC()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -30,7 +30,7 @@ namespace FMData.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/*")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new DataClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
             return fdc;
         }
 

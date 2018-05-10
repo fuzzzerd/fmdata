@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace FMData.Rest
 {
-    public interface IFileMakerRestClient
+    public interface IFileMakerRestClient : FMData.IFileMakerApiClient
     {
         #region Auth/Data Token Management
         /// <summary>
