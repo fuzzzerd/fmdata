@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FMData.Xml
+namespace FMData.Xml.Responses
 {
     public class BaseResponse : IResponse
     {
