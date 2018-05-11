@@ -333,7 +333,7 @@ namespace FMData.Rest
         /// <typeparam name="T">the type of response objects to return.</typeparam>
         /// <param name="req">The find request dictionary.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public async Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req)
+        public async Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req) where T : class, new()
         {
             var response = await GetFindHttpResponseAsync(req);
 
@@ -360,7 +360,7 @@ namespace FMData.Rest
         /// <typeparam name="T">The type of response objects to return.</typeparam>
         /// <param name="req">The find request parameters.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public async Task<IEnumerable<T>> FindAsync<T>(IFindRequest<T> req)
+        public async Task<IEnumerable<T>> FindAsync<T>(IFindRequest<T> req) where T : class, new()
         {
             var response = await GetFindHttpResponseAsync(req);
 
@@ -401,7 +401,7 @@ namespace FMData.Rest
         /// <typeparam name="T">The type of response objects to return.</typeparam>
         /// <param name="input">The object with properties to map to the find request.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public Task<IEnumerable<T>> FindAsync<T>(T input) => FindAsync(GetTableName(input), input);
+        public Task<IEnumerable<T>> FindAsync<T>(T input) where T : class, new() => FindAsync(GetTableName(input), input);
 
         /// <summary>
         /// Strongly typed find request.
@@ -410,7 +410,7 @@ namespace FMData.Rest
         /// <param name="layout">The name of the layout to run this request on.</param>
         /// <param name="input">The object with properties to map to the find request.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public Task<IEnumerable<T>> FindAsync<T>(string layout, T input) => FindAsync((IFindRequest<T>)new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
+        public Task<IEnumerable<T>> FindAsync<T>(string layout, T input) where T : class, new() => FindAsync((IFindRequest<T>)new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
 
         #endregion
 
@@ -427,7 +427,7 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
             if (req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
 
-            var json = req.ToJson();
+            var json = req.SerializeRequest();
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             httpContent.Headers.Add("FM-Data-token", this.dataToken);
             var response = _client.PostAsync(FindEndpoint(req.Layout), httpContent);
