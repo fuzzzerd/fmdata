@@ -69,7 +69,7 @@ namespace FMData.Xml
             var url = _fmsUri + "/fmi/xml/fmresultset.xml";
 
             var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeUriString(i.Key)}={Uri.EscapeUriString(i.Value.ToString())}"));
-            var httpRequestContent = new StringContent($"-db={_fileName}&-lay={layout}{stringContent}");
+            var httpRequestContent = new StringContent($"-new&-db={_fileName}&-lay={layout}{stringContent}");
 
             var response = await _client.PostAsync(url, httpRequestContent);
 
