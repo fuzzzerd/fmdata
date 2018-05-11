@@ -10,13 +10,13 @@ A client library for accessing FileMaker data.
 
 There are both stable builds on Nuget and Continuous Integration builds available from MyGet.
 
-## Stable Release Builds
+## Stable Builds are on NuGet
 
     dotnet add package FMData
 
-## CI Builds
+## CI Builds are on MyGet
 
-    dotnet add package FMData --version 1.0.2 --source https://www.myget.org/F/filemaker/api/v3/index.json
+    dotnet add package FMData --source https://www.myget.org/F/filemaker/api/v3/index.json
 
 ## Example Usage
 
@@ -29,15 +29,26 @@ There are both stable builds on Nuget and Continuous Integration builds availabl
 
 ## Planned Features
 
-- [Range of Records](https://fmhelp.filemaker.com/docs/16/en/restapi/#work-with-records_get-records)
-- [Finds with paging with range and offset parameters](https://fmhelp.filemaker.com/docs/16/en/restapi/#perform-find-requests)
-- [Global fields](https://fmhelp.filemaker.com/docs/16/en/restapi/#set-global-fields)
-- Batch operation helper methods
-- Portals / Related records
+Check out the issues log to see what features are planned. Feel free to contribute by adding issues or submitting a pull request.
 
-## FileMaker REST / Data API Documentation
+## Upstream Documentation
+
+### FileMaker REST / Data API Documentation
 
 - [FileMaker REST API Documentation](https://fmhelp.filemaker.com/docs/16/en/restapi/)
+
+### FileMaker CWP with Xml Guide
+
+- [FileMaker Server 16 Web Publishing Guide](https://fmhelp.filemaker.com/docs/16/en/fms16_cwp_guide.pdf)
+- [FileMaker Server 15 Web Publishing Guide](https://fmhelp.filemaker.com/docs/15/en/fms15_cwp_guide.pdf)
+
+## Versioning
+
+We use [Semantic Versioning](http://semver.org/). Using the Major.Minor.Patch syntax, we attempt to follow the basic rules
+
+ 1. MAJOR version when you make incompatible API changes,
+ 2. MINOR version when you add functionality in a backwards-compatible manner, and
+ 3. PATCH version when you make backwards-compatible bug fixes.
 
 ## Repository Statistics
 
