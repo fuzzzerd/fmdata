@@ -207,20 +207,11 @@ namespace FMData.Rest
         /// Edit a record.
         /// </summary>
         /// <typeparam name="T">Type parameter for this edit.</typeparam>
-        /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
-        /// <param name="input">Object with the updated values.</param>
-        /// <returns></returns>
-        public override Task<IResponse> EditAsync<T>(int recordId, T input) => EditAsync(GetTableName(input), recordId, input);
-
-        /// <summary>
-        /// Edit a record.
-        /// </summary>
-        /// <typeparam name="T">Type parameter for this edit.</typeparam>
         /// <param name="layout">Explicitly define the layout to use.</param>
         /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
         /// <param name="input">Object with the updated values.</param>
         /// <returns></returns>
-        public override Task<IResponse> EditAsync<T>(string layout, int recordId, T input) => EditAsync(new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() });
+        public override Task<IResponse> EditAsync<T>(string layout, int recordId, T input) => EditAsync((IEditRequest<T>)new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() });
 
         /// <summary>
         /// Edit a record utilizing a dictionary of key/values for the data field.
@@ -265,7 +256,7 @@ namespace FMData.Rest
 
         public override Task<IResponse> DeleteAsync<T>(int recId, T delete) => DeleteAsync(recId, GetTableName(delete));
 
-        public override Task<IResponse> DeleteAsync(int recId, string layout) => DeleteAsync((IDeleteRequest)new DeleteRequest { Layout = layout, RecordId = recId.ToString() });
+        public override Task<IResponse> DeleteAsync(int recId, string layout) => DeleteAsync(new DeleteRequest { Layout = layout, RecordId = recId.ToString() });
 
         public override async Task<IResponse> DeleteAsync(IDeleteRequest req)
         {
