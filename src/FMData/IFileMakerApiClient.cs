@@ -14,7 +14,7 @@ namespace FMData
         /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
         /// <returns>The newly created RecordId and/or an error response code.</returns>
-        Task<IResponse> CreateAsync<T>(T input);
+        Task<IResponse> CreateAsync<T>(T input) where T : class, new();
 
         /// <summary>
         /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout.
@@ -23,13 +23,13 @@ namespace FMData
         /// <param name="layout"></param>
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
         /// <returns>The newly created RecordId and/or an error response code.</returns>
-        Task<IResponse> CreateAsync<T>(string layout, T input);
+        Task<IResponse> CreateAsync<T>(string layout, T input) where T : class, new();
 
         /// <summary>
         /// Creates a new record.
         /// </summary>
         /// <param name="req">New record request.</param>
-        Task<IResponse> CreateAsync<T>(ICreateRequest<T> req);
+        Task<IResponse> CreateAsync<T>(ICreateRequest<T> req) where T : class, new();
 
         /// <summary>
         /// Find a record or records matching the request.
@@ -77,7 +77,7 @@ namespace FMData
         /// Edit record.
         /// </summary>
         /// <param name="req">Edit record request.</param>
-        Task<IResponse> EditAsync<T>(IEditRequest<T> req);
+        Task<IResponse> EditAsync<T>(IEditRequest<T> req) where T : class, new();
 
         /// <summary>
         /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
@@ -86,7 +86,7 @@ namespace FMData
         /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
         /// <returns></returns>
-        Task<IResponse> EditAsync<T>(int recordId, T input);
+        Task<IResponse> EditAsync<T>(int recordId, T input) where T : class, new();
 
         /// <summary>
         /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
@@ -96,7 +96,7 @@ namespace FMData
         /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
         /// <returns></returns>
-        Task<IResponse> EditAsync<T>(string layout, int recordId, T input);
+        Task<IResponse> EditAsync<T>(string layout, int recordId, T input) where T : class, new();
 
         /// <summary>
         /// Delete record
