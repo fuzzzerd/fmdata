@@ -17,7 +17,7 @@ namespace FMData.Rest
     /// <summary>
     /// FileMaker Data API Client Implementation
     /// </summary>
-    public class FileMakerRestClient : IFileMakerRestClient, IDisposable
+    public class FileMakerRestClient : FileMakerApiClientBase, IFileMakerRestClient
     {
         private readonly HttpClient _client;
         private readonly string _fmsUri;
@@ -169,19 +169,11 @@ namespace FMData.Rest
         /// Create a record in the database utilizing the TableAttribute to target the layout.
         /// </summary>
         /// <typeparam name="T">The type parameter to be created.</typeparam>
-        /// <param name="input">Object containing the data to be on the newly created record.</param>
-        /// <returns></returns>
-        public Task<IResponse> CreateAsync<T>(T input) => CreateAsync(GetTableName(input), input);
-
-        /// <summary>
-        /// Create a record in the database utilizing the TableAttribute to target the layout.
-        /// </summary>
-        /// <typeparam name="T">The type parameter to be created.</typeparam>
         /// <param name="layout">Explicitly define the layout to use for this request.</param>
         /// <param name="input">Object containing the data to be on the newly created record.</param>
         /// <returns></returns>
         /// // explicit cast to interface to route to correct generic method.
-        public Task<IResponse> CreateAsync<T>(string layout, T input) => CreateAsync((ICreateRequest<T>)new CreateRequest<T>() { Data = input, Layout = layout });
+        public override Task<IResponse> CreateAsync<T>(string layout, T input) => CreateAsync((ICreateRequest<T>)new CreateRequest<T>() { Data = input, Layout = layout });
 
         /// <summary>
         /// Create a record in the database using the CreateRequest object.
@@ -189,7 +181,7 @@ namespace FMData.Rest
         /// <typeparam name="T">The underlying type of record being created.</typeparam>
         /// <param name="req">The request object containing the data to be sent.</param>
         /// <returns></returns>
-        public async Task<IResponse> CreateAsync<T>(ICreateRequest<T> req)
+        public override async Task<IResponse> CreateAsync<T>(ICreateRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
@@ -218,7 +210,7 @@ namespace FMData.Rest
         /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
         /// <param name="input">Object with the updated values.</param>
         /// <returns></returns>
-        public Task<IResponse> EditAsync<T>(int recordId, T input) => EditAsync(GetTableName(input), recordId, input);
+        public override Task<IResponse> EditAsync<T>(int recordId, T input) => EditAsync(GetTableName(input), recordId, input);
 
         /// <summary>
         /// Edit a record.
@@ -228,14 +220,14 @@ namespace FMData.Rest
         /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
         /// <param name="input">Object with the updated values.</param>
         /// <returns></returns>
-        public Task<IResponse> EditAsync<T>(string layout, int recordId, T input) => EditAsync(new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() });
+        public override Task<IResponse> EditAsync<T>(string layout, int recordId, T input) => EditAsync(new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() });
 
         /// <summary>
         /// Edit a record utilizing a dictionary of key/values for the data field.
         /// </summary>
         /// <param name="req">The edit request object.</param>
         /// <returns></returns>
-        public async Task<IResponse> EditAsync(IEditRequest<Dictionary<string, string>> req)
+        public override async Task<IResponse> EditAsync(IEditRequest<Dictionary<string, string>> req)
         {
             HttpResponseMessage response = await GetEditHttpResponse(req);
 
@@ -256,7 +248,7 @@ namespace FMData.Rest
         /// <typeparam name="T">Type parameter for this edit.</typeparam>
         /// <param name="req">The edit request object.</param>
         /// <returns></returns>
-        public async Task<IResponse> EditAsync<T>(IEditRequest<T> req)
+        public override async Task<IResponse> EditAsync<T>(IEditRequest<T> req)
         {
             HttpResponseMessage response = await GetEditHttpResponse(req);
 
@@ -271,11 +263,11 @@ namespace FMData.Rest
             throw new Exception("Could not edit existing record.");
         }
 
-        public Task<IResponse> DeleteAsync<T>(int recId, T delete) => DeleteAsync(recId, GetTableName(delete));
+        public override Task<IResponse> DeleteAsync<T>(int recId, T delete) => DeleteAsync(recId, GetTableName(delete));
 
-        public Task<IResponse> DeleteAsync(int recId, string layout) => DeleteAsync((IDeleteRequest)new DeleteRequest { Layout = layout, RecordId = recId.ToString() });
+        public override Task<IResponse> DeleteAsync(int recId, string layout) => DeleteAsync((IDeleteRequest)new DeleteRequest { Layout = layout, RecordId = recId.ToString() });
 
-        public async Task<IResponse> DeleteAsync(IDeleteRequest req)
+        public override async Task<IResponse> DeleteAsync(IDeleteRequest req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
@@ -305,7 +297,7 @@ namespace FMData.Rest
         /// </summary>
         /// <param name="req">The find request field/value dictionary to pass into FileMaker server.</param>
         /// <returns>A <see cref="Dictionary{String,String}"/> wrapped in a FindResponse containing both record data and portal data.</returns>
-        public async Task<IFindResponse<Dictionary<string, string>>> FindAsync(IFindRequest<Dictionary<string, string>> req)
+        public override async Task<IFindResponse<Dictionary<string, string>>> FindAsync(IFindRequest<Dictionary<string, string>> req)
         {
             var response = await GetFindHttpResponseAsync(req);
 
@@ -333,7 +325,7 @@ namespace FMData.Rest
         /// <typeparam name="T">the type of response objects to return.</typeparam>
         /// <param name="req">The find request dictionary.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public async Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req) where T : class, new()
+        public override async Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req)
         {
             var response = await GetFindHttpResponseAsync(req);
 
@@ -360,7 +352,7 @@ namespace FMData.Rest
         /// <typeparam name="T">The type of response objects to return.</typeparam>
         /// <param name="req">The find request parameters.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public async Task<IEnumerable<T>> FindAsync<T>(IFindRequest<T> req) where T : class, new()
+        public override async Task<IEnumerable<T>> FindAsync<T>(IFindRequest<T> req)
         {
             var response = await GetFindHttpResponseAsync(req);
 
@@ -399,18 +391,10 @@ namespace FMData.Rest
         /// Strongly typed find request.
         /// </summary>
         /// <typeparam name="T">The type of response objects to return.</typeparam>
-        /// <param name="input">The object with properties to map to the find request.</param>
-        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public Task<IEnumerable<T>> FindAsync<T>(T input) where T : class, new() => FindAsync(GetTableName(input), input);
-
-        /// <summary>
-        /// Strongly typed find request.
-        /// </summary>
-        /// <typeparam name="T">The type of response objects to return.</typeparam>
         /// <param name="layout">The name of the layout to run this request on.</param>
         /// <param name="input">The object with properties to map to the find request.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public Task<IEnumerable<T>> FindAsync<T>(string layout, T input) where T : class, new() => FindAsync((IFindRequest<T>)new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
+        public override Task<IEnumerable<T>> FindAsync<T>(string layout, T input) => FindAsync((IFindRequest<T>)new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
 
         #endregion
 
@@ -455,35 +439,13 @@ namespace FMData.Rest
             return response;
         }
 
-        /// <summary>
-        /// Utility method to get the TableAttribute name to be used for the layout option in the request.
-        /// </summary>
-        /// <param name="instance"></param>
-        /// <returns>The specified in the Table Attribute</returns>
-        private string GetTableName<T>(T instance)
-        {
-            string lay;
-            try
-            {
-                // try to get the 'layout' name out of the 'table' attribute.
-                // not the best but tries to utilize a built in component that is fairly standard vs a custom component dirtying up consumers pocos
-                lay = typeof(T).GetTypeInfo().GetCustomAttribute<TableAttribute>().Name;
-            }
-            catch
-            {
-                throw new ArgumentException($"Could not load Layout name from TableAttribute on {typeof(T).Name}.");
-            }
-            return lay;
-        }
-
         #endregion
 
         #region IDisposable Implementation
-
         /// <summary>
         /// Dispose resources opened for this instance of the data client.
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
             if (_client != null)
             {
@@ -494,7 +456,6 @@ namespace FMData.Rest
                 _client.Dispose();
             }
         }
-
         #endregion
     }
 }
