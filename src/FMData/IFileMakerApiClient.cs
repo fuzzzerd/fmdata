@@ -43,21 +43,21 @@ namespace FMData
         /// <typeparam name="T">The type of object to project and return.</typeparam>
         /// <param name="req">The request parameters to send to FileMaker Server.</param>
         /// <returns>An IEnumerable of type T.</returns>
-        Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req);
+        Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req) where T : class, new();
 
         /// <summary>
         /// Find a record or records matching the request.
         /// </summary>
         /// <param name="req">Find request</param>
         /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(IFindRequest<T> req);
+        Task<IEnumerable<T>> FindAsync<T>(IFindRequest<T> req) where T : class, new();
 
         /// <summary>
         /// Finds a record or records matching the properties of the input request object.
         /// </summary>
         /// <param name="request">The object to utilize for the find request parameters.</param>
         /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(T request);
+        Task<IEnumerable<T>> FindAsync<T>(T request) where T : class, new();
         
         /// <summary>
         /// Finds a record or records matching the properties of the input request object.
@@ -65,7 +65,7 @@ namespace FMData
         /// <param name="layout">Overrides the TableAttribute for the name of the layout to run this request on.</param>
         /// <param name="request">The object to utilize for the find request parameters.</param>
         /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(string layout, T request);
+        Task<IEnumerable<T>> FindAsync<T>(string layout, T request) where T : class, new();
 
         /// <summary>
         /// Edit record.

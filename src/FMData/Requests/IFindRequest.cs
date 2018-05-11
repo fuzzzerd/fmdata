@@ -11,7 +11,5 @@ namespace FMData
         int Range { get; set; }
 
         IEnumerable<ISort> Sort { get; set; }
-
-        string ToJson();
     }
 }
