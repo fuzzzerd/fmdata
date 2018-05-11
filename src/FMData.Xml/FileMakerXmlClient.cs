@@ -4,11 +4,16 @@ using System.Net.Http;
 using System.Reflection;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.ComponentModel.DataAnnotations.Schema;
+using FMData.Xml.Requests;
+using FMData.Xml.Responses;
 
 namespace FMData.Xml
 {
     public class FileMakerXmlClient : IFileMakerApiClient
     {
+        private readonly XNamespace _ns = "http://www.filemaker.com/xml/fmresultset";
         private readonly HttpClient _client;
         private readonly string _fmsUri;
         private readonly string _fileName;
@@ -67,6 +72,7 @@ namespace FMData.Xml
             var httpRequestContent = new StringContent($"-db={_fileName}&-lay={layout}{stringContent}");
 
             var response = await _client.PostAsync(url, httpRequestContent);
+
 
             if (response.IsSuccessStatusCode)
             {
@@ -128,24 +134,86 @@ namespace FMData.Xml
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req)
+        public Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req) where T : class, new()
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<T>> FindAsync<T>(IFindRequest<T> req)
+        public async Task<IEnumerable<T>> FindAsync<T>(IFindRequest<T> req) where T : class, new()
         {
-            throw new NotImplementedException();
+            var url = _fmsUri + "/fmi/xml/fmresultset.xml";
+
+            var dictionary = req.Query.First().AsDictionary(false);
+
+            var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeUriString(i.Key)}={Uri.EscapeUriString(i.Value.ToString())}"));
+            var httpRequestContent = new StringContent($"–find&-db={_fileName}&-lay={req.Layout}{stringContent}");
+
+            var response = await _client.PostAsync(url, httpRequestContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // process response data return OK
+                var xdoc = XDocument.Load(await response.Content.ReadAsStreamAsync());
+
+                // act
+                var dict = new Dictionary<string, string>();
+                var records = xdoc
+                    .Descendants(_ns + "resultset")
+                    .Elements(_ns + "record")
+                    .Select(r => new RecordBase<T,T>
+                    {
+                        RecordId = Convert.ToInt32(r.Attribute("record-id").Value),
+                        ModId = Convert.ToInt32(r.Attribute("mod-id").Value),
+                        FieldData = r.Elements(_ns + "field")
+                            .ToDictionary(
+                                k => k.Attribute("name").Value,
+                                v => v.Attribute("name").Value == "length" ? Convert.ChangeType(v.Value,typeof(int)) : v.Value
+                            ).ToObject<T>()
+                    });
+
+                return records.Select(r => r.FieldData);
+            }
+
+            return null;
         }
 
-        public Task<IEnumerable<T>> FindAsync<T>(T request)
-        {
-            throw new NotImplementedException();
-        }
+        /// <summary>
+        /// Strongly typed find request.
+        /// </summary>
+        /// <typeparam name="T">The type of response objects to return.</typeparam>
+        /// <param name="input">The object with properties to map to the find request.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
+        public Task<IEnumerable<T>> FindAsync<T>(T input) where T : class, new() => FindAsync(GetTableName(input), input);
 
-        public Task<IEnumerable<T>> FindAsync<T>(string layout, T request)
+        /// <summary>
+        /// Strongly typed find request.
+        /// </summary>
+        /// <typeparam name="T">The type of response objects to return.</typeparam>
+        /// <param name="layout">The name of the layout to run this request on.</param>
+        /// <param name="input">The object with properties to map to the find request.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
+        public Task<IEnumerable<T>> FindAsync<T>(string layout, T input) where T : class, new() => FindAsync((IFindRequest<T>)new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
+
+
+        /// <summary>
+        /// Utility method to get the TableAttribute name to be used for the layout option in the request.
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns>The specified in the Table Attribute</returns>
+        private string GetTableName<T>(T instance)
         {
-            throw new NotImplementedException();
+            string lay;
+            try
+            {
+                // try to get the 'layout' name out of the 'table' attribute.
+                // not the best but tries to utilize a built in component that is fairly standard vs a custom component dirtying up consumers pocos
+                lay = typeof(T).GetTypeInfo().GetCustomAttribute<TableAttribute>().Name;
+            }
+            catch
+            {
+                throw new ArgumentException($"Could not load Layout name from TableAttribute on {typeof(T).Name}.");
+            }
+            return lay;
         }
     }
 }
