@@ -26,10 +26,11 @@ namespace FMData.Xml.Tests
                 {
                     RecordId = Convert.ToInt32(r.Attribute("record-id").Value),
                     ModId = Convert.ToInt32(r.Attribute("mod-id").Value),
-                    FieldData = r.Elements(ns + "field")
-                    .ToDictionary(
-                        k => k.Attribute("name").Value, 
-                        v => v.Value
+                    FieldData = r
+                        .Elements(ns + "field")
+                        .ToDictionary(
+                            k => k.Attribute("name").Value, 
+                            v => v.Value
                         )
                 });
 
