@@ -8,31 +8,16 @@ namespace FMData.Xml.Tests
     {
         public static string GrammarSample_fmresultset = @"<fmresultset xmlns=""http://www.filemaker.com/xml/fmresultset"" version=""1.0"">
 <error code=""0""/>
-<product build=""03/29/2017"" name=""FileMaker Web Publishing Engine"" 
-version=""16.0.1.0""/>
-<datasource database=""art"" date-format=""MM/dd/yyyy"" layout=""web3"" 
-table=""art"" time-format=""HH:mm:ss"" timestamp-format=""MM/dd/yyyy HH:mm:ss"" 
-total-count=""12""/>
+<product build=""03/29/2017"" name=""FileMaker Web Publishing Engine"" version=""16.0.1.0""/>
+<datasource database=""art"" date-format=""MM/dd/yyyy"" layout=""web3"" table=""art"" time-format=""HH:mm:ss"" timestamp-format=""MM/dd/yyyy HH:mm:ss"" total-count=""12""/>
 <metadata>
-<field-definition auto-enter=""no"" four-digit-year=""no"" global=""no"" max-
-repeat=""1"" name=""Title"" not-empty=""no"" numeric-only=""no"" result=""text"" 
-time-of-day=""no"" type=""normal""/>
-<field-definition auto-enter=""no"" four-digit-year=""no"" global=""no"" max-
-repeat=""1"" name=""Artist"" not-empty=""no"" numeric-only=""no"" result=""text"" 
-time-of-day=""no"" type=""normal""/>
-<field-definition auto-enter=""no"" four-digit-year=""no"" global=""no"" max-
-repeat=""1"" name=""Style"" not-empty=""no"" numeric-only=""no"" result=""text"" 
-time-of-day=""no"" type=""normal""/>
-<field-definition auto-enter=""no"" four-digit-year=""no"" global=""no"" max-
-repeat=""1"" name=""length"" not-empty=""no"" numeric-only=""no"" 
-result=""number"" time-of-day=""no"" type=""calculation""/>
+<field-definition auto-enter=""no"" four-digit-year=""no"" global=""no"" max-repeat=""1"" name=""Title"" not-empty=""no"" numeric-only=""no"" result=""text"" time-of-day=""no"" type=""normal""/>
+<field-definition auto-enter=""no"" four-digit-year=""no"" global=""no"" max-repeat=""1"" name=""Artist"" not-empty=""no"" numeric-only=""no"" result=""text"" time-of-day=""no"" type=""normal""/>
+<field-definition auto-enter=""no"" four-digit-year=""no"" global=""no"" max-repeat=""1"" name=""Style"" not-empty=""no"" numeric-only=""no"" result=""text"" time-of-day=""no"" type=""normal""/>
+<field-definition auto-enter=""no"" four-digit-year=""no"" global=""no"" max-repeat=""1"" name=""length"" not-empty=""no"" numeric-only=""no"" result=""number"" time-of-day=""no"" type=""calculation""/>
 <relatedset-definition table=""artlocations"">
-<field-definition auto-enter=""no"" four-digit-year=""no"" global=""no"" max-
-repeat=""1"" name=""artlocations::Location"" not-empty=""no"" numeric-
-only=""no"" result=""text"" time-of-day=""no"" type=""normal""/>
-<field-definition auto-enter=""no"" four-digit-year=""no"" global=""no"" max-
-repeat=""1"" name=""artlocations::Date"" not-empty=""no"" numeric-only=""no"" 
-result=""date"" time-of-day=""no"" type=""normal""/>
+<field-definition auto-enter=""no"" four-digit-year=""no"" global=""no"" max-repeat=""1"" name=""artlocations::Location"" not-empty=""no"" numeric-only=""no"" result=""text"" time-of-day=""no"" type=""normal""/>
+<field-definition auto-enter=""no"" four-digit-year=""no"" global=""no"" max-repeat=""1"" name=""artlocations::Date"" not-empty=""no"" numeric-only=""no"" result=""date"" time-of-day=""no"" type=""normal""/>
 </relatedset-definition>
 </metadata>
 <resultset count=""1"" fetch-size=""1"">

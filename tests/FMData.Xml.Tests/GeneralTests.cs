@@ -1,46 +1,42 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 using Xunit;
 
-namespace FMData.Tests
+namespace FMData.Xml.Tests
 {
     public class GeneralTests
     {
-        //private FindRequest<User> FindReq => new FindRequest<User>()
-        //{
-        //    Query = new List<User>()
-        //    {
-        //        new User()
-        //        {
-        //            Id =1
-        //        }
-        //    },
-        //    Layout = "layout"
-        //};
+        [Fact]
+        public void Sample_fmresultset_FieldExtraction()
+        {
+            //arrange 
+            var local = XmlResponses.GrammarSample_fmresultset;
+            var xdoc = XDocument.Load(new StringReader(local));
+            var ns = XNamespace.Get("http://www.filemaker.com/xml/fmresultset");
 
-        //[Fact]
-        //public void FindRequest_Numbers_ShouldSerialize_ToStrings_ForFileMaker()
-        //{
-        //    //arrange 
-        //    var r = FindReq;
+            // act
+            var dict = new Dictionary<string, string>();
+            var records = xdoc
+                .Descendants(ns + "resultset")
+                .Elements(ns + "record")
+                .Select(r => new Record()
+                {
+                    RecordId = Convert.ToInt32(r.Attribute("record-id").Value),
+                    ModId = Convert.ToInt32(r.Attribute("mod-id").Value),
+                    FieldData = r.Elements(ns + "field")
+                    .ToDictionary(
+                        k => k.Attribute("name").Value, 
+                        v => v.Value
+                        )
+                });
 
-        //    // act
-        //    var json = r.ToJson();
-
-        //    //assert
-        //    Assert.Contains("\"Id\":\"1\"", json);
-        //}
-
-        //[Fact]
-        //public void FindRequest_Numbers_ShouldNotSerialize_ToNumbers()
-        //{
-        //    //arrange 
-        //    var r = FindReq;
-
-        //    // act
-        //    var json = r.ToJson();
-
-        //    //assert
-        //    Assert.DoesNotContain("\"Id\":1", json);
-        //}
+            //assert
+            Assert.Contains(records, r => r.RecordId == 14);
+            Assert.Contains(records.SelectMany(f => f.FieldData), r => r.Key == "Title");
+            Assert.Contains(records.SelectMany(f => f.FieldData), r => r.Value == "Spring in Giverny 3");
+        }
     }
 }
