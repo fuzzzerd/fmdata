@@ -31,10 +31,10 @@ namespace FMData.Tests
     ]
 }}";
 
-        public static string SuccessfulCreate() => @"{
+        public static string SuccessfulCreate(int createdId = 254) => @"{
   ""errorCode"": ""0"",
-  ""result"": ""OK""
-}";
+  ""result"": ""OK"",
+  ""recordId"": """ + createdId.ToString() + @""" }";
 
         public static string SuccessfulEdit() => @"{
   ""errorCode"": ""0"",
