@@ -4,8 +4,8 @@ using System.Text;
 
 namespace FMData.Xml.Responses
 {
-    public class FindResponse<T> : BaseResponse, IResponse, IFindResponse<T>
-    {
-        public IEnumerable<RecordBase<T, Dictionary<string, string>>> Data { get; set; }
-    }
+    //public class FindResponse<T> : BaseResponse, IResponse, IFindResponse<T>
+    //{
+    //    public IEnumerable<RecordBase<T, Dictionary<string, string>>> Data { get; set; }
+    //}
 }

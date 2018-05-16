@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace FMData.Rest
 {
-    public interface IFileMakerRestClient : FMData.IFileMakerApiClient
+    public interface IFileMakerRestClient : IFileMakerApiClient
     {
         #region Auth/Data Token Management
         /// <summary>
@@ -15,8 +15,7 @@ namespace FMData.Rest
         /// <returns>An AuthResponse from deserialized from FileMaker Server json response.</returns>
         Task<AuthResponse> RefreshTokenAsync(
             string username,
-            string password,
-            string layout);
+            string password);
 
         /// <summary>
         /// Logs the user out and nullifies the token.

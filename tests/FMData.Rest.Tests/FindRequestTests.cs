@@ -21,19 +21,20 @@ namespace FMData.Tests
             var file = "test-file";
             var user = "unit";
             var pass = "test";
-            var layout = "layout";
 
-            mockHttp.When(HttpMethod.Get, $"{server}/fmi/rest/api/record/{file}/{layout}*")
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Get, $"{server}/fmi/data/v1/databases/{file}/layout*")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/auth/{file}")
-                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
-
-
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/*")
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/layout/_find")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/Users/_find")
+                .Respond("application/json", DataApiResponses.SuccessfulFind());
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
             return fdc;
         }
 
@@ -129,16 +130,16 @@ namespace FMData.Tests
             var file = "test-file";
             var user = "unit";
             var pass = "test";
-            var layout = "layout";
+            var layout = "Users";
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/auth/{file}")
-                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/*")
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/_find")
                 .WithPartialContent("fuzzzerd") // ensure the request contains the expected content
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
             // act
             var response = await fdc.FindAsync(new User()
@@ -161,15 +162,15 @@ namespace FMData.Tests
             var file = "test-file";
             var user = "unit";
             var pass = "test";
-            var layout = "layout";
+            var layout = "Users";
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/auth/{file}")
-                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/nottherequestbelow")
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/_find")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
             // act
             var response = await fdc.SendAsync(FindUserReq);
@@ -190,13 +191,13 @@ namespace FMData.Tests
             var pass = "test";
             var layout = "layout";
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/auth/{file}")
-                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/nottherequestbelow")
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/_find")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
             // act
             var toFind = new User() { Id = 35 };

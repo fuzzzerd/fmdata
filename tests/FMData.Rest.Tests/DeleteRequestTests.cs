@@ -19,43 +19,16 @@ namespace FMData.Tests
             var pass = "test";
             var layout = "layout";
 
-            mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
+            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(HttpMethod.Delete, $"{server}/fmi/rest/api/record/{file}/{layout}/*")
+            mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/*")
                 .Respond("application/json", DataApiResponses.SuccessfulDelete());
 
             var mockedClient = mockHttp.ToHttpClient();
 
-            var fdc = new FileMakerRestClient(mockedClient, server, file, user, pass, layout);
+            var fdc = new FileMakerRestClient(mockedClient, server, file, user, pass);
             return fdc;
-        }
-
-        [Fact]
-        public async Task DeleteShould_ReturnOK()
-        {
-            var fdc = GetMockedClient();
-
-            var req = new DeleteRequest()
-            {
-                Layout = "layout",
-                RecordId = "1234"
-            };
-            var response = await fdc.SendAsync(req);
-
-            Assert.NotNull(response);
-            Assert.Equal("OK", response.Result);
-        }
-
-        [Fact]
-        public async Task DeleteByIdandLayout_Should_ReturnOK()
-        {
-            var fdc = GetMockedClient();
-
-            var response = await fdc.DeleteAsync(2, "layout");
-
-            Assert.NotNull(response);
-            Assert.Equal("OK", response.Result);
         }
 
         [Fact]
@@ -71,22 +44,49 @@ namespace FMData.Tests
             var pass = "test";
             var layout = "Users";
 
-            mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
+            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}/*")
+            mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/*")
                 .Respond("application/json", DataApiResponses.SuccessfulDelete());
 
             var mockedClient = mockHttp.ToHttpClient();
 
-            var fdc = new FileMakerRestClient(mockedClient, server, file, user, pass, layout);
+            var fdc = new FileMakerRestClient(mockedClient, server, file, user, pass);
 
             // act
             var response = await fdc.DeleteAsync<TestModels.User>(2);
 
             // assert
             Assert.NotNull(response);
-            Assert.Equal("OK", response.Result);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
+        }
+
+        [Fact]
+        public async Task DeleteShould_ReturnOK()
+        {
+            var fdc = GetMockedClient();
+
+            var req = new DeleteRequest()
+            {
+                Layout = "layout",
+                RecordId = "1234"
+            };
+            var response = await fdc.SendAsync(req);
+
+            Assert.NotNull(response);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
+        }
+
+        [Fact]
+        public async Task DeleteByIdandLayout_Should_ReturnOK()
+        {
+            var fdc = GetMockedClient();
+
+            var response = await fdc.DeleteAsync(2, "layout");
+
+            Assert.NotNull(response);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
         }
 
         [Fact]
@@ -100,8 +100,8 @@ namespace FMData.Tests
 
             // assert
             Assert.NotNull(response);
-            Assert.Equal("404", response.ErrorCode);
-            Assert.Equal("Error", response.Result);
+            Assert.Contains(response.Messages, r => r.Code == "404");
+            Assert.Contains(response.Messages, r => r.Message == "Error");
         }
     }
 }

@@ -22,13 +22,12 @@ namespace FMData.Tests
                 var file = "test-file";
                 var user = "unit";
                 var pass = "test";
-                var layout = "layout";
 
                 // note the lack of slash here vs other tests to ensure the actual auth endpoint is correctly mocked/hit
-                mockHttp.When($"{server}fmi/rest/api/auth/{file}")
-                        .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                mockHttp.When($"{server}fmi/data/v1/databases/{file}/sessions")
+                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-                using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+                using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass))
                 {
                     Assert.True(fdc.IsAuthenticated);
                 }
@@ -45,12 +44,11 @@ namespace FMData.Tests
             var file = "test-file";
             var user = "unit";
             var pass = "test";
-            var layout = "layout";
 
-            mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
-                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
+                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass))
             {
                 Assert.True(fdc.IsAuthenticated);
             }
@@ -65,36 +63,34 @@ namespace FMData.Tests
             var file = "test-file";
             var user = "unit";
             var pass = "test";
-            var layout = "layout";
 
-            mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
-                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication("someOtherToken"));
+            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
+                .Respond("application/json", DataApiResponses.SuccessfulAuthentication("someOtherToken"));
 
-            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass))
             {
-                var response = await fdc.RefreshTokenAsync("integration", "test", "someLayout");
-                Assert.Equal("someOtherToken", response.Token);
+                var response = await fdc.RefreshTokenAsync("integration", "test");
+                Assert.Equal("someOtherToken", response.Response.Token);
             }
         }
 
         [Theory]
-        [InlineData("", "test", "layout")]
-        [InlineData("integration", "", "layout")]
-        [InlineData("integration", "test", "")]
-        public async Task RefreshToken_Requires_AllParameters(string user, string pass, string layout)
+        [InlineData("", "test")]
+        [InlineData("integration", "")]
+        public async Task RefreshToken_Requires_AllParameters(string user, string pass)
         {
             var mockHttp = new MockHttpMessageHandler();
 
             var server = "http://localhost";
             var file = "test-file";
 
-            mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
-                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication("someOtherToken"));
+            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
+                .Respond("application/json", DataApiResponses.SuccessfulAuthentication("someOtherToken"));
 
             // pass in actual values here since we DON'T want this to blow up on constructor 
-            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, "user", "pass", "layout"))
+            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, "user", "pass"))
             {
-                await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.RefreshTokenAsync(user, pass, layout));
+                await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.RefreshTokenAsync(user, pass));
             }
         }
     }
