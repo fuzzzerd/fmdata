@@ -17,33 +17,15 @@ namespace FMData
         Task<IResponse> CreateAsync<T>(T input) where T : class, new();
 
         /// <summary>
-        /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout.
+        /// Create a record in the file via explicit layout..
         /// </summary>
         /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
-        /// <param name="layout"></param>
+        /// <param name="layout">The layout to use for the context of the request.</param>
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
         /// <returns>The newly created RecordId and/or an error response code.</returns>
         Task<IResponse> CreateAsync<T>(string layout, T input) where T : class, new();
 
-        /// <summary>
-        /// Creates a new record.
-        /// </summary>
-        /// <param name="req">New record request.</param>
-        Task<IResponse> SendAsync<T>(ICreateRequest<T> req) where T : class, new();
 
-        /// <summary>
-        /// Find a record or records matching the request.
-        /// </summary>
-        /// <param name="req">Find request.</param>
-        Task<IFindResponse<Dictionary<string,string>>> SendAsync(IFindRequest<Dictionary<string,string>> req);
-
-
-        /// <summary>
-        /// Find a record or records matching the request.
-        /// </summary>
-        /// <param name="req">Find request</param>
-        /// <returns></returns>
-        Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req) where T : class, new();
 
         /// <summary>
         /// Finds a record or records matching the properties of the input request object.
@@ -60,17 +42,7 @@ namespace FMData
         /// <returns></returns>
         Task<IEnumerable<T>> FindAsync<T>(string layout, T request) where T : class, new();
 
-        /// <summary>
-        /// Edit record.
-        /// </summary>
-        /// <param name="req">Edit record request.</param>
-        Task<IResponse> SendAsync(IEditRequest<Dictionary<string, string>> req);
 
-        /// <summary>
-        /// Edit record.
-        /// </summary>
-        /// <param name="req">Edit record request.</param>
-        Task<IResponse> SendAsync<T>(IEditRequest<T> req) where T : class, new();
 
         /// <summary>
         /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
@@ -91,20 +63,15 @@ namespace FMData
         /// <returns></returns>
         Task<IResponse> EditAsync<T>(string layout, int recordId, T input) where T : class, new();
 
-        /// <summary>
-        /// Delete record
-        /// </summary>
-        /// <param name="req">Delete record request.</param>
-        Task<IResponse> SendAsync(IDeleteRequest req);
 
         /// <summary>
-        /// Delete a record
+        /// Delete a record by FileMaker RecordId. 
         /// </summary>
         /// <param name="recId">The filemaker RecordId to delete.</param>
-        /// <param name="delete">Used to pull the [TableAttribute] value to determine the layout to use.</param>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Used to pull the [TableAttribute] value to determine the layout to use.</typeparam>
         /// <returns></returns>
-        Task<IResponse> DeleteAsync<T>(int recId, T delete);
+        /// <remarks>Use the other delete overload if the class does not use the [Table] attribute.</remarks>
+        Task<IResponse> DeleteAsync<T>(int recId) where T : class, new();
 
         /// <summary>
         /// Delete a record.
@@ -113,6 +80,45 @@ namespace FMData
         /// <param name="layout">The layout to use for the delete.</param>
         /// <returns></returns>
         Task<IResponse> DeleteAsync(int recId, string layout);
+
+
+        #region Send Request Methods
+        /// <summary>
+        /// Creates a new record.
+        /// </summary>
+        /// <param name="req">New record request.</param>
+        Task<IResponse> SendAsync<T>(ICreateRequest<T> req) where T : class, new();
+
+        /// <summary>
+        /// Find a record or records matching the request.
+        /// </summary>
+        /// <param name="req">Find request.</param>
+        Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req);
+
+        /// <summary>
+        /// Find a record or records matching the request.
+        /// </summary>
+        /// <param name="req">Find request</param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req) where T : class, new();
+
+        /// <summary>
+        /// Edit record.
+        /// </summary>
+        /// <param name="req">Edit record request.</param>
+        Task<IResponse> SendAsync(IEditRequest<Dictionary<string, string>> req);
+
+        /// <summary>
+        /// Edit record.
+        /// </summary>
+        /// <param name="req">Edit record request.</param>
+        Task<IResponse> SendAsync<T>(IEditRequest<T> req) where T : class, new();
         
+        /// <summary>
+        /// Delete record
+        /// </summary>
+        /// <param name="req">Delete record request.</param>
+        Task<IResponse> SendAsync(IDeleteRequest req); 
+        #endregion
     }
 }
