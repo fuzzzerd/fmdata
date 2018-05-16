@@ -1,3 +1,4 @@
+using System.Net.Http;
 using System.Threading.Tasks;
 using FMData.Rest;
 using FMData.Rest.Requests;
@@ -21,7 +22,7 @@ namespace FMData.Tests
             mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}/*")
+            mockHttp.When(HttpMethod.Delete, $"{server}/fmi/rest/api/record/{file}/{layout}/*")
                 .Respond("application/json", DataApiResponses.SuccessfulDelete());
 
             var mockedClient = mockHttp.ToHttpClient();
