@@ -245,7 +245,7 @@ namespace FMData.Rest
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<FindResponse<T>>(responseJson);
-                return responseObject.Data.Select(d => d.FieldData);
+                return responseObject.Response.Data.Select(d => d.FieldData);
             }
 
             if (response.StatusCode == HttpStatusCode.NotFound)
@@ -384,7 +384,7 @@ namespace FMData.Rest
                 JObject joResponse = JObject.Parse(responseJson);
 
                 // get JSON result objects into a list
-                IList<JToken> results = joResponse["data"].Children()["fieldData"].ToList();
+                IList<JToken> results = joResponse["response"]["data"].Children()["fieldData"].ToList();
 
                 // serialize JSON results into .NET objects
                 IList<T> searchResults = new List<T>();
