@@ -9,6 +9,7 @@ namespace FMData.Xml.Requests
         public int Offset { get; set; }
         public int Range { get; set; }
         public IEnumerable<ISort> Sort { get; set; }
+        public string ResponseLayout { get; set; }
 
         public string SerializeRequest()
         {
