@@ -42,6 +42,14 @@ namespace FMData
         /// <returns></returns>
         Task<IEnumerable<T>> FindAsync<T>(string layout, T request) where T : class, new();
 
+        /// <summary>
+        /// Finds a record or records matching the properties of the input request.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="layout"></param>
+        /// <param name="req"></param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
 
 
         /// <summary>
@@ -63,6 +71,15 @@ namespace FMData
         /// <returns></returns>
         Task<IResponse> EditAsync<T>(string layout, int recordId, T input) where T : class, new();
 
+        /// <summary>
+        /// Edit a record based on RecordId, layout, and a collection of key/value pairs for the fields to be updated.
+        /// </summary>
+        /// <param name="recordId">FileMaker RecordId</param>
+        /// <param name="layout">The layout to use for context.</param>
+        /// <param name="editValues">The field and value pairs to send for edit.</param>
+        /// <returns></returns>
+        Task<IResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues);
+
 
         /// <summary>
         /// Delete a record by FileMaker RecordId. 
@@ -80,6 +97,7 @@ namespace FMData
         /// <param name="layout">The layout to use for the delete.</param>
         /// <returns></returns>
         Task<IResponse> DeleteAsync(int recId, string layout);
+
 
 
         #region Send Request Methods
@@ -101,12 +119,6 @@ namespace FMData
         /// <param name="req">Find request</param>
         /// <returns></returns>
         Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req) where T : class, new();
-
-        /// <summary>
-        /// Edit record.
-        /// </summary>
-        /// <param name="req">Edit record request.</param>
-        Task<IResponse> SendAsync(IEditRequest<Dictionary<string, string>> req);
 
         /// <summary>
         /// Edit record.

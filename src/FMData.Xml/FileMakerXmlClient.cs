@@ -99,17 +99,7 @@ namespace FMData.Xml
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> DeleteAsync<T>(int recId, T delete)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Task<IResponse> DeleteAsync(int recId, string layout)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Task<IResponse> SendAsync(IEditRequest<Dictionary<string, string>> req)
         {
             throw new NotImplementedException();
         }
@@ -182,12 +172,6 @@ namespace FMData.Xml
             throw new NotImplementedException();
         }
 
-        public override Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req)
-        {
-            throw new NotImplementedException();
-        }
-
-
         #region IDisposable Implementation
         /// <summary>
         /// Dispose resources opened for this instance of the data client.
@@ -199,6 +183,16 @@ namespace FMData.Xml
                 // dispose our injected http client
                 _client.Dispose();
             }
+        }
+
+        public override Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<IResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }
