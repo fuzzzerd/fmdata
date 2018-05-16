@@ -16,18 +16,18 @@ namespace FMData
         /// <returns></returns>
         public virtual Task<IResponse> CreateAsync<T>(T input) where T : class, new() => CreateAsync(GetTableName(input), input);
         public abstract Task<IResponse> CreateAsync<T>(string layout, T input) where T : class, new();
-        public abstract Task<IResponse> CreateAsync<T>(ICreateRequest<T> req) where T : class, new();
+        public abstract Task<IResponse> SendAsync<T>(ICreateRequest<T> req) where T : class, new();
 
         public virtual Task<IResponse> DeleteAsync<T>(int recId, T delete) => DeleteAsync(recId, GetTableName(delete));
         public abstract Task<IResponse> DeleteAsync(int recId, string layout);
-        public abstract Task<IResponse> DeleteAsync(IDeleteRequest req);
-        public abstract void Dispose();
+        public abstract Task<IResponse> SendAsync(IDeleteRequest req);
+        
         public virtual Task<IResponse> EditAsync<T>(int recordId, T input) where T : class, new() => EditAsync(GetTableName(input), recordId, input);
         public abstract Task<IResponse> EditAsync<T>(string layout, int recordId, T input) where T : class, new();
-        public abstract Task<IResponse> EditAsync(IEditRequest<Dictionary<string, string>> req);
-        public abstract Task<IResponse> EditAsync<T>(IEditRequest<T> req) where T : class, new();
+        public abstract Task<IResponse> SendAsync(IEditRequest<Dictionary<string, string>> req);
+        public abstract Task<IResponse> SendAsync<T>(IEditRequest<T> req) where T : class, new();
         
-
+         
         /// <summary>
         /// Strongly typed find request.
         /// </summary>
@@ -36,9 +36,10 @@ namespace FMData
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         public virtual Task<IEnumerable<T>> FindAsync<T>(T input) where T : class, new() => FindAsync(GetTableName(input), input);
         public abstract Task<IEnumerable<T>> FindAsync<T>(string layout, T request) where T : class, new();
-        public abstract Task<IFindResponse<Dictionary<string, string>>> FindAsync(IFindRequest<Dictionary<string, string>> req);
+
         public abstract Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req) where T : class, new();
-        public abstract Task<IEnumerable<T>> FindAsync<T>(IFindRequest<T> req) where T : class, new();
+        public abstract Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req);
+        public abstract Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req) where T : class, new();
 
         /// <summary>
         /// Utility method to get the TableAttribute name to be used for the layout option in the request.
@@ -60,5 +61,7 @@ namespace FMData
             }
             return lay;
         }
+
+        public abstract void Dispose();
     }
 }

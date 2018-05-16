@@ -89,12 +89,12 @@ namespace FMData.Xml
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> CreateAsync<T>(ICreateRequest<T> req)
+        public override Task<IResponse> SendAsync<T>(ICreateRequest<T> req)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> DeleteAsync(IDeleteRequest req)
+        public override Task<IResponse> SendAsync(IDeleteRequest req)
         {
             throw new NotImplementedException();
         }
@@ -109,12 +109,12 @@ namespace FMData.Xml
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> EditAsync(IEditRequest<Dictionary<string, string>> req)
+        public override Task<IResponse> SendAsync(IEditRequest<Dictionary<string, string>> req)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> EditAsync<T>(IEditRequest<T> req)
+        public override Task<IResponse> SendAsync<T>(IEditRequest<T> req)
         {
             throw new NotImplementedException();
         }
@@ -136,10 +136,10 @@ namespace FMData.Xml
         /// <param name="layout">The name of the layout to run this request on.</param>
         /// <param name="input">The object with properties to map to the find request.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public override Task<IEnumerable<T>> FindAsync<T>(string layout, T input) => FindAsync((IFindRequest<T>)new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
+        public override Task<IEnumerable<T>> FindAsync<T>(string layout, T input) => SendAsync((IFindRequest<T>)new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
 
 
-        public override async Task<IEnumerable<T>> FindAsync<T>(IFindRequest<T> req)
+        public override async Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req)
         {
             var url = _fmsUri + "/fmi/xml/fmresultset.xml";
 
@@ -177,7 +177,7 @@ namespace FMData.Xml
             return null;
         }
 
-        public override Task<IFindResponse<Dictionary<string, string>>> FindAsync(IFindRequest<Dictionary<string, string>> req)
+        public override Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req)
         {
             throw new NotImplementedException();
         }

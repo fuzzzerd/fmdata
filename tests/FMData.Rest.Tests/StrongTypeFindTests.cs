@@ -51,35 +51,7 @@ namespace FMData.Tests
             var fdc = GetMockedFDC();
 
             // act
-            var response = await fdc.FindAsync<User>(FindReq);
-
-            // assert
-            var responseDataContainsResult = response.Any(r => r.Name.Contains("Buzz"));
-            Assert.True(responseDataContainsResult);
-        }
-
-        [Fact]
-        public async Task DictionaryRequest_ForStrongType_ShouldReturn()
-        {
-            // arrange
-            var fdc = GetMockedFDC();
-
-            // act
-            var response = await fdc.FindAsync<User>((IFindRequest<Dictionary<string,string>>)new FindRequest<Dictionary<string, string>>()
-            {
-                Query = new List<Dictionary<string, string>>()
-            {
-                new Dictionary<string,string>()
-                {
-                    {"Name","fuzzzerd"}
-                },
-                new Dictionary<string,string>()
-                {
-                    {"Name","Admin"}, {"omit","true"},
-                }
-            },
-                Layout = "layout"
-            });
+            var response = await fdc.SendAsync<User>(FindReq);
 
             // assert
             var responseDataContainsResult = response.Any(r => r.Name.Contains("Buzz"));
@@ -139,7 +111,7 @@ namespace FMData.Tests
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
 
             // act
-            var response = await fdc.FindAsync<User>(FindReq);
+            var response = await fdc.SendAsync<User>(FindReq);
 
             // assert
             Assert.Empty(response);

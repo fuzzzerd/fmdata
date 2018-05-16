@@ -29,28 +29,21 @@ namespace FMData
         /// Creates a new record.
         /// </summary>
         /// <param name="req">New record request.</param>
-        Task<IResponse> CreateAsync<T>(ICreateRequest<T> req) where T : class, new();
+        Task<IResponse> SendAsync<T>(ICreateRequest<T> req) where T : class, new();
 
         /// <summary>
         /// Find a record or records matching the request.
         /// </summary>
         /// <param name="req">Find request.</param>
-        Task<IFindResponse<Dictionary<string,string>>> FindAsync(IFindRequest<Dictionary<string,string>> req);
+        Task<IFindResponse<Dictionary<string,string>>> SendAsync(IFindRequest<Dictionary<string,string>> req);
 
-        /// <summary>
-        /// Find a record with a custom dictionary of request parameters.
-        /// </summary>
-        /// <typeparam name="T">The type of object to project and return.</typeparam>
-        /// <param name="req">The request parameters to send to FileMaker Server.</param>
-        /// <returns>An IEnumerable of type T.</returns>
-        Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req) where T : class, new();
 
         /// <summary>
         /// Find a record or records matching the request.
         /// </summary>
         /// <param name="req">Find request</param>
         /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(IFindRequest<T> req) where T : class, new();
+        Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req) where T : class, new();
 
         /// <summary>
         /// Finds a record or records matching the properties of the input request object.
@@ -71,13 +64,13 @@ namespace FMData
         /// Edit record.
         /// </summary>
         /// <param name="req">Edit record request.</param>
-        Task<IResponse> EditAsync(IEditRequest<Dictionary<string, string>> req);
+        Task<IResponse> SendAsync(IEditRequest<Dictionary<string, string>> req);
 
         /// <summary>
         /// Edit record.
         /// </summary>
         /// <param name="req">Edit record request.</param>
-        Task<IResponse> EditAsync<T>(IEditRequest<T> req) where T : class, new();
+        Task<IResponse> SendAsync<T>(IEditRequest<T> req) where T : class, new();
 
         /// <summary>
         /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
@@ -102,7 +95,7 @@ namespace FMData
         /// Delete record
         /// </summary>
         /// <param name="req">Delete record request.</param>
-        Task<IResponse> DeleteAsync(IDeleteRequest req);
+        Task<IResponse> SendAsync(IDeleteRequest req);
 
         /// <summary>
         /// Delete a record

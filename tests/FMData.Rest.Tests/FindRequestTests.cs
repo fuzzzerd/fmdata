@@ -60,7 +60,7 @@ namespace FMData.Tests
         {
             var fdc = GetMockedFDC();
 
-            var response = await fdc.FindAsync(FindReq);
+            var response = await fdc.SendAsync(FindReq);
 
             var responseDataContainsResult = response.Data.Any(r => r.FieldData.Any(v => v.Value.Contains("Buzz")));
 
@@ -72,7 +72,7 @@ namespace FMData.Tests
         {
             var fdc = GetMockedFDC();
 
-            var response = await fdc.FindAsync((IFindRequest<TestModels.User>)new FindRequest<TestModels.User> { Layout = "layout" });
+            var response = await fdc.SendAsync((IFindRequest<TestModels.User>)new FindRequest<TestModels.User> { Layout = "layout" });
 
             Assert.Equal(2, response.Count());
         }
