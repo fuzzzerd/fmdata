@@ -367,6 +367,8 @@ namespace FMData.Rest
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         public override async Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req)
         {
+            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
+
             var response = await GetFindHttpResponseAsync(req);
 
             if (response.StatusCode == HttpStatusCode.OK)
