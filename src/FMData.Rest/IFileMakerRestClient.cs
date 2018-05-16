@@ -40,6 +40,15 @@ namespace FMData.Rest
         string FindEndpoint(string layout);
 
         /// <summary>
+        /// Generate the appropriate Get Records endpoint.
+        /// </summary>
+        /// <param name="layout">The layout to use as the context for the response.</param>
+        /// <param name="range">The number of records to return.</param>
+        /// <param name="offset">The offset number of records to skip before starting to return records.</param>
+        /// <returns>The FileMaker Data API Endpoint for Get Records reqeusts.</returns>
+        string GetRecordsEndpoint(string layout, int range, int offset);
+
+        /// <summary>
         /// Generate the appropriate Create endpoint uri for this instance of the data client.
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>

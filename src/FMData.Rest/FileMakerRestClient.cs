@@ -97,6 +97,14 @@ namespace FMData.Rest
         /// <returns>The FileMaker Data API Endpoint for Create requests.</returns>
         public string CreateEndpoint(string layout) => $"{_baseEndPoint}/record/{_fileName}/{layout}";
         /// <summary>
+        /// Generate the appropriate Get Records endpoint.
+        /// </summary>
+        /// <param name="layout">The layout to use as the context for the response.</param>
+        /// <param name="range">The number of records to return.</param>
+        /// <param name="offset">The offset number of records to skip before starting to return records.</param>
+        /// <returns>The FileMaker Data API Endpoint for Get Records reqeusts.</returns>
+        public string GetRecordsEndpoint(string layout, int range, int offset) => $"{_baseEndPoint}/record/{_fileName}/{layout}?range={range}&offset={offset}";
+        /// <summary>
         /// Generate the appropriate Edit/Update endpoint uri for this instance of the data client.
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
@@ -400,7 +408,15 @@ namespace FMData.Rest
         private Task<HttpResponseMessage> GetFindHttpResponseAsync<T>(IFindRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
-            if (req.Query == null || req.Query.Count() == 0) throw new ArgumentException("Query parameters are required on the find request.");
+
+            if (req.Query == null || req.Query.Count() == 0)
+            {
+                // normally required, but internally we can route to the regular record request apis
+                var uriEndpoint = GetRecordsEndpoint(req.Layout, req.Range, req.Offset);
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, uriEndpoint);
+                requestMessage.Headers.Add("FM-Data-token", this.dataToken);
+                return _client.SendAsync(requestMessage);
+            }
 
             var json = req.SerializeRequest();
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
