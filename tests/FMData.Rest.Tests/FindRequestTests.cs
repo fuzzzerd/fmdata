@@ -23,6 +23,9 @@ namespace FMData.Tests
             var pass = "test";
             var layout = "layout";
 
+            mockHttp.When(HttpMethod.Get, $"{server}/fmi/rest/api/record/{file}/{layout}*")
+                .Respond("application/json", DataApiResponses.SuccessfulFind());
+
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/auth/{file}")
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
@@ -30,11 +33,13 @@ namespace FMData.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/find/{file}/*")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
+            
+
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
             return fdc;
         }
 
-        private IFindRequest<Dictionary<string, string>> FindReq => (IFindRequest<Dictionary<string,string>>)new FindRequest<Dictionary<string, string>>()
+        private IFindRequest<Dictionary<string, string>> FindReq => new FindRequest<Dictionary<string, string>>()
         {
             Query = new List<Dictionary<string, string>>()
             {
@@ -60,6 +65,16 @@ namespace FMData.Tests
             var responseDataContainsResult = response.Data.Any(r => r.FieldData.Any(v => v.Value.Contains("Buzz")));
 
             Assert.True(responseDataContainsResult);
+        }
+
+        [Fact]
+        public async Task EmptyFind_ShouldReturnMany()
+        {
+            var fdc = GetMockedFDC();
+
+            var response = await fdc.FindAsync((IFindRequest<TestModels.User>)new FindRequest<TestModels.User> { Layout = "layout" });
+
+            Assert.Equal(2, response.Count());
         }
 
         [Fact]
