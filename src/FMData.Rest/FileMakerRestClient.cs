@@ -4,11 +4,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,8 +25,10 @@ namespace FMData.Rest
         private readonly string _password;
 
         private string dataToken;
+        private DateTime dataTokenLastUse = DateTime.MinValue;
+        private void UpdateTokenDate() => dataTokenLastUse = DateTime.UtcNow;
 
-        public bool IsAuthenticated => !String.IsNullOrEmpty(dataToken);
+        public bool IsAuthenticated => !String.IsNullOrEmpty(dataToken);// && DateTime.UtcNow.Subtract(dataTokenLastUse).TotalMinutes <= 15;
 
         #region Constructors
         /// <summary>
@@ -37,10 +38,9 @@ namespace FMData.Rest
         /// <param name="file">Name of the FileMaker Database to connect to.</param>
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
-        /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
         /// <remarks>Pass through constructor with no real body used for injection.</remarks>
-        public FileMakerRestClient(string fmsUri, string file, string user, string pass, string initialLayout)
-            : this(new HttpClient(), fmsUri, file, user, pass, initialLayout) { }
+        public FileMakerRestClient(string fmsUri, string file, string user, string pass)
+            : this(new HttpClient(), fmsUri, file, user, pass) { }
 
         /// <summary>
         /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"> instance to the class.
@@ -50,8 +50,7 @@ namespace FMData.Rest
         /// <param name="file">Name of the FileMaker Database to connect to.</param>
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
-        /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
-        public FileMakerRestClient(HttpClient client, string fmsUri, string file, string user, string pass, string initialLayout)
+        public FileMakerRestClient(HttpClient client, string fmsUri, string file, string user, string pass)
         {
             _client = client;
 
@@ -65,11 +64,11 @@ namespace FMData.Rest
             _userName = user;
             _password = pass;
 
-            var authResponse = RefreshTokenAsync(_userName, _password, initialLayout);
+            var authResponse = RefreshTokenAsync(_userName, _password);
             authResponse.Wait();
-            if (authResponse.Result.Result == "OK")
+            if (authResponse.Result.Messages.Any(r => r.Message == "OK"))
             {
-                dataToken = authResponse.Result.Token;
+                dataToken = authResponse.Result.Response.Token;
             }
         }
         #endregion
@@ -78,72 +77,79 @@ namespace FMData.Rest
         /// <summary>
         /// Note we assume _fmsUri has no trailing slash as its cut off in the constructor.
         /// </summary>
-        private string _baseEndPoint => $"{_fmsUri}/fmi/rest/api";
+        private string _baseEndPoint => $"{_fmsUri}/fmi/data/v1/databases/{_fileName}";
         /// <summary>
         /// Generate the appropriate Authentication endpoint uri for this instance of the data client.
         /// </summary>
         /// <returns>The FileMaker Data API Endpoint for Authentication Requests.</returns>
-        public string AuthEndpoint() => $"{_baseEndPoint}/auth/{_fileName}";
+        public string AuthEndpoint() => $"{_baseEndPoint}/sessions";
+        
         /// <summary>
         /// Generate the appropriate Find endpoint uri for this instance of the data client.
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <returns>The FileMaker Data API Endpoint for Find requests.</returns>
-        public string FindEndpoint(string layout) => $"{_baseEndPoint}/find/{_fileName}/{layout}";
+        public string FindEndpoint(string layout) => $"{_baseEndPoint}/layouts/{layout}/_find";
+        
         /// <summary>
         /// Generate the appropriate Create endpoint uri for this instance of the data client.
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <returns>The FileMaker Data API Endpoint for Create requests.</returns>
-        public string CreateEndpoint(string layout) => $"{_baseEndPoint}/record/{_fileName}/{layout}";
+        public string CreateEndpoint(string layout) => $"{_baseEndPoint}/layouts/{layout}/records";
+        
         /// <summary>
         /// Generate the appropriate Get Records endpoint.
         /// </summary>
         /// <param name="layout">The layout to use as the context for the response.</param>
-        /// <param name="range">The number of records to return.</param>
+        /// <param name="limit">The number of records to return.</param>
         /// <param name="offset">The offset number of records to skip before starting to return records.</param>
         /// <returns>The FileMaker Data API Endpoint for Get Records reqeusts.</returns>
-        public string GetRecordsEndpoint(string layout, int range, int offset) => $"{_baseEndPoint}/record/{_fileName}/{layout}?range={range}&offset={offset}";
+        public string GetRecordsEndpoint(string layout, int limit, int offset) => $"{_baseEndPoint}/layouts/{layout}/records?_limit={limit}&_offset={offset}";
+        
         /// <summary>
         /// Generate the appropriate Edit/Update endpoint uri for this instance of the data client.
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <param name="recordid">The record ID of the record to edit.</param>
         /// <returns>The FileMaker Data API Endpoint for Update/Edit requests.</returns>
-        public string UpdateEndpoint(string layout, object recordid) => $"{_baseEndPoint}/record/{_fileName}/{layout}/{recordid}";
+        public string UpdateEndpoint(string layout, object recordid) => $"{_baseEndPoint}/layouts/{layout}/records/{recordid}";
+        
         /// <summary>
         /// Generate the appropriate Delete endpoint uri for this instance of the data client.
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <param name="recordid">The record ID of the record to edit.</param>
         /// <returns>The FileMaker Data API Endpoint for Delete requests.</returns>
-        public string DeleteEndpoint(string layout, object recordid) => $"{_baseEndPoint}/record/{_fileName}/{layout}/{recordid}";
+        public string DeleteEndpoint(string layout, object recordid) => $"{_baseEndPoint}/layouts/{layout}/records/{recordid}";
         #endregion
 
         #region FM Data Token Management
 
         /// <summary>
-        /// <see cref="IFileMakerApiClient.RefreshTokenAsync(string, string, string)"/>
+        /// <see cref="IFileMakerApiClient.RefreshTokenAsync(string, string)"/>
         /// </summary>
-        public async Task<AuthResponse> RefreshTokenAsync(string username, string password, string layout)
+        public async Task<AuthResponse> RefreshTokenAsync(string username, string password)
         {
             // parameter checks
             if (string.IsNullOrEmpty(username)) throw new ArgumentException("Username is a required parameter.");
             if (string.IsNullOrEmpty(password)) throw new ArgumentException("Password is a required parameter.");
-            if (string.IsNullOrEmpty(layout)) throw new ArgumentException("Layout is a required parameter.");
 
-            // build up the request object/content
-            var str = $"{{ \"user\": \"{username}\", \"password\" : \"{password}\", \"layout\": \"{layout}\" }}";
-            var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
+            var authHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}")));
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, AuthEndpoint());
+            requestMessage.Headers.Authorization = authHeader;
+            requestMessage.Content = new StringContent("{ }", Encoding.UTF8, "application/json");
+
             // run the post action
-            var response = await _client.PostAsync(AuthEndpoint(), httpContent);
+            var response = await _client.SendAsync(requestMessage);
 
             // process the response
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<AuthResponse>(responseJson);
-                this.dataToken = responseObject.Token;
+                this.dataToken = responseObject.Response.Token;
+                
                 return responseObject;
             }
             // something bad happened. TODO: improve non-OK response handling
@@ -353,7 +359,7 @@ namespace FMData.Rest
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                return new BaseResponse() { ErrorCode = "404", Result = "Error" };
+                return new BaseResponse("404", "Error");
             }
 
             throw new Exception("Could not delete record.");
@@ -419,7 +425,7 @@ namespace FMData.Rest
             if (req.Query == null || req.Query.Count() == 0)
             {
                 // normally required, but internally we can route to the regular record request apis
-                var uriEndpoint = GetRecordsEndpoint(req.Layout, req.Range, req.Offset);
+                var uriEndpoint = GetRecordsEndpoint(req.Layout, req.Limit, req.Offset);
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get, uriEndpoint);
                 requestMessage.Headers.Add("FM-Data-token", this.dataToken);
                 return _client.SendAsync(requestMessage);

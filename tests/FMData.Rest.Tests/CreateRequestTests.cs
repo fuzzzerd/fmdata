@@ -37,14 +37,18 @@ namespace FMData.Tests
             var pass = "test";
             var layout = "layout";
 
-            mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
+            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/rest/api/record/{file}/*")
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
                 .WithPartialContent("data") // make sure that the body content contains the 'data' object expected by fms
-                .Respond("application/json", DataApiResponses.SuccessfulCreate());
+                .Respond("application/json", DataApiResponses.SuccessfulDelete());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/Somelayout/records*")
+                .WithPartialContent("data") // make sure that the body content contains the 'data' object expected by fms
+                .Respond("application/json", DataApiResponses.SuccessfulDelete());
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
             return fdc;
         }
 
@@ -62,7 +66,7 @@ namespace FMData.Tests
             var response = await fdc.CreateAsync(newModel);
 
             Assert.NotNull(response);
-            Assert.Equal("OK", response.Result);
+            Assert.Contains(response.Messages, r=> r.Message == "OK");
         }
 
         [Fact]
@@ -79,7 +83,7 @@ namespace FMData.Tests
             var response = await fdc.CreateAsync("layout", newModel);
 
             Assert.NotNull(response);
-            Assert.Equal("OK", response.Result);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
         }
 
         [Fact]
@@ -133,7 +137,7 @@ namespace FMData.Tests
             var response = await fdc.SendAsync(req);
 
             Assert.NotNull(response);
-            Assert.Equal("OK", response.Result);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
         }
     }
 }

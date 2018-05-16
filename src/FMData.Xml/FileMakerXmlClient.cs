@@ -77,7 +77,7 @@ namespace FMData.Xml
             if (response.IsSuccessStatusCode)
             {
                 // process response data return OK
-                return new BaseResponse { Result = "OK", ErrorCode = "" };
+                return new BaseResponse("", "OK");
             }
 
             throw new Exception("Unable to complete request");

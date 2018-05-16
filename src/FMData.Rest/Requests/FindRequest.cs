@@ -20,8 +20,8 @@ namespace FMData.Rest.Requests
         /// <summary>
         /// Maximum number of records to return for this request.
         /// </summary>
-        [JsonProperty("range")]
-        public int Range { get; set; } = 100; // default 
+        [JsonProperty("limit")]
+        public int Limit { get; set; } = 100; // default 
 
         /// <summary>
         /// The number of records to skip before returning records for this request.

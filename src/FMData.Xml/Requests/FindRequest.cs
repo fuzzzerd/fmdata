@@ -7,7 +7,7 @@ namespace FMData.Xml.Requests
         public string Layout { get; set; }
         public IEnumerable<T> Query { get; set; }
         public int Offset { get; set; }
-        public int Range { get; set; }
+        public int Limit { get; set; }
         public IEnumerable<ISort> Sort { get; set; }
         public string ResponseLayout { get; set; }
 

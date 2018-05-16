@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using FMData.Rest;
 using FMData.Rest.Requests;
@@ -21,15 +22,15 @@ namespace FMData.Tests
             var pass = "test";
             var layout = "layout";
 
-            mockHttp.When($"{server}/fmi/rest/api/auth/{file}")
-                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
+               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When($"{server}/fmi/rest/api/record/{file}/{layout}/*")
+            mockHttp.When(HttpMethod.Put, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
                 .Respond("application/json", DataApiResponses.SuccessfulEdit());
 
             IEnumerable<int> x = new List<int>();
 
-            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass, layout))
+            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass))
             {
                 var req = new EditRequest<Dictionary<string, string>>()
                 {
@@ -44,7 +45,7 @@ namespace FMData.Tests
                 var response = await fdc.SendAsync(req);
 
                 Assert.NotNull(response);
-                Assert.Equal("OK", response.Result);
+                Assert.Contains(response.Messages, r => r.Message == "OK");
             }
         }
     }

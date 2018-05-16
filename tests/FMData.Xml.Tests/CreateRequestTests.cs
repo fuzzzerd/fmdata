@@ -44,7 +44,7 @@ namespace FMData.Xml.Tests
             var response = await fdc.CreateAsync(mtoCreate);
 
             Assert.NotNull(response);
-            Assert.Equal("OK", response.Result);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
         }
     }
 }

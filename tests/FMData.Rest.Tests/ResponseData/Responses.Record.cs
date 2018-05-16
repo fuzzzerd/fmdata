@@ -31,19 +31,19 @@ namespace FMData.Tests
     ]
 }}";
 
-        public static string SuccessfulCreate(int createdId = 254) => @"{
-  ""errorCode"": ""0"",
-  ""result"": ""OK"",
-  ""recordId"": """ + createdId.ToString() + @""" }";
+        public static string SuccessfulCreate(int createdId = 254) => $@"{{
+    ""response"": {{""recordId"":{createdId}}},
+    ""messages"":[{{""code"":""0"",""message"":""OK""}}]
+}}";
 
         public static string SuccessfulEdit() => @"{
-  ""errorCode"": ""0"",
-  ""result"": ""OK""
+    ""response"": {},
+    ""messages"":[{""code"":""0"",""message"":""OK""}]
 }";
 
         public static string SuccessfulDelete() => @"{
-  ""errorCode"": ""0"",
-  ""result"": ""OK""
+    ""response"": {},
+    ""messages"":[{""code"":""0"",""message"":""OK""}]
 }";
     }
 }

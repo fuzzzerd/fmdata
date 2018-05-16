@@ -1,13 +1,12 @@
-using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace FMData.Rest.Responses
 {
     public class BaseResponse : IResponse
     {
-        [JsonProperty("errorCode")]
-        public string ErrorCode { get; set; }
+        public BaseResponse() { Messages = new List<ResponseMessage>(); }
+        public BaseResponse(string code, string message) { Messages = new List<ResponseMessage>() { new ResponseMessage { Code = code, Message = message } }; }
 
-        [JsonProperty("result")]
-        public string Result { get; set; }
+        public IEnumerable<ResponseMessage> Messages { get; set; }
     }
 }

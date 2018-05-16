@@ -6,7 +6,10 @@ namespace FMData.Xml.Responses
 {
     public class BaseResponse : IResponse
     {
-        public string ErrorCode { get; set; }
-        public string Result { get; set; }
+        public BaseResponse() { Messages = new List<ResponseMessage>(); }
+        public BaseResponse(string code, string message) { Messages = new List<ResponseMessage>() { new ResponseMessage { Code = code, Message = message } }; }
+
+        public virtual object Response { get; set; }
+        public IEnumerable<ResponseMessage> Messages { get; set; }
     }
 }

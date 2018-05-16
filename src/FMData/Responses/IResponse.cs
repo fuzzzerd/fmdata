@@ -6,8 +6,12 @@ namespace FMData
 {
     public interface IResponse
     {
-        string ErrorCode { get; set; }
+        IEnumerable<ResponseMessage> Messages { get; set; }
+    }
 
-        string Result { get; set; }
+    public class ResponseMessage
+    {
+        public string Code { get; set; }
+        public string Message { get; set; }
     }
 }
