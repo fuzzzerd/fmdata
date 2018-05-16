@@ -73,7 +73,7 @@ namespace FMData.Tests
 
             var response = await fdc.SendAsync(FindReq);
 
-            var responseDataContainsResult = response.Data.Any(r => r.FieldData.Any(v => v.Value.Contains("Buzz")));
+            var responseDataContainsResult = response.Response.Data.Any(r => r.FieldData.Any(v => v.Value.Contains("Buzz")));
 
             Assert.True(responseDataContainsResult);
         }
@@ -95,7 +95,7 @@ namespace FMData.Tests
 
             var response = await fdc.SendAsync(new FindRequest<Dictionary<string, string>>() { Layout = "layout" });
 
-            Assert.Equal(2, response.Data.Count());
+            Assert.Equal(2, response.Response.Data.Count());
         }
 
         [Fact]

@@ -4,6 +4,11 @@ namespace FMData
 {
     public interface IFindResponse<TResponseType>
     {
-        IEnumerable<RecordBase<TResponseType, Dictionary<string, string>>> Data { get; set; }
+        FindResultType<TResponseType> Response { get; set; }
+    }
+
+    public class FindResultType<T>
+    {
+        public IEnumerable<RecordBase<T, Dictionary<string, string>>> Data { get; set; }
     }
 }
