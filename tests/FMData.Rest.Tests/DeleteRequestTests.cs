@@ -80,9 +80,9 @@ namespace FMData.Tests
 
             var fdc = new FileMakerRestClient(mockedClient, server, file, user, pass, layout);
 
-            var toDelete = new TestModels.User();
             // act
-            var response = await fdc.DeleteAsync(2, toDelete);
+            var response = await fdc.DeleteAsync<TestModels.User>(2);
+
             // assert
             Assert.NotNull(response);
             Assert.Equal("OK", response.Result);
@@ -93,10 +93,9 @@ namespace FMData.Tests
         {
             // arrange 
             var fdc = GetMockedClient();
-            var toDelete = new TestModels.User();
 
             // act
-            var response = await fdc.DeleteAsync(2, toDelete);
+            var response = await fdc.DeleteAsync<TestModels.User>(2);
 
             // assert
             Assert.NotNull(response);

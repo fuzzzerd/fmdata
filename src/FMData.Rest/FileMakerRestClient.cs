@@ -173,6 +173,7 @@ namespace FMData.Rest
 
         #region Data Minipulation Functions
 
+        #region Relay Methods //TODO: Possibly Integrate into base class
         /// <summary>
         /// Create a record in the database utilizing the TableAttribute to target the layout.
         /// </summary>
@@ -180,8 +181,104 @@ namespace FMData.Rest
         /// <param name="layout">Explicitly define the layout to use for this request.</param>
         /// <param name="input">Object containing the data to be on the newly created record.</param>
         /// <returns></returns>
-        /// // explicit cast to interface to route to correct generic method.
-        public override Task<IResponse> CreateAsync<T>(string layout, T input) => SendAsync((ICreateRequest<T>)new CreateRequest<T>() { Data = input, Layout = layout });
+        public override Task<IResponse> CreateAsync<T>(string layout, T input) => SendAsync(new CreateRequest<T>() { Data = input, Layout = layout });
+
+        /// <summary>
+        /// Strongly typed find request.
+        /// </summary>
+        /// <typeparam name="T">The type of response objects to return.</typeparam>
+        /// <param name="layout">The name of the layout to run this request on.</param>
+        /// <param name="input">The object with properties to map to the find request.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
+        public override Task<IEnumerable<T>> FindAsync<T>(string layout, T input) => SendAsync(new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
+
+
+        /// <summary>
+        /// Edit a record.
+        /// </summary>
+        /// <typeparam name="T">Type parameter for this edit.</typeparam>
+        /// <param name="layout">Explicitly define the layout to use.</param>
+        /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
+        /// <param name="input">Object with the updated values.</param>
+        /// <returns></returns>
+        public override Task<IResponse> EditAsync<T>(string layout, int recordId, T input) => SendAsync(new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() });
+
+        /// <summary>
+        /// Edit a record.
+        /// </summary>
+        /// <param name="layout">Explicitly define the layout to use.</param>
+        /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
+        /// <param name="editValues">Object with the updated values.</param>
+        /// <returns></returns>
+        public override Task<IResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues) => SendAsync(new EditRequest<Dictionary<string, string>>() { Data = editValues, Layout = layout, RecordId = recordId.ToString() });
+
+
+        /// <summary>
+        /// Delete a record by FileMaker RecordId and explicit layout.
+        /// </summary>
+        /// <param name="recId"></param>
+        /// <param name="layout"></param>
+        /// <returns></returns>
+        public override Task<IResponse> DeleteAsync(int recId, string layout) => SendAsync(new DeleteRequest { Layout = layout, RecordId = recId.ToString() });
+        #endregion
+
+        #region Special Implementations
+        /// <summary>
+        /// General purpose Find Request method. Supports additional syntaxes like the { "omit" : "true" } operation.
+        /// This method returns a strongly typed <see cref="IEnumerable{T}"/> but accepts a the more flexible <see cref="Dictionary{string,string}"/> request parameters.
+        /// </summary>
+        /// <typeparam name="T">the type of response objects to return.</typeparam>
+        /// <param name="req">The find request dictionary.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
+        /// <remarks>Can't be a relay method, since we have to process the data specially to get our output</remarks>
+        public override async Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req)
+        {
+            var response = await GetFindHttpResponseAsync(new FindRequest<Dictionary<string, string>> { Layout = layout, Query = new List<Dictionary<string, string>> { req } });
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<FindResponse<T>>(responseJson);
+                return responseObject.Data.Select(d => d.FieldData);
+            }
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                // on 404 return empty set instead of throwing an exception
+                // since this is an expected case
+                return new List<T>();
+            }
+
+            throw new Exception("Find request Error");
+        }
+
+        /// <summary>
+        /// General purpose Find Request method. Supports additional syntaxes like the { "omit" : "true" } operation.
+        /// </summary>
+        /// <param name="req">The find request field/value dictionary to pass into FileMaker server.</param>
+        /// <returns>A <see cref="Dictionary{String,String}"/> wrapped in a FindResponse containing both record data and portal data.</returns>
+        public override async Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req)
+        {
+            var response = await GetFindHttpResponseAsync(req);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<FindResponse<Dictionary<string, string>>>(responseJson);
+                return responseObject;
+            }
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                // on 404 return empty set instead of throwing an exception
+                // since this is an expected case
+                return new FindResponse<Dictionary<string, string>>();
+            }
+
+            throw new Exception("Find Request Error");
+        } 
+        #endregion
+
 
         /// <summary>
         /// Create a record in the database using the CreateRequest object.
@@ -212,36 +309,6 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// Edit a record.
-        /// </summary>
-        /// <typeparam name="T">Type parameter for this edit.</typeparam>
-        /// <param name="layout">Explicitly define the layout to use.</param>
-        /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
-        /// <param name="input">Object with the updated values.</param>
-        /// <returns></returns>
-        public override Task<IResponse> EditAsync<T>(string layout, int recordId, T input) => SendAsync(new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() });
-
-        /// <summary>
-        /// Edit a record utilizing a dictionary of key/values for the data field.
-        /// </summary>
-        /// <param name="req">The edit request object.</param>
-        /// <returns></returns>
-        public override async Task<IResponse> SendAsync(IEditRequest<Dictionary<string, string>> req)
-        {
-            HttpResponseMessage response = await GetEditHttpResponse(req);
-
-            // process the response
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
-                return responseObject;
-            }
-            // something bad happened. TODO: improve non-OK response handling
-            throw new Exception("Could not edit existing record.");
-        }
-
-        /// <summary>
         /// Edit a record utilizing a generic parameter type to house the fields to be edited.
         /// </summary>
         /// <typeparam name="T">Type parameter for this edit.</typeparam>
@@ -262,10 +329,11 @@ namespace FMData.Rest
             throw new Exception("Could not edit existing record.");
         }
 
-        public override Task<IResponse> DeleteAsync<T>(int recId, T delete) => DeleteAsync(recId, GetTableName(delete));
-
-        public override Task<IResponse> DeleteAsync(int recId, string layout) => SendAsync(new DeleteRequest { Layout = layout, RecordId = recId.ToString() });
-
+        /// <summary>
+        /// Delete a record.
+        /// </summary>
+        /// <param name="req">The delete record request.</param>
+        /// <returns></returns>
         public override async Task<IResponse> SendAsync(IDeleteRequest req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
@@ -289,60 +357,6 @@ namespace FMData.Rest
             }
 
             throw new Exception("Could not delete record.");
-        }
-
-        /// <summary>
-        /// General purpose Find Request method. Supports additional syntaxes like the { "omit" : "true" } operation.
-        /// </summary>
-        /// <param name="req">The find request field/value dictionary to pass into FileMaker server.</param>
-        /// <returns>A <see cref="Dictionary{String,String}"/> wrapped in a FindResponse containing both record data and portal data.</returns>
-        public override async Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req)
-        {
-            var response = await GetFindHttpResponseAsync(req);
-
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<FindResponse<Dictionary<string, string>>>(responseJson);
-                return responseObject;
-            }
-
-            if(response.StatusCode == HttpStatusCode.NotFound)
-            {
-                // on 404 return empty set instead of throwing an exception
-                // since this is an expected case
-                return new FindResponse<Dictionary<string,string>>();
-            }
-
-            throw new Exception("Find Rquest Error");
-        }
-
-        /// <summary>
-        /// General purpose Find Request method. Supports additional syntaxes like the { "omit" : "true" } operation.
-        /// This method returns a strongly typed <see cref="IEnumerable{T}"/> but accepts a the more flexible <see cref="Dictionary{string,string}"/> request parameters.
-        /// </summary>
-        /// <typeparam name="T">the type of response objects to return.</typeparam>
-        /// <param name="req">The find request dictionary.</param>
-        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public override async Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req)
-        {
-            var response = await GetFindHttpResponseAsync(req);
-
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<FindResponse<T>>(responseJson);
-                return responseObject.Data.Select(d => d.FieldData);
-            }
-
-            if(response.StatusCode == HttpStatusCode.NotFound)
-            {
-                // on 404 return empty set instead of throwing an exception
-                // since this is an expected case
-                return new List<T>();
-            }
-
-            throw new Exception("Find Rquest Error");
         }
 
         /// <summary>
@@ -385,15 +399,6 @@ namespace FMData.Rest
             // other error TODO: Improve handling
             throw new Exception("Find request error");
         }
-
-        /// <summary>
-        /// Strongly typed find request.
-        /// </summary>
-        /// <typeparam name="T">The type of response objects to return.</typeparam>
-        /// <param name="layout">The name of the layout to run this request on.</param>
-        /// <param name="input">The object with properties to map to the find request.</param>
-        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public override Task<IEnumerable<T>> FindAsync<T>(string layout, T input) => SendAsync((IFindRequest<T>)new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
 
         #endregion
 
