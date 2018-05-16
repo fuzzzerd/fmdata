@@ -16,18 +16,8 @@ namespace FMData
         /// <returns></returns>
         public virtual Task<IResponse> CreateAsync<T>(T input) where T : class, new() => CreateAsync(GetTableName(input), input);
         public abstract Task<IResponse> CreateAsync<T>(string layout, T input) where T : class, new();
-        public abstract Task<IResponse> SendAsync<T>(ICreateRequest<T> req) where T : class, new();
 
-        public virtual Task<IResponse> DeleteAsync<T>(int recId, T delete) => DeleteAsync(recId, GetTableName(delete));
-        public abstract Task<IResponse> DeleteAsync(int recId, string layout);
-        public abstract Task<IResponse> SendAsync(IDeleteRequest req);
-        
-        public virtual Task<IResponse> EditAsync<T>(int recordId, T input) where T : class, new() => EditAsync(GetTableName(input), recordId, input);
-        public abstract Task<IResponse> EditAsync<T>(string layout, int recordId, T input) where T : class, new();
-        public abstract Task<IResponse> SendAsync(IEditRequest<Dictionary<string, string>> req);
-        public abstract Task<IResponse> SendAsync<T>(IEditRequest<T> req) where T : class, new();
-        
-         
+
         /// <summary>
         /// Strongly typed find request.
         /// </summary>
@@ -36,11 +26,38 @@ namespace FMData
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         public virtual Task<IEnumerable<T>> FindAsync<T>(T input) where T : class, new() => FindAsync(GetTableName(input), input);
         public abstract Task<IEnumerable<T>> FindAsync<T>(string layout, T request) where T : class, new();
-
         public abstract Task<IEnumerable<T>> FindAsync<T>(IFindRequest<Dictionary<string, string>> req) where T : class, new();
+
+
+        /// <summary>
+        /// Edit a record by FileMaker RecordId.
+        /// </summary>
+        /// <typeparam name="T">The type to pull the [Table] attribute from for context layout.</typeparam>
+        /// <param name="recordId">The FileMaker RecordId of the record to be edited.</param>
+        /// <param name="input">Object containing the values the record should reflect after the edit.</param>
+        /// <returns></returns>
+        public virtual Task<IResponse> EditAsync<T>(int recordId, T input) where T : class, new() => EditAsync(GetTableName(input), recordId, input);
+        public abstract Task<IResponse> EditAsync<T>(string layout, int recordId, T input) where T : class, new();
+
+
+        /// <summary>
+        /// Delete a record utilizing a generic type with the [Table] attribute specifying the layout and the FileMaker RecordId.
+        /// </summary>
+        /// <typeparam name="T">Class with the [Table] attribute specifying the layout to use.</typeparam>
+        /// <param name="recId">The FileMaker RecordId of the record to delete.</param>
+        /// <returns></returns>
+        public virtual Task<IResponse> DeleteAsync<T>(int recId) where T : class, new() => DeleteAsync(recId, GetTableName(new T()));
+        public abstract Task<IResponse> DeleteAsync(int recId, string layout);
+
+
+        public abstract Task<IResponse> SendAsync<T>(ICreateRequest<T> req) where T : class, new();
+        public abstract Task<IResponse> SendAsync(IDeleteRequest req);
+        public abstract Task<IResponse> SendAsync(IEditRequest<Dictionary<string, string>> req);
+        public abstract Task<IResponse> SendAsync<T>(IEditRequest<T> req) where T : class, new();
         public abstract Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req);
         public abstract Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req) where T : class, new();
 
+        #region Utility Methods
         /// <summary>
         /// Utility method to get the TableAttribute name to be used for the layout option in the request.
         /// </summary>
@@ -60,7 +77,8 @@ namespace FMData
                 throw new ArgumentException($"Could not load Layout name from TableAttribute on {typeof(T).Name}.");
             }
             return lay;
-        }
+        } 
+        #endregion
 
         public abstract void Dispose();
     }
