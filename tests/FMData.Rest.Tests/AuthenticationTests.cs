@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
 using Xunit;
 using FMData.Rest;
+using System.Net;
+using System.Net.Http;
 
 // this is apparently necessary to work in appveyor / myget
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
@@ -51,6 +53,28 @@ namespace FMData.Tests
             using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass))
             {
                 Assert.True(fdc.IsAuthenticated);
+            }
+        }
+
+        [Fact]
+        public void DataCliet_ShouldHandle_401_From_Sessions()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                .Respond(HttpStatusCode.Unauthorized, "application/json", DataApiResponses.Authentication401());
+
+            mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/sessions*")
+                .Respond(HttpStatusCode.OK, "application/json", "");
+
+            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass))
+            {
+                Assert.False(fdc.IsAuthenticated);
             }
         }
 

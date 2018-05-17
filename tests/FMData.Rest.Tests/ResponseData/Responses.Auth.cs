@@ -17,5 +17,6 @@ namespace FMData.Tests
         }}
     ]
 }}";
+        public static string Authentication401() => @"{""messages"":[{""message"":""HTTP Authorization header or OAuth headers are missing."",""code"":""10""}],""response"":{}}";
     }
 }
