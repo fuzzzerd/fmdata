@@ -30,23 +30,23 @@ namespace FMData.Tests
 
             IEnumerable<int> x = new List<int>();
 
-            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass))
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+
+            var req = new EditRequest<Dictionary<string, string>>()
             {
-                var req = new EditRequest<Dictionary<string, string>>()
-                {
-                    Layout = "layout",
-                    RecordId = "264",
-                    Data = new Dictionary<string, string>()
+                Layout = "layout",
+                RecordId = "264",
+                Data = new Dictionary<string, string>()
                     {
                         { "Name", "Fuzzerd-Updated" },
                         { "AnotherField", "Another-Updated" }
                     }
-                };
-                var response = await fdc.SendAsync(req);
+            };
+            var response = await fdc.SendAsync(req);
 
-                Assert.NotNull(response);
-                Assert.Contains(response.Messages, r => r.Message == "OK");
-            }
+            Assert.NotNull(response);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
+
         }
     }
 }
