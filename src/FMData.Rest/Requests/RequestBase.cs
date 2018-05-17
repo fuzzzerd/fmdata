@@ -20,7 +20,7 @@ namespace FMData
         /// JSON Convert the current object to a string for passing out to the API.
         /// </summary>
         /// <returns></returns>
-        public string SerializeRequest()
+        public virtual string SerializeRequest()
         {
             return JsonConvert.SerializeObject(this);
         }
