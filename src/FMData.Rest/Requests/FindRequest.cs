@@ -27,7 +27,7 @@ namespace FMData.Rest.Requests
         /// The number of records to skip before returning records for this request.
         /// </summary>
         [JsonProperty("offset")]
-        public int Offset { get; set; } = 0; // default
+        public int Offset { get; set; } = 1; // default
 
         /// <summary>
         /// The sort fields and directions for this request.
