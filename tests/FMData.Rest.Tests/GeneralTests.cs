@@ -26,7 +26,7 @@ namespace FMData.Tests
             var r = FindReq;
 
             // act
-            var json = r.ToJson();
+            var json = r.SerializeRequest();
 
             //assert
             Assert.Contains("\"Id\":\"1\"", json);
@@ -39,7 +39,7 @@ namespace FMData.Tests
             var r = FindReq;
 
             // act
-            var json = r.ToJson();
+            var json = r.SerializeRequest();
 
             //assert
             Assert.DoesNotContain("\"Id\":1", json);
