@@ -149,7 +149,6 @@ namespace FMData.Rest
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<AuthResponse>(responseJson);
                 this.dataToken = responseObject.Response.Token;
-                
                 return responseObject;
             }
 
@@ -163,7 +162,6 @@ namespace FMData.Rest
         public async Task<IResponse> LogoutAsync()
         {
             // add a default request header of our data token to nuke
-            _client.DefaultRequestHeaders.Add("FM-Data-token", this.dataToken);
             var response = await _client.DeleteAsync(AuthEndpoint() + $"/{this.dataToken}");
 
             // process the response
@@ -404,9 +402,9 @@ namespace FMData.Rest
             {
                 return new List<T>();
             }
-
+            
             // other error TODO: Improve handling
-            throw new Exception("Find request error");
+            throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responed with {response.StatusCode}");
         }
 
         #endregion
@@ -422,6 +420,7 @@ namespace FMData.Rest
         private Task<HttpResponseMessage> GetFindHttpResponseAsync<T>(IFindRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
+            if (!this.IsAuthenticated) throw new Exception($"Client not authenticated: {this.dataToken}.");
 
             var authHeader = new AuthenticationHeaderValue("Bearer", this.dataToken);
 
