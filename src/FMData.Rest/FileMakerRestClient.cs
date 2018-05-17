@@ -143,8 +143,8 @@ namespace FMData.Rest
             // run the post action
             var response = await _client.SendAsync(requestMessage);
 
-            // process the response
-            if (response.StatusCode == HttpStatusCode.OK)
+            // process the response even a 401 returns a FMS error to be passed back.
+            if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<AuthResponse>(responseJson);
@@ -152,6 +152,7 @@ namespace FMData.Rest
                 
                 return responseObject;
             }
+
             // something bad happened. TODO: improve non-OK response handling
             throw new Exception("Could not authenticate.");
         }
@@ -163,7 +164,7 @@ namespace FMData.Rest
         {
             // add a default request header of our data token to nuke
             _client.DefaultRequestHeaders.Add("FM-Data-token", this.dataToken);
-            var response = await _client.DeleteAsync(AuthEndpoint());
+            var response = await _client.DeleteAsync(AuthEndpoint() + $"/{this.dataToken}");
 
             // process the response
             if (response.StatusCode == HttpStatusCode.OK)
