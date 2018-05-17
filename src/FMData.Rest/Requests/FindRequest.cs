@@ -46,8 +46,7 @@ namespace FMData.Rest.Requests
         /// Convert the this instance to Json.
         /// </summary>
         /// <returns>Json serialization of this instance.</returns>
-        public string ToJson() => JsonConvert.SerializeObject(
-            this,
+        public override string SerializeRequest() => JsonConvert.SerializeObject(this,
             Formatting.None,
             new JsonSerializerSettings 
             { 
