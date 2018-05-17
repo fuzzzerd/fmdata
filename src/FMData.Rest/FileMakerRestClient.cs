@@ -423,19 +423,26 @@ namespace FMData.Rest
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
 
+            var authHeader = new AuthenticationHeaderValue("Bearer", this.dataToken);
+
             if (req.Query == null || req.Query.Count() == 0)
             {
                 // normally required, but internally we can route to the regular record request apis
                 var uriEndpoint = GetRecordsEndpoint(req.Layout, req.Limit, req.Offset);
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get, uriEndpoint);
-                requestMessage.Headers.Add("FM-Data-token", this.dataToken);
+                requestMessage.Headers.Authorization = authHeader;
                 return _client.SendAsync(requestMessage);
             }
 
             var json = req.SerializeRequest();
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-            httpContent.Headers.Add("FM-Data-token", this.dataToken);
-            var response = _client.PostAsync(FindEndpoint(req.Layout), httpContent);
+            var requestMessage2 = new HttpRequestMessage(HttpMethod.Post, FindEndpoint(req.Layout))
+            {
+                Content = httpContent
+            };
+            requestMessage2.Headers.Authorization = authHeader;
+
+            var response = _client.SendAsync(requestMessage2);
 
             return response;
         }
