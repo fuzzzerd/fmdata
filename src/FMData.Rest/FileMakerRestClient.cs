@@ -149,6 +149,10 @@ namespace FMData.Rest
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<AuthResponse>(responseJson);
                 this.dataToken = responseObject.Response.Token;
+
+                // setup the token as an auth bearer header.
+                this._client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.dataToken);
+
                 return responseObject;
             }
 
@@ -284,7 +288,6 @@ namespace FMData.Rest
         } 
         #endregion
 
-
         /// <summary>
         /// Create a record in the database using the CreateRequest object.
         /// </summary>
@@ -297,7 +300,8 @@ namespace FMData.Rest
 
             var str = req.SerializeRequest();
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
-            httpContent.Headers.Add("FM-Data-token", this.dataToken);
+
+            UpdateTokenDate(); // we're about to use the token so update date used
 
             // run the post action
             var response = await _client.PostAsync(CreateEndpoint(req.Layout), httpContent);
@@ -309,6 +313,7 @@ namespace FMData.Rest
                 var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
+            
             // something bad happened. TODO: improve non-OK response handling
             throw new Exception("Could not Create new record.");
         }
@@ -344,8 +349,9 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
 
+            UpdateTokenDate(); // we're about to use the token so update date used
+
             // add a default request header of our data token to nuke
-            _client.DefaultRequestHeaders.Add("FM-Data-token", this.dataToken);
             var response = await _client.DeleteAsync(DeleteEndpoint(req.Layout, req.RecordId));
 
             // process the response
@@ -422,14 +428,11 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
             if (!this.IsAuthenticated) throw new Exception($"Client not authenticated: {this.dataToken}.");
 
-            var authHeader = new AuthenticationHeaderValue("Bearer", this.dataToken);
-
             if (req.Query == null || req.Query.Count() == 0)
             {
                 // normally required, but internally we can route to the regular record request apis
                 var uriEndpoint = GetRecordsEndpoint(req.Layout, req.Limit, req.Offset);
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get, uriEndpoint);
-                requestMessage.Headers.Authorization = authHeader;
                 return _client.SendAsync(requestMessage);
             }
 
@@ -439,7 +442,8 @@ namespace FMData.Rest
             {
                 Content = httpContent
             };
-            requestMessage2.Headers.Authorization = authHeader;
+
+            UpdateTokenDate(); // we're about to use the token so update date used
 
             var response = _client.SendAsync(requestMessage2);
 
@@ -457,9 +461,10 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
 
-            var str = JsonConvert.SerializeObject(req);
+            var str = req.SerializeRequest();
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
-            httpContent.Headers.Add("FM-Data-token", this.dataToken);
+
+            UpdateTokenDate(); // we're about to use the token so update date used
 
             // run the post action
             var response = await _client.PutAsync(UpdateEndpoint(req.Layout, req.RecordId), httpContent);
