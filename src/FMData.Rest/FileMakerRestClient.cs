@@ -148,15 +148,24 @@ namespace FMData.Rest
             var response = await _client.SendAsync(requestMessage);
 
             // process the response even a 401 returns a FMS error to be passed back.
-            if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Unauthorized)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<AuthResponse>(responseJson);
                 this.dataToken = responseObject.Response.Token;
 
+                // got a new token, so update our timestamp
+                this.dataTokenLastUse = DateTime.UtcNow;
                 // setup the token as an auth bearer header.
                 this._client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.dataToken);
 
+                return responseObject;
+            }
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<AuthResponse>(responseJson);
                 return responseObject;
             }
 
@@ -430,13 +439,13 @@ namespace FMData.Rest
         private Task<HttpResponseMessage> GetFindHttpResponseAsync<T>(IFindRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
-            if (!this.IsAuthenticated) throw new Exception($"Client not authenticated: {this.dataToken}.");
 
             if (req.Query == null || req.Query.Count() == 0)
             {
                 // normally required, but internally we can route to the regular record request apis
                 var uriEndpoint = GetRecordsEndpoint(req.Layout, req.Limit, req.Offset);
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get, uriEndpoint);
+                UpdateTokenDate(); // we're about to use the token so update date used
                 return _client.SendAsync(requestMessage);
             }
 
