@@ -26,9 +26,13 @@ namespace FMData.Rest
 
         private string dataToken;
         private DateTime dataTokenLastUse = DateTime.MinValue;
-        private void UpdateTokenDate() => dataTokenLastUse = DateTime.UtcNow;
+        private void UpdateTokenDate()
+        {
+            if (!IsAuthenticated) { RefreshTokenAsync(_userName, _password).Wait(); }
+            dataTokenLastUse = DateTime.UtcNow;
+        }
 
-        public bool IsAuthenticated => !String.IsNullOrEmpty(dataToken);// && DateTime.UtcNow.Subtract(dataTokenLastUse).TotalMinutes <= 15;
+        public bool IsAuthenticated => !String.IsNullOrEmpty(dataToken) && DateTime.UtcNow.Subtract(dataTokenLastUse).TotalMinutes <= 15;
 
         #region Constructors
         /// <summary>
