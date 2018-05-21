@@ -12,15 +12,18 @@ There are both stable builds on Nuget and Continuous Integration builds availabl
 
 ## Stable Builds are on NuGet
 
-    dotnet add package FMData
+    dotnet add package FMData.Rest
+    //or
+    dotnet add package FMData.Xml
 
-## CI Builds are on MyGet
-
-    dotnet add package FMData --source https://www.myget.org/F/filemaker/api/v3/index.json
+*Note: CI Builds are on MyGet*
 
 ## Example Usage
 
-    // TODO: write sample usage and documentation
+    var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
+    var toFind = new Model { Name = "someName" };
+    var resuts = await client.FindAsync(toFind);
+    // results is IEnumerable<Model> matching the find request.
 
 ## Contributing
 
