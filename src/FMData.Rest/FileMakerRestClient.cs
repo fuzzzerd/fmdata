@@ -18,6 +18,8 @@ namespace FMData.Rest
     /// </summary>
     public class FileMakerRestClient : FileMakerApiClientBase, IFileMakerRestClient
     {
+        internal readonly int tokenExpiration = 15;
+
         private readonly HttpClient _client;
         private readonly string _fmsUri;
         private readonly string _fileName;
@@ -32,7 +34,7 @@ namespace FMData.Rest
             dataTokenLastUse = DateTime.UtcNow;
         }
 
-        public bool IsAuthenticated => !String.IsNullOrEmpty(dataToken) && DateTime.UtcNow.Subtract(dataTokenLastUse).TotalMinutes <= 15;
+        public bool IsAuthenticated => !String.IsNullOrEmpty(dataToken) && DateTime.UtcNow.Subtract(dataTokenLastUse).TotalMinutes <= tokenExpiration;
 
         #region Constructors
         /// <summary>
