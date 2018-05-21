@@ -38,7 +38,8 @@ Check out the issues log to see what features are planned. Feel free to contribu
 
 ### FileMaker REST / Data API Documentation
 
-- [FileMaker REST API Documentation](https://fmhelp.filemaker.com/docs/16/en/restapi/)
+- [FileMaker Data API Documentation (FMS17)](http://fmhelp.filemaker.com/docs/17/en/dataapi/)
+- [FileMaker REST API Documentation (FMS16)](https://fmhelp.filemaker.com/docs/16/en/restapi/) -- Not Supported by this project.
 
 ### FileMaker CWP with Xml Guide
 
