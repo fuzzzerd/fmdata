@@ -41,19 +41,6 @@ namespace FMData.Rest.Requests
         /// <param name="json">The incomming Json data to deserialize.</param>
         /// <returns>An instance of the FindRequest object from the provided Json string.</returns>
         public static FindRequest<T> FromJson<T>(string json) => JsonConvert.DeserializeObject<FindRequest<T>>(json);
-
-        /// <summary>
-        /// Convert the this instance to Json.
-        /// </summary>
-        /// <returns>Json serialization of this instance.</returns>
-        public override string SerializeRequest() => JsonConvert.SerializeObject(this,
-            Formatting.None,
-            new JsonSerializerSettings 
-            { 
-                NullValueHandling = NullValueHandling.Ignore, 
-                DefaultValueHandling = DefaultValueHandling.Ignore,
-                Converters = { new FormatNumbersAsTextConverter() }
-            });
     }
 
     public partial class Sort : ISort

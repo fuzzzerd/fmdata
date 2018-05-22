@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace FMData
+namespace FMData.Rest
 {
     public class RequestBase
     {
@@ -20,9 +20,13 @@ namespace FMData
         /// JSON Convert the current object to a string for passing out to the API.
         /// </summary>
         /// <returns></returns>
-        public virtual string SerializeRequest()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public virtual string SerializeRequest() => JsonConvert.SerializeObject(this,
+            Formatting.None,
+            new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.Ignore,
+                Converters = { new FormatNumbersAsTextConverter() }
+            });
     }
 }
