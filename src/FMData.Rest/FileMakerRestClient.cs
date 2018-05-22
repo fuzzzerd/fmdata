@@ -314,16 +314,18 @@ namespace FMData.Rest
             // run the post action
             var response = await _client.PostAsync(CreateEndpoint(req.Layout), httpContent);
 
-            // process the response
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+
                 return responseObject;
             }
-            
-            // something bad happened. TODO: improve non-OK response handling
-            throw new Exception($"Non-OK Response: Status = {response.StatusCode}.");
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
         }
 
         /// <summary>
