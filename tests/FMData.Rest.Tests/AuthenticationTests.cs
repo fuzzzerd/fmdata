@@ -16,7 +16,7 @@ namespace FMData.Tests
     public class AuthenticationTests
     {
         [Fact]
-        public void NewUp_DataClient_WithTrailingSlash_ShouldBeAuthenticated()
+        public void DoesNotGetTokenOnConstructor()
         {
             using (var mockHttp = new MockHttpMessageHandler())
             {
@@ -34,31 +34,9 @@ namespace FMData.Tests
 
                 using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass))
                 {
-                    Assert.True(fdc.IsAuthenticated);
+                    Assert.False(fdc.IsAuthenticated);
                 }
 
-            }
-        }
-
-        [Fact]
-        public void NewUp_DataClient_ShouldBeAuthenticated()
-        {
-            var mockHttp = new MockHttpMessageHandler();
-
-            var server = "http://localhost";
-            var file = "test-file";
-            var user = "unit";
-            var pass = "test";
-
-            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
-                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
-
-            mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/sessions*")
-                .Respond(HttpStatusCode.OK, "application/json", "");
-
-            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass))
-            {
-                Assert.True(fdc.IsAuthenticated);
             }
         }
 

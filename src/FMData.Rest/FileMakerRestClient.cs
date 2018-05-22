@@ -69,13 +69,6 @@ namespace FMData.Rest
             _fileName = file;
             _userName = user;
             _password = pass;
-
-            var authResponse = RefreshTokenAsync(_userName, _password);
-            authResponse.Wait();
-            if (authResponse.Result.Messages.Any(r => r.Message == "OK"))
-            {
-                dataToken = authResponse.Result.Response.Token;
-            }
         }
         #endregion
 
