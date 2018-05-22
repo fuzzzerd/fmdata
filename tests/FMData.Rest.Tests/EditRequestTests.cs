@@ -29,8 +29,6 @@ namespace FMData.Tests
                 .WithPartialContent("fieldData")
                 .Respond("application/json", DataApiResponses.SuccessfulEdit());
 
-            IEnumerable<int> x = new List<int>();
-
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
             var req = new EditRequest<Dictionary<string, string>>()
@@ -59,19 +57,18 @@ namespace FMData.Tests
             var user = "unit";
             var pass = "test";
             var layout = "Users";
+            var rid = 25;
 
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/{rid}")
                 .WithPartialContent("fieldData")
                 .Respond("application/json", DataApiResponses.SuccessfulEdit());
 
-            IEnumerable<int> x = new List<int>();
-
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
-            var response = await fdc.EditAsync(25, new User() { Name = "test user" });
+            var response = await fdc.EditAsync(rid, new User() { Name = "test user" });
 
             Assert.NotNull(response);
             Assert.Contains(response.Messages, r => r.Message == "OK");
