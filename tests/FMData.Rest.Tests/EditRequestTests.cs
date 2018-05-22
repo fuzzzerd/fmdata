@@ -25,7 +25,7 @@ namespace FMData.Tests
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(HttpMethod.Put, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
                 .WithPartialContent("fieldData")
                 .Respond("application/json", DataApiResponses.SuccessfulEdit());
 
@@ -47,7 +47,6 @@ namespace FMData.Tests
 
             Assert.NotNull(response);
             Assert.Contains(response.Messages, r => r.Message == "OK");
-
         }
     }
 }

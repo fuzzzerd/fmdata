@@ -491,12 +491,14 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
 
             var str = req.SerializeRequest();
-            var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
-
+            var method = new HttpMethod("PATCH");
+            var requestMessage = new HttpRequestMessage(method, UpdateEndpoint(req.Layout, req.RecordId))
+            {
+                Content = new StringContent(str, Encoding.UTF8, "application/json")
+            };
             UpdateTokenDate(); // we're about to use the token so update date used
-
             // run the post action
-            var response = await _client.PutAsync(UpdateEndpoint(req.Layout, req.RecordId), httpContent);
+            var response = await _client.SendAsync(requestMessage);
             return response;
         }
 
