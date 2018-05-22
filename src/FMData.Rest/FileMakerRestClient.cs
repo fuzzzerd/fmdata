@@ -330,7 +330,7 @@ namespace FMData.Rest
             }
             
             // something bad happened. TODO: improve non-OK response handling
-            throw new Exception("Could not Create new record.");
+            throw new Exception($"Non-OK Response: Status = {response.StatusCode}.");
         }
 
         /// <summary>
@@ -351,7 +351,7 @@ namespace FMData.Rest
                 return responseObject;
             }
             // something bad happened. TODO: improve non-OK response handling
-            throw new Exception("Could not edit existing record.");
+            throw new Exception($"Non-OK Response: Status = {response.StatusCode}.");
         }
 
         /// <summary>
@@ -382,7 +382,7 @@ namespace FMData.Rest
                 return new BaseResponse("404", "Error");
             }
 
-            throw new Exception("Could not delete record.");
+            throw new Exception($"Non-OK/404 response: Status = {response.StatusCode}.");
         }
 
         /// <summary>
