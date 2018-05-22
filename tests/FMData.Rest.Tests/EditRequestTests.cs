@@ -1,10 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using FMData.Rest;
 using FMData.Rest.Requests;
+using FMData.Tests.TestModels;
 using RichardSzalay.MockHttp;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FMData.Tests
@@ -44,6 +44,34 @@ namespace FMData.Tests
                     }
             };
             var response = await fdc.SendAsync(req);
+
+            Assert.NotNull(response);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
+        }
+
+        [Fact]
+        public async Task EditUserShould_UpdateRecord_WithId()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "Users";
+
+            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
+               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+                .WithPartialContent("fieldData")
+                .Respond("application/json", DataApiResponses.SuccessfulEdit());
+
+            IEnumerable<int> x = new List<int>();
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+
+            var response = await fdc.EditAsync(25, new User() { Name = "test user" });
 
             Assert.NotNull(response);
             Assert.Contains(response.Messages, r => r.Message == "OK");
