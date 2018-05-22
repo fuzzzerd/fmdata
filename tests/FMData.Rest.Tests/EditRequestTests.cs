@@ -26,6 +26,7 @@ namespace FMData.Tests
                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             mockHttp.When(HttpMethod.Put, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+                .WithPartialContent("fieldData")
                 .Respond("application/json", DataApiResponses.SuccessfulEdit());
 
             IEnumerable<int> x = new List<int>();

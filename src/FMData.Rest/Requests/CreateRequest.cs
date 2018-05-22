@@ -4,7 +4,7 @@ namespace FMData.Rest.Requests
 {
     public class CreateRequest<T> : RequestBase, ICreateRequest<T>
     {
-        [JsonProperty("data")]
+        [JsonProperty("fieldData")]
         public T Data { get; set; }
     }
 }
