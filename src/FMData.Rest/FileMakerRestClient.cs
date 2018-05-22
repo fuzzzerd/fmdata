@@ -252,13 +252,6 @@ namespace FMData.Rest
         {
             var response = await GetFindHttpResponseAsync(new FindRequest<Dictionary<string, string>> { Layout = layout, Query = new List<Dictionary<string, string>> { req } });
 
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<FindResponse<T>>(responseJson);
-                return responseObject.Response.Data.Select(d => d.FieldData);
-            }
-
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 // on 404 return empty set instead of throwing an exception
@@ -266,7 +259,18 @@ namespace FMData.Rest
                 return new List<T>();
             }
 
-            throw new Exception("Find request Error");
+            try
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<FindResponse<T>>(responseJson);
+
+                return responseObject.Response.Data.Select(d => d.FieldData);
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
         }
 
         /// <summary>
@@ -278,13 +282,6 @@ namespace FMData.Rest
         {
             var response = await GetFindHttpResponseAsync(req);
 
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<FindResponse<Dictionary<string, string>>>(responseJson);
-                return responseObject;
-            }
-
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 // on 404 return empty set instead of throwing an exception
@@ -292,7 +289,18 @@ namespace FMData.Rest
                 return new FindResponse<Dictionary<string, string>>();
             }
 
-            throw new Exception("Find Request Error");
+            try
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<FindResponse<Dictionary<string, string>>>(responseJson);
+
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
         } 
         #endregion
 
@@ -338,15 +346,23 @@ namespace FMData.Rest
         {
             HttpResponseMessage response = await GetEditHttpResponse(req);
 
-            // process the response
-            if (response.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return new BaseResponse("404", "Error");
+            }
+
+            try
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+
                 return responseObject;
             }
-            // something bad happened. TODO: improve non-OK response handling
-            throw new Exception($"Non-OK Response: Status = {response.StatusCode}.");
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
         }
 
         /// <summary>
@@ -364,20 +380,23 @@ namespace FMData.Rest
             // add a default request header of our data token to nuke
             var response = await _client.DeleteAsync(DeleteEndpoint(req.Layout, req.RecordId));
 
-            // process the response
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
-                return responseObject;
-            }
-
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 return new BaseResponse("404", "Error");
             }
 
-            throw new Exception($"Non-OK/404 response: Status = {response.StatusCode}.");
+            try
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
         }
 
         /// <summary>
