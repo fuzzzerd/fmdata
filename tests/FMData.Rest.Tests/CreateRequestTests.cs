@@ -41,11 +41,11 @@ namespace FMData.Tests
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
-                .WithPartialContent("data") // make sure that the body content contains the 'data' object expected by fms
+                .WithPartialContent("fieldData") // make sure that the body content contains the 'data' object expected by fms
                 .Respond("application/json", DataApiResponses.SuccessfulDelete());
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/Somelayout/records*")
-                .WithPartialContent("data") // make sure that the body content contains the 'data' object expected by fms
+                .WithPartialContent("fieldData") // make sure that the body content contains the 'data' object expected by fms
                 .Respond("application/json", DataApiResponses.SuccessfulDelete());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);

@@ -7,7 +7,7 @@ namespace FMData.Rest.Requests
         /// <summary>
         /// Edit request data. The values from this object are what will be passed to FileMaker's API.
         /// </summary>
-        [JsonProperty("data")]
+        [JsonProperty("fieldData")]
         public T Data { get; set; }
 
         /// <summary>
