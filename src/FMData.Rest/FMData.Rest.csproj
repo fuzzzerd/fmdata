@@ -19,6 +19,10 @@
     <PackageTags>filemaker filemaker-rest filemaker-api netstandard json dotnet-standard</PackageTags>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard1.3\FMData.Rest.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\FMData\FMData.csproj" />
   </ItemGroup>

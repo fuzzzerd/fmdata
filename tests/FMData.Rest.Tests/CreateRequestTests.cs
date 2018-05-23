@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FMData;
 using FMData.Rest;
 using FMData.Rest.Requests;
+using FMData.Tests.TestModels;
 using RichardSzalay.MockHttp;
 using Xunit;
 
@@ -14,6 +15,12 @@ namespace FMData.Tests
 {
     public class CreateRequestTests
     {
+        private static string server = "http://localhost";
+        private static string file = "test-file";
+        private static string user = "unit";
+        private static string pass = "test";
+        private static string layout = "layout";
+
         [Table("Somelayout")]
         public class TableModelTest
         {
@@ -27,26 +34,24 @@ namespace FMData.Tests
             public string AnotherField { get; set; }
         }
 
-        private static IFileMakerApiClient GetMockedFDC(MockHttpMessageHandler mockHttp = null)
+        private static IFileMakerApiClient GetDataClientWithMockedHandler(MockHttpMessageHandler mockHttp = null)
         {
-            if(mockHttp == null) { mockHttp = new MockHttpMessageHandler(); }
+            if(mockHttp == null) {
+                // new up a default set of responses (none were provided)
+                mockHttp = new MockHttpMessageHandler();
 
-            var server = "http://localhost";
-            var file = "test-file";
-            var user = "unit";
-            var pass = "test";
-            var layout = "layout";
+                mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+                .WithPartialContent("fieldData") // make sure that the body content contains the 'data' object expected by fms
+                .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
+                mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/Somelayout/records*")
+                    .WithPartialContent("fieldData") // make sure that the body content contains the 'data' object expected by fms
+                    .Respond("application/json", DataApiResponses.SuccessfulCreate());
+            }
+            
+            // always add the authentication setup
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
-
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
-                .WithPartialContent("fieldData") // make sure that the body content contains the 'data' object expected by fms
-                .Respond("application/json", DataApiResponses.SuccessfulDelete());
-
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/Somelayout/records*")
-                .WithPartialContent("fieldData") // make sure that the body content contains the 'data' object expected by fms
-                .Respond("application/json", DataApiResponses.SuccessfulDelete());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
             return fdc;
@@ -55,7 +60,7 @@ namespace FMData.Tests
         [Fact]
         public async Task CreateWithTableAttribute_ShouldReturnOK()
         {
-            var fdc = GetMockedFDC();
+            var fdc = GetDataClientWithMockedHandler();
 
             var newModel = new TableModelTest()
             {
@@ -72,7 +77,7 @@ namespace FMData.Tests
         [Fact]
         public async Task CreateWithExplicitLayout_ShouldReturnOK()
         {
-            var fdc = GetMockedFDC();
+            var fdc = GetDataClientWithMockedHandler();
 
             var newModel = new ModelTest()
             {
@@ -89,7 +94,7 @@ namespace FMData.Tests
         [Fact]
         public async Task CreateWithoutTableAttirbute_ShouldThrow_WithoutExplicitLayout()
         {
-            var fdc = GetMockedFDC();
+            var fdc = GetDataClientWithMockedHandler();
 
             var newModel = new ModelTest()
             {
@@ -103,7 +108,7 @@ namespace FMData.Tests
         [Fact]
         public async Task Create_WithoutLayout_ThrowsArgumentException_SendAsync()
         {
-            IFileMakerApiClient fdc = GetMockedFDC();
+            IFileMakerApiClient fdc = GetDataClientWithMockedHandler();
 
             var req = new CreateRequest<Dictionary<string, string>>()
             {
@@ -121,7 +126,7 @@ namespace FMData.Tests
         [Fact]
         public async Task CreateFromDictionaryStringString_ShouldReturnOK_FromSendAsync()
         {
-            IFileMakerApiClient fdc = GetMockedFDC();
+            IFileMakerApiClient fdc = GetDataClientWithMockedHandler();
 
             var req = new CreateRequest<Dictionary<string, string>>()
             {
@@ -134,6 +139,84 @@ namespace FMData.Tests
             };
 
             // requires cast to call correct method -- maybe needs renamed since overloading isn't working out so well
+            var response = await fdc.SendAsync(req);
+
+            Assert.NotNull(response);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
+        }
+
+        [Fact]
+        public async Task CreateWithScript_RequiresScriptSet()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+                .WithPartialContent("fieldData")
+                .WithPartialContent("script") // ensure the body contains the script parameter we're sending
+                .WithPartialContent("run_this_script")
+                .Respond("application/json", DataApiResponses.SuccessfulCreate());
+
+            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+
+            var req = new CreateRequest<User>()
+            {
+                Layout = "layout",
+                Data = new User { Name = "test name" },
+                Script = "run_this_script"
+            };
+
+            var response = await fdc.SendAsync(req);
+
+            Assert.NotNull(response);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
+        }
+
+        [Fact]
+        public async Task CreateWithPreRequestScript_RequiresScriptSet()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+                .WithPartialContent("fieldData")
+                .WithPartialContent("script.prerequest") // ensure the body contains the script parameter we're sending
+                .WithPartialContent("run_this_script")
+                .Respond("application/json", DataApiResponses.SuccessfulCreate());
+
+            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+
+            var req = new CreateRequest<User>()
+            {
+                Layout = "layout",
+                Data = new User { Name = "test name" },
+                PreRequestScript = "run_this_script"
+            };
+
+            var response = await fdc.SendAsync(req);
+
+            Assert.NotNull(response);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
+        }
+
+        [Fact]
+        public async Task CreateWithPreSortScript_RequiresScriptSet()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+                .WithPartialContent("fieldData")
+                .WithPartialContent("script.presort") // ensure the body contains the script parameter we're sending
+                .WithPartialContent("run_this_script")
+                .Respond("application/json", DataApiResponses.SuccessfulCreate());
+
+            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+
+            var req = new CreateRequest<User>()
+            {
+                Layout = "layout",
+                Data = new User { Name = "test name" },
+                PreSortScript = "run_this_script"
+            };
+
             var response = await fdc.SendAsync(req);
 
             Assert.NotNull(response);
