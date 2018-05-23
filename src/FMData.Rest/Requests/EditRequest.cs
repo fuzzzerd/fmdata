@@ -2,6 +2,10 @@ using Newtonsoft.Json;
 
 namespace FMData.Rest.Requests
 {
+    /// <summary>
+    /// Edit Request Wrapper
+    /// </summary>
+    /// <typeparam name="T">The type to edit.</typeparam>
     public class EditRequest<T> : RequestBase, IEditRequest<T>
     {
         /// <summary>

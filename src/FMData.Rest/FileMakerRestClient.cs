@@ -34,6 +34,9 @@ namespace FMData.Rest
             dataTokenLastUse = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Indicates that the client is authenticated and has a token within the refresh window.
+        /// </summary>
         public bool IsAuthenticated => !String.IsNullOrEmpty(dataToken) && DateTime.UtcNow.Subtract(dataTokenLastUse).TotalMinutes <= tokenExpiration;
 
         #region Constructors
@@ -49,7 +52,7 @@ namespace FMData.Rest
             : this(new HttpClient(), fmsUri, file, user, pass) { }
 
         /// <summary>
-        /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"> instance to the class.
+        /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"></see> instance to the class.
         /// </summary>
         /// <param name="client">An <see ref="HttpClient"/> instance to utilize for the liftime of this Data Client.</param>
         /// <param name="fmsUri">FileMaker Server HTTP Uri Endpoint.</param>
@@ -126,7 +129,7 @@ namespace FMData.Rest
         #region FM Data Token Management
 
         /// <summary>
-        /// <see cref="IFileMakerApiClient.RefreshTokenAsync(string, string)"/>
+        /// <see cref="IFileMakerRestClient.RefreshTokenAsync(string, string)"/>
         /// </summary>
         public async Task<AuthResponse> RefreshTokenAsync(string username, string password)
         {
@@ -169,7 +172,7 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// <see cref="IFileMakerApiClient.LogoutAsync"/>
+        /// <see cref="IFileMakerRestClient.LogoutAsync"/>
         /// </summary>
         public async Task<IResponse> LogoutAsync()
         {
@@ -242,9 +245,10 @@ namespace FMData.Rest
         #region Special Implementations
         /// <summary>
         /// General purpose Find Request method. Supports additional syntaxes like the { "omit" : "true" } operation.
-        /// This method returns a strongly typed <see cref="IEnumerable{T}"/> but accepts a the more flexible <see cref="Dictionary{string,string}"/> request parameters.
+        /// This method returns a strongly typed <see cref="IEnumerable{T}"/> but accepts a the more flexible <see cref="Dictionary{TKey, TValue}"/> request parameters.
         /// </summary>
         /// <typeparam name="T">the type of response objects to return.</typeparam>
+        /// <param name="layout">The layout to perform the find request on.</param>
         /// <param name="req">The find request dictionary.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         /// <remarks>Can't be a relay method, since we have to process the data specially to get our output</remarks>
