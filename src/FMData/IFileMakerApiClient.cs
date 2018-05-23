@@ -17,6 +17,11 @@ namespace FMData
         Task<IResponse> CreateAsync<T>(T input) where T : class, new();
 
         /// <summary>
+        /// <see cref="FileMakerApiClientBase.CreateAsync{T}(T, string, string)"/>
+        /// </summary>
+        Task<IResponse> CreateAsync<T>(T input, string script, string scriptParameter) where T : class, new();
+
+        /// <summary>
         /// Create a record in the file via explicit layout..
         /// </summary>
         /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>

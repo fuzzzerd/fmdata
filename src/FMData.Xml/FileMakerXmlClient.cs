@@ -194,6 +194,26 @@ namespace FMData.Xml
         {
             throw new NotImplementedException();
         }
+
+        protected override ICreateRequest<T> _createFactory<T>()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override IEditRequest<T> _editFactory<T>()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override IFindRequest<T> _findFactory<T>()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override IDeleteRequest _deleteFactory()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

@@ -12,6 +12,29 @@ namespace FMData
     public abstract class FileMakerApiClientBase : IFileMakerApiClient, IDisposable
     {
         /// <summary>
+        /// Factory to get a new Create Request of the correct type.
+        /// </summary>
+        protected abstract ICreateRequest<T> _createFactory<T>();
+        /// <summary>
+        /// Factory to get a new Edit Request of the correct type.
+        /// </summary>
+        protected abstract IEditRequest<T> _editFactory<T>();
+        /// <summary>
+        /// Factory to get a new Find Request of the correct type.
+        /// </summary>
+        protected abstract IFindRequest<T> _findFactory<T>();
+        /// <summary>
+        /// Factory to get a new Delete Request of the correct type.
+        /// </summary>
+        protected abstract IDeleteRequest _deleteFactory();
+
+        /// <summary>
+        /// Factory for generating requests.
+        /// </summary>
+        /// <param name="createFactory">The Create Request Factory</param>
+        ///protected FileMakerApiClientBase(Func<IFileMakerRequest> createFactory) => _createFactory = createFactory;
+
+        /// <summary>
         /// Create a record in the database utilizing the TableAttribute to target the layout.
         /// </summary>
         /// <typeparam name="T">The type parameter to be created.</typeparam>
@@ -19,13 +42,36 @@ namespace FMData
         /// <returns></returns>
         public virtual Task<IResponse> CreateAsync<T>(T input) where T : class, new() => CreateAsync(GetTableName(input), input);
         /// <summary>
+        /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout and perform a script with parameter.
+        /// </summary>
+        /// <typeparam name="T">The type to create</typeparam>
+        /// <param name="input">The input record to create.</param>
+        /// <param name="script">The name of a FileMaker script to run.</param>
+        /// <param name="scriptParameter">The parameter to pass to the script.</param>
+        /// <returns></returns>
+        public virtual Task<IResponse> CreateAsync<T>(T input, string script, string scriptParameter) where T : class, new()
+        {
+            var request = _createFactory<T>();
+            request.Layout = GetTableName(input);
+            request.Data = input;
+            request.Script = script;
+            request.ScriptParameter = scriptParameter;
+            return SendAsync(request);
+        }
+        /// <summary>
         /// Create a record in the database.
         /// </summary>
         /// <typeparam name="T">The type parameter to be created.</typeparam>
         /// <param name="layout">Layout to use (overrides any [Table] parms on the class.)</param>
         /// <param name="input">The input object containing the values for the record.</param>
         /// <returns></returns>
-        public abstract Task<IResponse> CreateAsync<T>(string layout, T input) where T : class, new();
+        public virtual Task<IResponse> CreateAsync<T>(string layout, T input) where T : class, new()
+        {
+            var request = _createFactory<T>();
+            request.Layout = layout;
+            request.Data = input;
+            return SendAsync(request);
+        }
 
 
         /// <summary>
@@ -81,7 +127,13 @@ namespace FMData
         /// <summary>
         /// Delete a record by id and layout.
         /// </summary>
-        public abstract Task<IResponse> DeleteAsync(int recId, string layout);
+        public virtual Task<IResponse> DeleteAsync(int recId, string layout)
+        {
+            var request = _deleteFactory();
+            request.RecordId = recId;
+            request.Layout = layout;
+            return SendAsync(request);
+        }
 
         /// <summary>
         /// Send a Create Record request to the FileMaker API.
