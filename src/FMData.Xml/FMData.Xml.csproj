@@ -19,6 +19,10 @@
     <PackageTags>filemaker filemaker-xml filemaker-cwp filemaker-api netstandard xml dotnet-standard</PackageTags>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard1.3\FMData.Xml.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\FMData\FMData.csproj" />
   </ItemGroup>
