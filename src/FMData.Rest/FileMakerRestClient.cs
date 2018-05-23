@@ -211,38 +211,6 @@ namespace FMData.Rest
 
         #region Data Minipulation Functions
 
-        #region Relay Methods //TODO: Possibly Integrate into base class
-
-        /// <summary>
-        /// Strongly typed find request.
-        /// </summary>
-        /// <typeparam name="T">The type of response objects to return.</typeparam>
-        /// <param name="layout">The name of the layout to run this request on.</param>
-        /// <param name="input">The object with properties to map to the find request.</param>
-        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public override Task<IEnumerable<T>> FindAsync<T>(string layout, T input) => SendAsync(new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
-
-
-        /// <summary>
-        /// Edit a record.
-        /// </summary>
-        /// <typeparam name="T">Type parameter for this edit.</typeparam>
-        /// <param name="layout">Explicitly define the layout to use.</param>
-        /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
-        /// <param name="input">Object with the updated values.</param>
-        /// <returns></returns>
-        public override Task<IResponse> EditAsync<T>(string layout, int recordId, T input) => SendAsync(new EditRequest<T>() { Data = input, Layout = layout, RecordId = recordId.ToString() });
-
-        /// <summary>
-        /// Edit a record.
-        /// </summary>
-        /// <param name="layout">Explicitly define the layout to use.</param>
-        /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
-        /// <param name="editValues">Object with the updated values.</param>
-        /// <returns></returns>
-        public override Task<IResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues) => SendAsync(new EditRequest<Dictionary<string, string>>() { Data = editValues, Layout = layout, RecordId = recordId.ToString() });
-        #endregion
-
         #region Special Implementations
         /// <summary>
         /// General purpose Find Request method. Supports additional syntaxes like the { "omit" : "true" } operation.
