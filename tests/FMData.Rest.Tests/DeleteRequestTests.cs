@@ -70,7 +70,7 @@ namespace FMData.Tests
             var req = new DeleteRequest()
             {
                 Layout = "layout",
-                RecordId = "1234"
+                RecordId = 1234
             };
             var response = await fdc.SendAsync(req);
 

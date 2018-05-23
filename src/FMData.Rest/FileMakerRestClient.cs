@@ -18,6 +18,24 @@ namespace FMData.Rest
     /// </summary>
     public class FileMakerRestClient : FileMakerApiClientBase, IFileMakerRestClient
     {
+        /// <summary>
+        /// Factory to get a new Create Request of the correct type.
+        /// </summary>
+        protected override ICreateRequest<T> _createFactory<T>() => new CreateRequest<T>();
+        /// <summary>
+        /// Factory to get a new Edit Request of the correct type.
+        /// </summary>
+        protected override IEditRequest<T> _editFactory<T>() => new EditRequest<T>();
+        /// <summary>
+        /// Factory to get a new Find Request of the correct type.
+        /// </summary>
+        protected override IFindRequest<T> _findFactory<T>() => new FindRequest<T>();
+        /// <summary>
+        /// Factory to get a new Delete Request of the correct type.
+        /// </summary>
+        protected override IDeleteRequest _deleteFactory() => new DeleteRequest();
+
+
         internal readonly int tokenExpiration = 15;
 
         private readonly HttpClient _client;
@@ -194,14 +212,6 @@ namespace FMData.Rest
         #region Data Minipulation Functions
 
         #region Relay Methods //TODO: Possibly Integrate into base class
-        /// <summary>
-        /// Create a record in the database utilizing the TableAttribute to target the layout.
-        /// </summary>
-        /// <typeparam name="T">The type parameter to be created.</typeparam>
-        /// <param name="layout">Explicitly define the layout to use for this request.</param>
-        /// <param name="input">Object containing the data to be on the newly created record.</param>
-        /// <returns></returns>
-        public override Task<IResponse> CreateAsync<T>(string layout, T input) => SendAsync(new CreateRequest<T>() { Data = input, Layout = layout });
 
         /// <summary>
         /// Strongly typed find request.
@@ -231,15 +241,6 @@ namespace FMData.Rest
         /// <param name="editValues">Object with the updated values.</param>
         /// <returns></returns>
         public override Task<IResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues) => SendAsync(new EditRequest<Dictionary<string, string>>() { Data = editValues, Layout = layout, RecordId = recordId.ToString() });
-
-
-        /// <summary>
-        /// Delete a record by FileMaker RecordId and explicit layout.
-        /// </summary>
-        /// <param name="recId"></param>
-        /// <param name="layout"></param>
-        /// <returns></returns>
-        public override Task<IResponse> DeleteAsync(int recId, string layout) => SendAsync(new DeleteRequest { Layout = layout, RecordId = recId.ToString() });
         #endregion
 
         #region Special Implementations
@@ -377,7 +378,7 @@ namespace FMData.Rest
         public override async Task<IResponse> SendAsync(IDeleteRequest req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
-            if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
+            if (req.RecordId == 0) throw new ArgumentException("RecordId is required on the request and must not be zero.");
 
             UpdateTokenDate(); // we're about to use the token so update date used
 
