@@ -377,8 +377,9 @@ namespace FMData.Rest
         /// </summary>
         /// <typeparam name="T">The type of response objects to return.</typeparam>
         /// <param name="req">The find request parameters.</param>
+        /// <param name="fmId">Function to assign the FileMaker RecordId to each instnace of {T}</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public override async Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req)
+        public override async Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T,int,object> fmId = null)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
@@ -391,14 +392,17 @@ namespace FMData.Rest
                 JObject joResponse = JObject.Parse(responseJson);
 
                 // get JSON result objects into a list
-                IList<JToken> results = joResponse["response"]["data"].Children()["fieldData"].ToList();
+                IList<JToken> results = joResponse["response"]["data"].Children().ToList();
 
                 // serialize JSON results into .NET objects
                 IList<T> searchResults = new List<T>();
                 foreach (JToken result in results)
                 {
                     // JToken.ToObject is a helper method that uses JsonSerializer internally
-                    T searchResult = result.ToObject<T>();
+                    T searchResult = result["fieldData"].ToObject<T>();
+                    int fileMakerId = result["recordId"].ToObject<int>();
+                    int modId = result["modId"].ToObject<int>();
+                    fmId?.Invoke(searchResult, fileMakerId);
                     searchResults.Add(searchResult);
                 }
 

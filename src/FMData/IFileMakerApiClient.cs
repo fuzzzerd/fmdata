@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -123,7 +124,7 @@ namespace FMData
         /// </summary>
         /// <param name="req">Find request</param>
         /// <returns></returns>
-        Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req) where T : class, new();
+        Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T, int, object> fmId = null) where T : class, new();
 
         /// <summary>
         /// Edit record.

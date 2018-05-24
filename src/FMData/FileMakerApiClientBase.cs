@@ -8,6 +8,7 @@ namespace FMData
 {
     /// <summary>
     /// Base for implementations to inherit from.
+    /// Provides some wrapper and passthrough functionality to expand the API surface without requiring each fo those methods be re-implemented.
     /// </summary>
     public abstract class FileMakerApiClientBase : IFileMakerApiClient, IDisposable
     {
@@ -27,12 +28,6 @@ namespace FMData
         /// Factory to get a new Delete Request of the correct type.
         /// </summary>
         protected abstract IDeleteRequest _deleteFactory();
-
-        /// <summary>
-        /// Factory for generating requests.
-        /// </summary>
-        /// <param name="createFactory">The Create Request Factory</param>
-        ///protected FileMakerApiClientBase(Func<IFileMakerRequest> createFactory) => _createFactory = createFactory;
 
         /// <summary>
         /// Create a record in the database utilizing the TableAttribute to target the layout.
@@ -183,7 +178,7 @@ namespace FMData
         /// <summary>
         /// Send a Find Record request to the FileMaker API.
         /// </summary>
-        public abstract Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req) where T : class, new();
+        public abstract Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T, int, object> fmId = null) where T : class, new();
 
         #region Utility Methods
         /// <summary>
