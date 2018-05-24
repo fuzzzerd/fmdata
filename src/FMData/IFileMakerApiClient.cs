@@ -39,7 +39,15 @@ namespace FMData
         /// <param name="request">The object to utilize for the find request parameters.</param>
         /// <returns></returns>
         Task<IEnumerable<T>> FindAsync<T>(T request) where T : class, new();
-        
+
+        /// <summary>
+        /// Finds a record or records matching the properties of the input request object.
+        /// </summary>
+        /// <param name="request">The object to utilize for the find request parameters.</param>
+        /// <param name="fmid">Function to map the FileMaker RecordId to each instance T.</param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> FindAsync<T>(T request, Func<T,int,object> fmid) where T : class, new();
+
         /// <summary>
         /// Finds a record or records matching the properties of the input request object.
         /// </summary>

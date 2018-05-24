@@ -77,6 +77,20 @@ namespace FMData
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         public virtual Task<IEnumerable<T>> FindAsync<T>(T input) where T : class, new() => FindAsync(GetTableName(input), input);
         /// <summary>
+        /// Find a record with utilizing a class instance to define the find request field values.
+        /// </summary>
+        /// <typeparam name="T">The type of response objects to return.</typeparam>
+        /// <param name="input">The object with properties to map to the find request.</param>
+        /// <param name="fmid">Function to map a the FileMaker RecordId to each instance T.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
+        public virtual Task<IEnumerable<T>> FindAsync<T>(T input, Func<T, int, object> fmid) where T : class, new()
+        {
+            var req = _findFactory<T>();
+            req.Layout = GetTableName(input);
+            req.Query = new List<T>() { input };
+            return SendAsync(req, fmid);
+        }
+        /// <summary>
         /// Strongly typed find request.
         /// </summary>
         /// <typeparam name="T">The type of response objects to return.</typeparam>
