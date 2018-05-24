@@ -6,6 +6,7 @@ namespace FMData.Tests.TestModels
     [Table("Users")]
     public class User
     {
+        public int FileMakerRecordId { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime Created { get; set; }

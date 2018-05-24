@@ -129,7 +129,7 @@ namespace FMData.Xml
         public override Task<IEnumerable<T>> FindAsync<T>(string layout, T input) => SendAsync((IFindRequest<T>)new FindRequest<T>() { Layout = layout, Query = new List<T>() { input } });
 
 
-        public override async Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req)
+        public override async Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T, int, object> fmId = null)
         {
             var url = _fmsUri + "/fmi/xml/fmresultset.xml";
 

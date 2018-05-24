@@ -121,6 +121,20 @@ namespace FMData.Tests
         }
 
         [Fact]
+        public async Task SendAsync_StrongType_FindShould_ReturnData_AndGetFMID()
+        {
+            // arrange
+            var fdc = GetMockedFDC();
+
+            // act
+            var response = await fdc.SendAsync(FindUserReq, (u, i) => u.FileMakerRecordId = i);
+
+            // assert
+            var responseDataContainsResult = response.All(r => r.FileMakerRecordId != 0);
+            Assert.True(responseDataContainsResult);
+        }
+
+        [Fact]
         public async Task Find_WithoutExplicitRequest_ShouldReturnData()
         {
             // arrange
