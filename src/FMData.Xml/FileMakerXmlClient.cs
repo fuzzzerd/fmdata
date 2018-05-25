@@ -1,13 +1,12 @@
-﻿using System;
+﻿using FMData.Xml.Requests;
+using FMData.Xml.Responses;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.ComponentModel.DataAnnotations.Schema;
-using FMData.Xml.Requests;
-using FMData.Xml.Responses;
 
 namespace FMData.Xml
 {
@@ -211,6 +210,11 @@ namespace FMData.Xml
         }
 
         protected override IDeleteRequest _deleteFactory()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<IResponse> SetGlobalField(string baseTable, string fieldName, string targetValue)
         {
             throw new NotImplementedException();
         }
