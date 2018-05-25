@@ -214,7 +214,7 @@ namespace FMData.Xml
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> SetGlobalField(string baseTable, string fieldName, string targetValue)
+        public override Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue)
         {
             throw new NotImplementedException();
         }

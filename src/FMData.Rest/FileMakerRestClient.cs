@@ -429,7 +429,7 @@ namespace FMData.Rest
         /// <param name="fieldName">The name of the global field to set.</param>
         /// <param name="targetValue">The target value for this global field.</param>
         /// <returns>FileMaker Response</returns>
-        public override async Task<IResponse> SetGlobalField(string baseTable, string fieldName, string targetValue)
+        public override async Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue)
         {
             if (string.IsNullOrEmpty(baseTable)) throw new ArgumentException("baseTable is required on set global.");
             if (string.IsNullOrEmpty(fieldName)) throw new ArgumentException("fieldName is required on set global.");

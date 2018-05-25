@@ -123,7 +123,7 @@ namespace FMData
         /// <param name="fieldName">The name of the global field to set.</param>
         /// <param name="targetValue">The target value for this global field.</param>
         /// <returns>FileMaker Response</returns>
-        Task<IResponse> SetGlobalField(string baseTable, string fieldName, string targetValue);
+        Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue);
         #endregion
 
         #region Send Request Methods

@@ -222,5 +222,37 @@ namespace FMData.Tests
             Assert.NotNull(response);
             Assert.Contains(response.Messages, r => r.Message == "OK");
         }
+
+        [Fact]
+        public async Task CreateWithGlobal_Should_GetTwoOKs()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/globals")
+                .WithPartialContent("globalFields")
+                .Respond("application/json", DataApiResponses.SetGlobalSuccess());
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+                .WithPartialContent("fieldData")
+                .Respond("application/json", DataApiResponses.SuccessfulCreate());
+
+            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+
+            var req = new CreateRequest<User>()
+            {
+                Layout = "layout",
+                Data = new User { Name = "test name" },
+                Script = "run_this_script"
+            };
+
+            var globalResponse = await fdc.SetGlobalFieldAsync("Table", "Field", "Value");
+            var response = await fdc.SendAsync(req);
+
+            Assert.NotNull(response);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
+
+            Assert.NotNull(globalResponse);
+            Assert.Contains(globalResponse.Messages, r => r.Message == "OK");
+        }
     }
 }
