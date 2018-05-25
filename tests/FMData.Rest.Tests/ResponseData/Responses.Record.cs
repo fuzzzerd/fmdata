@@ -42,6 +42,12 @@ namespace FMData.Tests
     ""messages"":[{""code"":""0"",""message"":""OK""}]
 }";
 
+        public static string SetGlobalSuccess() => @"{
+    ""response"": {},
+    ""messages"":[{""code"":""0"",""message"":""OK""}]
+}";
+
+
         public static string SuccessfulDelete() => @"{
     ""response"": {},
     ""messages"":[{""code"":""0"",""message"":""OK""}]
