@@ -421,6 +421,49 @@ namespace FMData.Rest
 
         #endregion
 
+        /// <summary>
+        /// Set the value of global fields.
+        /// // https://fmhelp.filemaker.com/docs/17/en/dataapi/#set-global-fields
+        /// </summary>
+        /// <param name="baseTable">The base table on which this global field is defined.</param>
+        /// <param name="fieldName">The name of the global field to set.</param>
+        /// <param name="targetValue">The target value for this global field.</param>
+        /// <returns>FileMaker Response</returns>
+        public override async Task<IResponse> SetGlobalField(string baseTable, string fieldName, string targetValue)
+        {
+            if (string.IsNullOrEmpty(baseTable)) throw new ArgumentException("baseTable is required on set global.");
+            if (string.IsNullOrEmpty(fieldName)) throw new ArgumentException("fieldName is required on set global.");
+            if (string.IsNullOrEmpty(targetValue)) throw new ArgumentException("baseTable is required on set global.");
+
+            var str = $"{{ \"globalFields\" : {{ \"{baseTable}::{fieldName}\" : \"{targetValue}\" }} }}";
+            var method = new HttpMethod("PATCH");
+            var requestMessage = new HttpRequestMessage(method, $"{_baseEndPoint}/globals")
+            {
+                Content = new StringContent(str, Encoding.UTF8, "application/json")
+            };
+            UpdateTokenDate(); // we're about to use the token so update date used
+            // run the patch action
+            var response = await _client.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return new BaseResponse("404", "Error");
+            }
+
+            try
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
+        }
+
         #region Private Helpers and utility methods
 
         /// <summary>
@@ -474,7 +517,7 @@ namespace FMData.Rest
                 Content = new StringContent(str, Encoding.UTF8, "application/json")
             };
             UpdateTokenDate(); // we're about to use the token so update date used
-            // run the post action
+            // run the patch action
             var response = await _client.SendAsync(requestMessage);
             return response;
         }

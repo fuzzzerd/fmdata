@@ -194,6 +194,16 @@ namespace FMData
         /// </summary>
         public abstract Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T, int, object> fmId = null) where T : class, new();
 
+        /// <summary>
+        /// Set the value of global fields.
+        /// // https://fmhelp.filemaker.com/docs/17/en/dataapi/#set-global-fields
+        /// </summary>
+        /// <param name="baseTable">The base table on which this global field is defined.</param>
+        /// <param name="fieldName">The name of the global field to set.</param>
+        /// <param name="targetValue">The target value for this global field.</param>
+        /// <returns>FileMaker Response</returns>
+        public abstract Task<IResponse> SetGlobalField(string baseTable, string fieldName, string targetValue);
+
         #region Utility Methods
         /// <summary>
         /// Utility method to get the TableAttribute name to be used for the layout option in the request.

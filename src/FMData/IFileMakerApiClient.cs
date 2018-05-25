@@ -114,6 +114,18 @@ namespace FMData
 
 
 
+        #region Set Globals
+        /// <summary>
+        /// Set the value of global fields.
+        /// // https://fmhelp.filemaker.com/docs/17/en/dataapi/#set-global-fields
+        /// </summary>
+        /// <param name="baseTable">The base table on which this global field is defined.</param>
+        /// <param name="fieldName">The name of the global field to set.</param>
+        /// <param name="targetValue">The target value for this global field.</param>
+        /// <returns>FileMaker Response</returns>
+        Task<IResponse> SetGlobalField(string baseTable, string fieldName, string targetValue);
+        #endregion
+
         #region Send Request Methods
         /// <summary>
         /// Creates a new record.
