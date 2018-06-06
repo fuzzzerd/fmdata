@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -10,7 +9,7 @@
     <Version>2.0.0</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseUrl>https://github.com/fuzzzerd/fmdata/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>http://fmdata.io/</PackageProjectUrl>
+    <PackageProjectUrl>https://fmdata.io/</PackageProjectUrl>
     <PackageIconUrl></PackageIconUrl>
     <RepositoryUrl>https://github.com/fuzzzerd/fmdata</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
@@ -27,7 +26,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-62925-02" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-62925-02" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework) == 'netstandard1.3'">
@@ -37,5 +36,4 @@
   <ItemGroup Condition="$(TargetFramework) != 'netstandard1.3'">
     <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
-
 </Project>
