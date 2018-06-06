@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 
 namespace FMData.Rest
 {
+    /// <summary>
+    /// FileMaker REST Client methods. Mostly for internal use.
+    /// </summary>
     public interface IFileMakerRestClient : IFileMakerApiClient
     {
         #region Auth/Data Token Management
@@ -11,7 +14,6 @@ namespace FMData.Rest
         /// </summary>
         /// <param name="username">Username of the account to authenticate.</param>
         /// <param name="password">Password of the account to authenticate.</param>
-        /// <param name="layout">The layout to authenticate against.</param>
         /// <returns>An AuthResponse from deserialized from FileMaker Server json response.</returns>
         Task<AuthResponse> RefreshTokenAsync(
             string username,

@@ -142,7 +142,8 @@ namespace FMData
         /// <summary>
         /// Find a record or records matching the request.
         /// </summary>
-        /// <param name="req">Find request</param>
+        /// <param name="req">Find request.</param>
+        /// <param name="fmId">Function to map the FileMaker Id to the model.</param>
         /// <returns></returns>
         Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T, int, object> fmId = null) where T : class, new();
 

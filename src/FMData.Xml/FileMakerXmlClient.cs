@@ -33,7 +33,7 @@ namespace FMData.Xml
             : this(new HttpClient(), fmsUri, file, user, pass, initialLayout) { }
 
         /// <summary>
-        /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"> instance to the class.
+        /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"/> instance to the class.
         /// </summary>
         /// <param name="client">An <see ref="HttpClient"/> instance to utilize for the liftime of this Data Client.</param>
         /// <param name="fmsUri">FileMaker Server HTTP Uri Endpoint.</param>
