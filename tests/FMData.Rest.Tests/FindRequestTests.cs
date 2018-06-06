@@ -5,6 +5,7 @@ using RichardSzalay.MockHttp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -54,7 +55,7 @@ namespace FMData.Tests
             Layout = "layout"
         };
 
-        private IFindRequest<User> FindUserReq => (IFindRequest<User>)new FindRequest<User>()
+        private IFindRequest<User> FindUserReqWithLayoutOverride => new FindRequest<User>()
         {
             Query = new List<User>()
             {
@@ -113,7 +114,7 @@ namespace FMData.Tests
             var fdc = GetMockedFDC();
 
             // act
-            var response = await fdc.SendAsync(FindUserReq);
+            var response = await fdc.SendAsync(FindUserReqWithLayoutOverride);
 
             // assert
             var responseDataContainsResult = response.Any(r => r.Name.Contains("Buzz"));
@@ -127,7 +128,7 @@ namespace FMData.Tests
             var fdc = GetMockedFDC();
 
             // act
-            var response = await fdc.SendAsync(FindUserReq, (u, i) => u.FileMakerRecordId = i);
+            var response = await fdc.SendAsync(FindUserReqWithLayoutOverride, (u, i) => u.FileMakerRecordId = i);
 
             // assert
             var responseDataContainsResult = response.All(r => r.FileMakerRecordId != 0);
@@ -199,7 +200,7 @@ namespace FMData.Tests
         }
 
         [Fact]
-        public async Task SendAsync_FindNotFound_Should_ReturnEmpty()
+        public async Task SendAsync_Should_Handle_MissingLayout()
         {
             // arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -208,18 +209,17 @@ namespace FMData.Tests
             var file = "test-file";
             var user = "unit";
             var pass = "test";
-            var layout = "Users";
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
                            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/_find")
-                .Respond("application/json", DataApiResponses.SuccessfulFind());
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/*")
+                .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.LayoutNotFound());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
             // act
-            var response = await fdc.SendAsync(FindUserReq);
+            var response = await fdc.SendAsync(FindUserReqWithLayoutOverride);
 
             // assert
             Assert.Empty(response);
@@ -235,19 +235,47 @@ namespace FMData.Tests
             var file = "test-file";
             var user = "unit";
             var pass = "test";
-            var layout = "layout";
+            var layout = FileMakerRestClient.GetTableName(new User());
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
                            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/_find")
-                .Respond("application/json", DataApiResponses.SuccessfulFind());
+                .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.FindNotFound());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
             // act
             var toFind = new User() { Id = 35 };
             var response = await fdc.FindAsync(toFind);
+
+            // assert
+            Assert.Empty(response);
+        }
+
+        [Fact]
+        public async Task SendAsyncFind_Record_ThatDoesNotExist_ShouldReturnEmpty()
+        {
+            // arrange
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = FileMakerRestClient.GetTableName(new User());
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/_find")
+                .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.FindNotFound());
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+
+            // act
+            var toFind = new User() { Id = 35 };
+            var response = await fdc.SendAsync(new FindRequest<User>() { Query = new List<User> { toFind } });
 
             // assert
             Assert.Empty(response);
