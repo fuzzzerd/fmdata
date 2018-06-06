@@ -409,6 +409,29 @@ namespace FMData.Rest
                 return searchResults;
             }
 
+            if(response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                try
+                {
+                    // attempt to read response content
+                    if(response.Content == null) { throw new Exception("Could not read response from Data API."); }
+
+                    var responseJson = await response.Content.ReadAsStringAsync();
+                    var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+                    if (responseObject.Messages.Any(m => m.Code == "401"))
+                    {
+                        // filemaker no records match the find request => empty list.
+                        return new List<T>();
+                    }
+
+                        throw new Exception(responseObject.Messages.First().Message);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Could not read response from Data API.", ex);
+                }
+            }
+
             // not found, so return empty list
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
