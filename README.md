@@ -1,4 +1,4 @@
-# FM Data
+# FMData is a FileMaker API Client Library for Rest/Json/Xml
 
 FMData is a C# client library for accessing data from FileMaker databases. Currently supporting the FileMaker 17 REST/DATA API.
 
