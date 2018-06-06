@@ -52,6 +52,25 @@ A model should roughly match a table in your solution. Its accessed via layout.
     var toCreate = new Model { Name = "someName", Address = "123 Main Street" };
     var resuts = await client.CreateAsync(toCreate);
 
+### Updating a record
+
+    var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
+    var fileMakerRecordId = 1; // this is the value from the calculation: Get(RecordID)
+    var toUpdate = new Model { Name = "someName", Address = "123 Main Street" };
+    var resuts = await client.EditAsync(fileMakerRecordId, toCreate);
+
+### Find with FileMaker Id Mapping
+
+Note you need to add an int property to the Model `public int FileMakerRecordId {get; set; }` and provide the Func to the `FindAsync` method to tell FMData how to map the FileMaker Id returned from the API to your model.
+
+    Func<Model, int, object> FMRecordIdMapper = (o, id) => o.FileMakerRecordId = id;
+    var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
+    var toFind = new Model { Name = "someName" };
+    var resuts = await client.FindAsync(toFind, FMRecordIdMapper);
+    // results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
+
+Alternatively, you could create a calculated field `Get(RecordID)`, put it on your layout, and map it the normal way.
+
 ## Contributing
 
 - If you've found a bug or have a suggestion, add it to our [![FMData issues](https://img.shields.io/github/issues/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/issues) log.
