@@ -1,8 +1,12 @@
-# FMData is a FileMaker API Client Library for Rest/Json/Xml
+# Use FMData to Access FileMaker Data API with FMData utilzing C# and .NET
 
-FMData is a C# client library for accessing data from FileMaker databases. Currently supporting the FileMaker 17 REST/DATA API.
+FMData is a C# client library for accessing data from FileMaker databases. It currently supports the FileMaker Data API and has planned support for the FileMaker Xml API.
 
-The interfaces and core elements are defined in the `FMData` package, the implementations for REST API or XML API are contained within their respective packages: `FMData.Rest` and `FMData.Xml` -- the current focus is on completing the Rest implementation. The Xml implementation currently lacks many features.
+## About FMData
+
+Data access is wrapped around the `IFileMakerApiClient` interface which is defined in `FMData`. There are multiple implementations. Currently one for Data/JSON and one for Xml. The design is meant to mirror FileMaker constructs and should be portable to future technologies exposed by FileMaker.
+
+The implementation for consuming data via the Data API is located in `FMData.Rest` and the implementation for Xml will be located in `FMData.Xml`.
 
 | Build Status | Activity | MyGet | Nuget | License |
 |---|---|---|---|---|
@@ -10,20 +14,43 @@ The interfaces and core elements are defined in the `FMData` package, the implem
 
 ## Installation
 
-Stable builds are released to NuGet and CI builds are released on MyGet.
+Install via `dotnet add` or nuget.
 
-## Stable Builds are on NuGet
+### Stable Builds are on NuGet and CI builds are on MyGet
 
     dotnet add package FMData.Rest
-    //or
-    dotnet add package FMData.Xml
 
 ## Example Usage
+
+The recommended way to consume this library is using a strongly typed model.
+
+### Setting up your model
+
+A model should roughly match a table in your solution. Its accessed via layout.
+
+    [Table("NameOfYourLayout")] // use the Table attribute to specify the layout
+    public class Model
+    {
+        public string Name { get; set; }
+
+        // if your model name does not match
+        // the JsonProperty attribute to map to the right field
+        [JsonProperty("overrideFieldName")] // the filemaker field to use
+        public string Address { get; set; }
+    }
+
+### Performing a Find
 
     var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
     var toFind = new Model { Name = "someName" };
     var resuts = await client.FindAsync(toFind);
     // results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
+
+### Create a new record
+
+    var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
+    var toCreate = new Model { Name = "someName", Address = "123 Main Street" };
+    var resuts = await client.CreateAsync(toCreate);
 
 ## Contributing
 
