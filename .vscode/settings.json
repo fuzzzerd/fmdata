@@ -1,3 +1,4 @@
 {
-    "dotnet-test-explorer.testProjectPath": "tests/FMData.Tests"
+    "dotnet-test-explorer.enableTelemetry": false,
+    "dotnet-test-explorer.testProjectPath": "tests/FMData.Rest.Tests"
 }
