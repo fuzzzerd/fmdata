@@ -210,7 +210,7 @@ namespace FMData
         /// </summary>
         /// <param name="instance"></param>
         /// <returns>The specified in the Table Attribute</returns>
-        protected string GetTableName<T>(T instance)
+        public static string GetTableName<T>(T instance)
         {
             string lay;
             try

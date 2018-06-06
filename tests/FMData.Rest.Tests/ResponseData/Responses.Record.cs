@@ -32,6 +32,16 @@ namespace FMData.Tests
     ""messages"":[{{""code"":""0"",""message"":""OK""}}]
 }}";
 
+        public static string LayoutNotFound() => @"{
+    ""response"": {},
+    ""messages"":[{""code"":""105"",""message"":""Layout is missing""}]
+}";
+
+        public static string FindNotFound() => @"{
+    ""response"": {},
+    ""messages"":[{""code"":""401"",""message"":""No records match the request""}]
+}";
+
         public static string SuccessfulCreate(int createdId = 254) => $@"{{
     ""response"": {{""recordId"":{createdId}}},
     ""messages"":[{{""code"":""0"",""message"":""OK""}}]
