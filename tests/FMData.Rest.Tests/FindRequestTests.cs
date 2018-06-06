@@ -200,7 +200,7 @@ namespace FMData.Tests
         }
 
         [Fact]
-        public async Task SendAsync_Should_Handle_MissingLayout()
+        public async Task SendAsyncFind_WithBadLayout_Throws()
         {
             // arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -219,10 +219,8 @@ namespace FMData.Tests
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
             // act
-            var response = await fdc.SendAsync(FindUserReqWithLayoutOverride);
-
             // assert
-            Assert.Empty(response);
+            await Assert.ThrowsAsync<Exception>(async () => await fdc.SendAsync(FindUserReqWithLayoutOverride));
         }
 
         [Fact]
@@ -275,10 +273,38 @@ namespace FMData.Tests
 
             // act
             var toFind = new User() { Id = 35 };
-            var response = await fdc.SendAsync(new FindRequest<User>() { Query = new List<User> { toFind } });
+            var response = await fdc.SendAsync(new FindRequest<User>() { Query = new List<User> { toFind }, Layout = layout });
 
             // assert
             Assert.Empty(response);
+        }
+
+
+        [Fact]
+        public async Task SendAsyncFind_WithoutLayout_ShouldThrow()
+        {
+            // arrange
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = FileMakerRestClient.GetTableName(new User());
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/_find")
+                .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.FindNotFound());
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+
+            // act
+            var toFind = new User() { Id = 35 };
+
+            // assert
+            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.SendAsync(new FindRequest<User>() { Query = new List<User> { toFind } }));
         }
     }
 }
