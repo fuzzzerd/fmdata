@@ -1,6 +1,8 @@
 # FM Data
 
-A client library for accessing FileMaker data.
+FMData is a C# client library for accessing data from FileMaker databases. Currently supporting the FileMaker 17 REST/DATA API.
+
+The interfaces and core elements are defined in the `FMData` package, the implementations for REST API or XML API are contained within their respective packages: `FMData.Rest` and `FMData.Xml` -- the current focus is on completing the Rest implementation. The Xml implementation currently lacks many features.
 
 | Build Status | Activity | MyGet | Nuget | License |
 |---|---|---|---|---|
@@ -8,7 +10,7 @@ A client library for accessing FileMaker data.
 
 ## Installation
 
-There are both stable builds on Nuget and Continuous Integration builds available from MyGet.
+Stable builds are released to NuGet and CI builds are released on MyGet.
 
 ## Stable Builds are on NuGet
 
@@ -16,14 +18,12 @@ There are both stable builds on Nuget and Continuous Integration builds availabl
     //or
     dotnet add package FMData.Xml
 
-*Note: CI Builds are on MyGet*
-
 ## Example Usage
 
     var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
     var toFind = new Model { Name = "someName" };
     var resuts = await client.FindAsync(toFind);
-    // results is IEnumerable<Model> matching the find request.
+    // results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
 
 ## Contributing
 
