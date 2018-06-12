@@ -200,6 +200,39 @@ namespace FMData.Tests
         }
 
         [Fact]
+        public async Task Find_WithScript_ShouldHaveScript()
+        {
+            // arrange
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "Users";
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/_find")
+                .WithPartialContent("fuzzzerd") // ensure the request contains the expected content
+                .WithPartialContent("script").WithPartialContent("nos_ran")
+                .Respond("application/json", DataApiResponses.SuccessfulFind());
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+
+            // act
+            var response = await fdc.FindAsync(new User()
+            {
+                Name = "fuzzzerd"
+            }, "nos_ran", null, null);
+
+            // assert
+            var responseDataContainsResult = response.Any(r => r.Created == DateTime.Parse("03/29/2018 15:22:09"));
+            Assert.True(responseDataContainsResult);
+        }
+
+        [Fact]
         public async Task SendAsyncFind_WithBadLayout_Throws()
         {
             // arrange
