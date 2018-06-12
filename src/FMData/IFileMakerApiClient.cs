@@ -94,6 +94,18 @@ namespace FMData
         /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
         /// </summary>
         /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
+        /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
+        /// <param name="script">script to run after the request.</param>
+        /// <param name="scriptParameter">Script parameter.</param>
+        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
+        /// <returns></returns>
+        Task<IResponse> EditAsync<T>(int recordId, string script, string scriptParameter, T input) where T : class, new();
+
+
+        /// <summary>
+        /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
+        /// </summary>
+        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
         /// <param name="layout"></param>
         /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
