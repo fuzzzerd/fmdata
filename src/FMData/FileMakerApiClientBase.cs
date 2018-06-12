@@ -46,13 +46,53 @@ namespace FMData
         /// <returns></returns>
         public virtual Task<IResponse> CreateAsync<T>(T input, string script, string scriptParameter) where T : class, new()
         {
+            return CreateAsync(input, script, scriptParameter, null, null, null, null);
+        }
+
+        /// <summary>
+        /// Creates a record matching the input data. All possible scripts available.
+        /// Empty script names will be ignored.
+        /// </summary>
+        /// <typeparam name="T">The type of record to be created.</typeparam>
+        /// <param name="input">The data to put in the record.</param>
+        /// <param name="script">Name of the script to run at request completion.</param>
+        /// <param name="scriptParameter">Parameter for script.</param>
+        /// <param name="preRequestScript">Script to run before the request. See FMS documentation for more details.</param>
+        /// <param name="preRequestScriptParameter">Parameter for script.</param>
+        /// <param name="preSortScript">Script to run after the request, but before the sort. See FMS documentation for more details.</param>
+        /// <param name="preSortScriptParameter">Parameter for script.</param>
+        /// <returns>A response indicating the results of the call to the FileMaker Server Data API.</returns>
+        public virtual Task<IResponse> CreateAsync<T>(T input, string script, string scriptParameter, string preRequestScript, string preRequestScriptParameter, string preSortScript, string preSortScriptParameter) where T : class, new()
+        {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             var request = _createFactory<T>();
             request.Layout = GetTableName(input);
             request.Data = input;
-            request.Script = script;
-            request.ScriptParameter = scriptParameter;
+
+            if (!string.IsNullOrEmpty(script))
+            {
+                request.Script = script;
+                request.ScriptParameter = scriptParameter;
+            }
+            if (!string.IsNullOrEmpty(preRequestScript))
+            {
+                request.PreRequestScript = preRequestScript;
+                request.PreRequestScriptParameter = preRequestScriptParameter;
+            }
+
+            if (!string.IsNullOrEmpty(preSortScript))
+            {
+                request.PreSortScript = preSortScript;
+                request.PreSortScriptParameter = preSortScriptParameter;
+            }
+
             return SendAsync(request);
         }
+
         /// <summary>
         /// Create a record in the database.
         /// </summary>
@@ -224,7 +264,7 @@ namespace FMData
                 throw new ArgumentException($"Could not load Layout name from TableAttribute on {typeof(T).Name}.");
             }
             return lay;
-        } 
+        }
         #endregion
 
         /// <summary>
