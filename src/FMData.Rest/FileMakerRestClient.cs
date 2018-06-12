@@ -142,6 +142,15 @@ namespace FMData.Rest
         /// <param name="recordid">The record ID of the record to edit.</param>
         /// <returns>The FileMaker Data API Endpoint for Delete requests.</returns>
         public string DeleteEndpoint(string layout, object recordid) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records/{recordid}";
+
+        /// <summary>
+        /// Generate the appropriate Container field endpoint.
+        /// </summary>
+        /// <param name="layout">The layout to use.</param>
+        /// <param name="recordid">the record ID of the record to edit.</param>
+        /// <param name="fieldName">The name of the container field.</param>
+        /// <returns></returns>
+        public string ContainerEndpoint(string layout, object recordid, string fieldName) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records/{recordid}/containers/{Uri.EscapeUriString(fieldName)}";
         #endregion
 
         #region FM Data Token Management
