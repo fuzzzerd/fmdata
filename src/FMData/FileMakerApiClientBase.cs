@@ -292,6 +292,13 @@ namespace FMData
         /// <returns>FileMaker Response</returns>
         public abstract Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue);
 
+        public abstract Task<IResponse> UpdateContainer(
+            string layout,
+            int recordId,
+            string fieldName,
+            string fileName,
+            byte[] content);
+
         #region Utility Methods
         /// <summary>
         /// Utility method to get the TableAttribute name to be used for the layout option in the request.
