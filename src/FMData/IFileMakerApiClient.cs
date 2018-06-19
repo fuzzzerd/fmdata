@@ -153,6 +153,15 @@ namespace FMData
         Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue);
         #endregion
 
+        #region Set Containers
+        Task<IResponse> UpdateContainer(
+            string layout,
+            int recordId,
+            string fieldName,
+            string fileName,
+            byte[] content);
+        #endregion
+
         #region Send Request Methods
         /// <summary>
         /// Creates a new record.

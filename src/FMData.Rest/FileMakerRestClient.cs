@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -476,6 +477,48 @@ namespace FMData.Rest
             UpdateTokenDate(); // we're about to use the token so update date used
             // run the patch action
             var response = await _client.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return new BaseResponse("404", "Error");
+            }
+
+            try
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
+        }
+
+
+        public override async Task<IResponse> UpdateContainer(
+            string layout, 
+            int recordId, 
+            string fieldName,
+            string fileName,
+            byte[] content)
+        {
+            var form = new MultipartFormDataContent();
+            
+            //var stream = new MemoryStream(content);
+            //var streamContent = new StreamContent(stream);
+            var uri = ContainerEndpoint(layout, recordId, fieldName);
+
+            var containerContent = new ByteArrayContent(content);
+            containerContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+
+            form.Add(containerContent, fileName, Path.GetFileName(fileName));
+
+            UpdateTokenDate();
+            var response = await _client.PostAsync(uri, form);
+            
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
