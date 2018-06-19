@@ -1,6 +1,6 @@
-# Use FMData to Access FileMaker Databases via the FileMaker Data API with C# and .NET
+# Use the FMData API Client to Access FileMaker Databases via the FileMaker Data API with C# and .NET
 
-FMData is a C# client library for accessing data from FileMaker databases. It currently supports the FileMaker Data API and has planned support for the FileMaker Xml API.
+FMData is a C# client library for accessing data from FileMaker databases. It currently supports the FileMaker Data API. With slow work towards compatibility with the existing FileMaker Xml API.
 
 ## About FMData
 
