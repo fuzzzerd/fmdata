@@ -223,6 +223,11 @@ namespace FMData.Xml
         {
             throw new NotImplementedException();
         }
+
+        public override Task<IResponse> UpdateContainer(string layout, int recordId, string fieldName, string fileName, int repetition, byte[] content)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }
