@@ -292,6 +292,15 @@ namespace FMData
         /// <returns>FileMaker Response</returns>
         public abstract Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue);
 
+        /// <summary>
+        /// Puts the contents of the byte array into the specified container field.
+        /// </summary>
+        /// <param name="layout">The layout to perform this operation on.</param>
+        /// <param name="recordId">The FileMaker RecordID of the record we want to update the container on.</param>
+        /// <param name="fieldName">Name of the Container Field.</param>
+        /// <param name="fileName">The name of the file being inserted into the container field.</param>
+        /// <param name="content">The content to be inserted into the container field.</param>
+        /// <returns>The FileMaker Server Response from this operation.</returns>
         public abstract Task<IResponse> UpdateContainer(
             string layout,
             int recordId,
