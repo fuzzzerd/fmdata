@@ -104,21 +104,21 @@ namespace FMData.Rest
         /// </summary>
         /// <returns>The FileMaker Data API Endpoint for Authentication Requests.</returns>
         public string AuthEndpoint() => $"{_baseEndPoint}/sessions";
-        
+
         /// <summary>
         /// Generate the appropriate Find endpoint uri for this instance of the data client.
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <returns>The FileMaker Data API Endpoint for Find requests.</returns>
         public string FindEndpoint(string layout) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/_find";
-        
+
         /// <summary>
         /// Generate the appropriate Create endpoint uri for this instance of the data client.
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <returns>The FileMaker Data API Endpoint for Create requests.</returns>
         public string CreateEndpoint(string layout) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records";
-        
+
         /// <summary>
         /// Generate the appropriate Get Records endpoint.
         /// </summary>
@@ -127,7 +127,7 @@ namespace FMData.Rest
         /// <param name="offset">The offset number of records to skip before starting to return records.</param>
         /// <returns>The FileMaker Data API Endpoint for Get Records reqeusts.</returns>
         public string GetRecordsEndpoint(string layout, int limit, int offset) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records?_limit={limit}&_offset={offset}";
-        
+
         /// <summary>
         /// Generate the appropriate Edit/Update endpoint uri for this instance of the data client.
         /// </summary>
@@ -135,7 +135,7 @@ namespace FMData.Rest
         /// <param name="recordid">The record ID of the record to edit.</param>
         /// <returns>The FileMaker Data API Endpoint for Update/Edit requests.</returns>
         public string UpdateEndpoint(string layout, object recordid) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records/{recordid}";
-        
+
         /// <summary>
         /// Generate the appropriate Delete endpoint uri for this instance of the data client.
         /// </summary>
@@ -285,7 +285,7 @@ namespace FMData.Rest
                 // something bad happened. TODO: improve non-OK response handling
                 throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
             }
-        } 
+        }
         #endregion
 
         /// <summary>
@@ -390,7 +390,7 @@ namespace FMData.Rest
         /// <param name="req">The find request parameters.</param>
         /// <param name="fmId">Function to assign the FileMaker RecordId to each instnace of {T}</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public override async Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T,int,object> fmId = null)
+        public override async Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T, int, object> fmId = null)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
@@ -420,12 +420,12 @@ namespace FMData.Rest
                 return searchResults;
             }
 
-            if(response.StatusCode == HttpStatusCode.InternalServerError)
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 try
                 {
                     // attempt to read response content
-                    if(response.Content == null) { throw new Exception("Could not read response from Data API."); }
+                    if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
 
                     var responseJson = await response.Content.ReadAsStringAsync();
                     var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
@@ -435,7 +435,7 @@ namespace FMData.Rest
                         return new List<T>();
                     }
 
-                        throw new Exception(responseObject.Messages.First().Message);
+                    throw new Exception(responseObject.Messages.First().Message);
                 }
                 catch (Exception ex)
                 {
@@ -448,7 +448,7 @@ namespace FMData.Rest
             {
                 return new List<T>();
             }
-            
+
             // other error TODO: Improve handling
             throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responed with {response.StatusCode}");
         }
@@ -509,15 +509,15 @@ namespace FMData.Rest
         /// <param name="content">The content to be inserted into the container field.</param>
         /// <returns>The FileMaker Server Response from this operation.</returns>
         public override async Task<IResponse> UpdateContainer(
-            string layout, 
-            int recordId, 
+            string layout,
+            int recordId,
             string fieldName,
             string fileName,
             int repetition,
             byte[] content)
         {
             var form = new MultipartFormDataContent();
-            
+
             //var stream = new MemoryStream(content);
             //var streamContent = new StreamContent(stream);
             var uri = ContainerEndpoint(layout, recordId, fieldName, repetition);
@@ -617,8 +617,9 @@ namespace FMData.Rest
         {
             if (_client != null)
             {
-                // end our token
-                LogoutAsync().Wait();
+                // end our token, utilize the threadpool to ensure we do not block 
+                // https://blogs.msdn.microsoft.com/pfxteam/2012/04/13/should-i-expose-synchronous-wrappers-for-asynchronous-methods/
+                Task.Run(() => LogoutAsync()).Wait();
 
                 // dispose our injected http client
                 _client.Dispose();
