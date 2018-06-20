@@ -47,9 +47,9 @@ namespace FMData.Rest
 
         private string dataToken;
         private DateTime dataTokenLastUse = DateTime.MinValue;
-        private void UpdateTokenDate()
+        private async Task UpdateTokenDateAsync()
         {
-            if (!IsAuthenticated) { RefreshTokenAsync(_userName, _password).Wait(); }
+            if (!IsAuthenticated) { await RefreshTokenAsync(_userName, _password); }
             dataTokenLastUse = DateTime.UtcNow;
         }
 
@@ -301,7 +301,7 @@ namespace FMData.Rest
             var str = req.SerializeRequest();
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
 
-            UpdateTokenDate(); // we're about to use the token so update date used
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
             // run the post action
             var response = await _client.PostAsync(CreateEndpoint(req.Layout), httpContent);
@@ -359,7 +359,7 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (req.RecordId == 0) throw new ArgumentException("RecordId is required on the request and must not be zero.");
 
-            UpdateTokenDate(); // we're about to use the token so update date used
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
             // add a default request header of our data token to nuke
             var response = await _client.DeleteAsync(DeleteEndpoint(req.Layout, req.RecordId));
@@ -475,7 +475,7 @@ namespace FMData.Rest
             {
                 Content = new StringContent(str, Encoding.UTF8, "application/json")
             };
-            UpdateTokenDate(); // we're about to use the token so update date used
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
             // run the patch action
             var response = await _client.SendAsync(requestMessage);
 
@@ -527,7 +527,7 @@ namespace FMData.Rest
 
             form.Add(containerContent, "upload", Path.GetFileName(fileName));
 
-            UpdateTokenDate();
+            await UpdateTokenDateAsync();
             var response = await _client.PostAsync(uri, form);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
@@ -557,7 +557,7 @@ namespace FMData.Rest
         /// <typeparam name="T">The type parameter of the data request.</typeparam>
         /// <param name="req">The request object to send.</param>
         /// <returns>The task that will return the http response from this</returns>
-        private Task<HttpResponseMessage> GetFindHttpResponseAsync<T>(IFindRequest<T> req)
+        private async Task<HttpResponseMessage> GetFindHttpResponseAsync<T>(IFindRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
 
@@ -566,8 +566,8 @@ namespace FMData.Rest
                 // normally required, but internally we can route to the regular record request apis
                 var uriEndpoint = GetRecordsEndpoint(req.Layout, req.Limit, req.Offset);
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get, uriEndpoint);
-                UpdateTokenDate(); // we're about to use the token so update date used
-                return _client.SendAsync(requestMessage);
+                await UpdateTokenDateAsync(); // we're about to use the token so update date used
+                return await _client.SendAsync(requestMessage);
             }
 
             var json = req.SerializeRequest();
@@ -577,9 +577,9 @@ namespace FMData.Rest
                 Content = httpContent
             };
 
-            UpdateTokenDate(); // we're about to use the token so update date used
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
-            var response = _client.SendAsync(requestMessage2);
+            var response = await _client.SendAsync(requestMessage2);
 
             return response;
         }
@@ -601,7 +601,7 @@ namespace FMData.Rest
             {
                 Content = new StringContent(str, Encoding.UTF8, "application/json")
             };
-            UpdateTokenDate(); // we're about to use the token so update date used
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
             // run the patch action
             var response = await _client.SendAsync(requestMessage);
             return response;
