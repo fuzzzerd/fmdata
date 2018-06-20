@@ -150,8 +150,9 @@ namespace FMData.Rest
         /// <param name="layout">The layout to use.</param>
         /// <param name="recordid">the record ID of the record to edit.</param>
         /// <param name="fieldName">The name of the container field.</param>
+        /// <param name="repetition">Field repetition number.</param>
         /// <returns></returns>
-        public string ContainerEndpoint(string layout, object recordid, string fieldName) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records/{recordid}/containers/{Uri.EscapeUriString(fieldName)}";
+        public string ContainerEndpoint(string layout, object recordid, string fieldName, int repetition = 1) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records/{recordid}/containers/{Uri.EscapeUriString(fieldName)}/{repetition}";
         #endregion
 
         #region FM Data Token Management
@@ -504,6 +505,7 @@ namespace FMData.Rest
         /// <param name="recordId">The FileMaker RecordID of the record we want to update the container on.</param>
         /// <param name="fieldName">Name of the Container Field.</param>
         /// <param name="fileName">The name of the file being inserted into the container field.</param>
+        /// <param name="repetition">Field repetition number.</param>
         /// <param name="content">The content to be inserted into the container field.</param>
         /// <returns>The FileMaker Server Response from this operation.</returns>
         public override async Task<IResponse> UpdateContainer(
@@ -511,22 +513,22 @@ namespace FMData.Rest
             int recordId, 
             string fieldName,
             string fileName,
+            int repetition,
             byte[] content)
         {
             var form = new MultipartFormDataContent();
             
             //var stream = new MemoryStream(content);
             //var streamContent = new StreamContent(stream);
-            var uri = ContainerEndpoint(layout, recordId, fieldName);
+            var uri = ContainerEndpoint(layout, recordId, fieldName, repetition);
 
             var containerContent = new ByteArrayContent(content);
             containerContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
 
-            form.Add(containerContent, fileName, Path.GetFileName(fileName));
+            form.Add(containerContent, "upload", Path.GetFileName(fileName));
 
             UpdateTokenDate();
             var response = await _client.PostAsync(uri, form);
-            
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {

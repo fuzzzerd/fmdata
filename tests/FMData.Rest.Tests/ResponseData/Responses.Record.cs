@@ -62,5 +62,15 @@ namespace FMData.Tests
     ""response"": {},
     ""messages"":[{""code"":""0"",""message"":""OK""}]
 }";
+        public static string UploadPayloadError() => @"{
+    ""messages"": [
+        {
+            ""message"": ""Upload payload must contain a part named 'upload'."",
+            ""code"": ""960""
+        }
+    ],
+    ""response"": {}
+}";
+
     }
 }
