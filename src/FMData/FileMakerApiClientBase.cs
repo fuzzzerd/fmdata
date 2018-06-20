@@ -302,7 +302,7 @@ namespace FMData
         /// <param name="fileName">The name of the file being inserted into the container field.</param>
         /// <param name="content">The content to be inserted into the container field.</param>
         /// <returns>The FileMaker Server Response from this operation.</returns>
-        public virtual Task<IResponse> UpdateContainer(
+        public virtual Task<IResponse> UpdateContainerAsync(
             string layout,
             int recordId,
             string fieldName,

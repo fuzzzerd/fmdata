@@ -219,7 +219,7 @@ namespace FMData.Xml
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> UpdateContainer(string layout, int recordId, string fieldName, string fileName, byte[] content)
+        public override Task<IResponse> UpdateContainerAsync(string layout, int recordId, string fieldName, string fileName, byte[] content)
         {
             throw new NotImplementedException();
         }
