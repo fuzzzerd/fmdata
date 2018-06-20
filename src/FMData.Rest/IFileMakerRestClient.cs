@@ -78,8 +78,9 @@ namespace FMData.Rest
         /// <param name="layout">The layout to use.</param>
         /// <param name="recordid">the record ID of the record to edit.</param>
         /// <param name="fieldName">The name of the container field.</param>
+        /// <param name="repetitionNumber">Field repetition number; default value is 1 (one).</param>
         /// <returns></returns>
-        string ContainerEndpoint(string layout, object recordid, string fieldName);
+        string ContainerEndpoint(string layout, object recordid, string fieldName, int repetitionNumber = 1);
         #endregion
 
         /// <summary>
