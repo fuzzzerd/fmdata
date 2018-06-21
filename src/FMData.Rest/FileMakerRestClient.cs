@@ -467,7 +467,7 @@ namespace FMData.Rest
         {
             if (string.IsNullOrEmpty(baseTable)) throw new ArgumentException("baseTable is required on set global.");
             if (string.IsNullOrEmpty(fieldName)) throw new ArgumentException("fieldName is required on set global.");
-            if (string.IsNullOrEmpty(targetValue)) throw new ArgumentException("baseTable is required on set global.");
+            if (string.IsNullOrEmpty(targetValue)) throw new ArgumentException("targetValue is required on set global.");
 
             var str = $"{{ \"globalFields\" : {{ \"{baseTable}::{fieldName}\" : \"{targetValue}\" }} }}";
             var method = new HttpMethod("PATCH");
