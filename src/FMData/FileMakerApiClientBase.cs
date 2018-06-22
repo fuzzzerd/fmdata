@@ -108,6 +108,15 @@ namespace FMData
             return SendAsync(request);
         }
 
+        /// <summary>
+        /// Get a single record by FileMaker RecordId
+        /// </summary>
+        /// <typeparam name="T">The type to load the data into.</typeparam>
+        /// <param name="layout">the layout to execute the request on.</param>
+        /// <param name="fileMakerId">The FileMaker RecordId of the record to load.</param>
+        /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
+        /// <returns>A single record matching the FileMaker Record Id.</returns>
+        public abstract Task<T> GetByFileMakerIdAsync<T>(string layout, int fileMakerId, Func<T, int, object> fmId = null) where T : class, new();
 
         /// <summary>
         /// Find a record with utilizing a class instance to define the find request field values.

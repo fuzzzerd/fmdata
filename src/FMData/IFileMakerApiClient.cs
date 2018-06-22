@@ -9,6 +9,7 @@ namespace FMData
     /// </summary>
     public interface IFileMakerApiClient
     {
+        #region Create
         /// <summary>
         /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout.
         /// </summary>
@@ -35,9 +36,24 @@ namespace FMData
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
         /// <returns>The newly created RecordId and/or an error response code.</returns>
         Task<ICreateResponse> CreateAsync<T>(string layout, T input) where T : class, new();
+        #endregion
 
 
+        #region Get
 
+        /// <summary>
+        /// Get a single record by FileMaker RecordId
+        /// </summary>
+        /// <typeparam name="T">The type to load the data into.</typeparam>
+        /// <param name="layout">The layout to execute the request against.</param>
+        /// <param name="fileMakerId">The FileMaker RecordId of the record to load.</param>
+        /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
+        /// <returns>A single record matching the FileMaker Record Id.</returns>
+        Task<T> GetByFileMakerIdAsync<T>(string layout, int fileMakerId, Func<T, int, object> fmId = null) where T : class, new();
+
+        #endregion
+
+        #region Find
         /// <summary>
         /// Finds a record or records matching the properties of the input request object.
         /// </summary>
@@ -51,7 +67,7 @@ namespace FMData
         /// <param name="request">The object to utilize for the find request parameters.</param>
         /// <param name="fmid">Function to map the FileMaker RecordId to each instance T.</param>
         /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(T request, Func<T,int,object> fmid) where T : class, new();
+        Task<IEnumerable<T>> FindAsync<T>(T request, Func<T, int, object> fmid) where T : class, new();
 
         /// <summary>
         /// Finds a record or records matching the properties of the input request object.
@@ -79,8 +95,10 @@ namespace FMData
         /// <param name="req"></param>
         /// <returns></returns>
         Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
+        #endregion
 
 
+        #region Edit
         /// <summary>
         /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
         /// </summary>
@@ -101,7 +119,6 @@ namespace FMData
         /// <returns></returns>
         Task<IEditResponse> EditAsync<T>(int recordId, string script, string scriptParameter, T input) where T : class, new();
 
-
         /// <summary>
         /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
         /// </summary>
@@ -120,8 +137,10 @@ namespace FMData
         /// <param name="editValues">The field and value pairs to send for edit.</param>
         /// <returns></returns>
         Task<IEditResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues);
+        #endregion
 
 
+        #region Delete
         /// <summary>
         /// Delete a record by FileMaker RecordId. 
         /// </summary>
@@ -138,7 +157,7 @@ namespace FMData
         /// <param name="layout">The layout to use for the delete.</param>
         /// <returns></returns>
         Task<IResponse> DeleteAsync(int recId, string layout);
-
+        #endregion
 
 
         #region Set Globals
@@ -152,6 +171,7 @@ namespace FMData
         /// <returns>FileMaker Response</returns>
         Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue);
         #endregion
+
 
         #region Set Containers
         /// <summary>
@@ -188,6 +208,7 @@ namespace FMData
             string fileName,
             byte[] content);
         #endregion
+
 
         #region Send Request Methods
         /// <summary>

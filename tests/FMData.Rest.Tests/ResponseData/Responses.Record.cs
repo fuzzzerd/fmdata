@@ -32,6 +32,25 @@ namespace FMData.Tests
     ""messages"":[{{""code"":""0"",""message"":""OK""}}]
 }}";
 
+        public static string SuccessfulGetById(int id) => $@"{{
+    ""response"": {{
+        ""data"": [
+            {{
+                ""fieldData"": {{
+                    ""Id"": ""4"",
+                    ""Name"": ""fuzzzerd"",
+                    ""Created"": ""03/29/2018 15:22:09"",
+                    ""Modified"": ""03/29/2018 15:22:12""
+                }},
+                ""portalData"": {{}},
+                ""recordId"": ""{id}"",
+                ""modId"": ""0""
+            }}
+        ]
+    }},
+    ""messages"":[{{""code"":""0"",""message"":""OK""}}]
+}}";
+
         public static string LayoutNotFound() => @"{
     ""response"": {},
     ""messages"":[{""code"":""105"",""message"":""Layout is missing""}]

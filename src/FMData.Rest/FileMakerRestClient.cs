@@ -123,6 +123,14 @@ namespace FMData.Rest
         /// Generate the appropriate Get Records endpoint.
         /// </summary>
         /// <param name="layout">The layout to use as the context for the response.</param>
+        /// <param name="recordId">The FileMaker record Id for this request.</param>
+        /// <returns>The FileMaker Data API Endpoint for Get Records reqeusts.</returns>
+        public string GetRecordEndpoint(string layout, int recordId) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records/{recordId}";
+
+        /// <summary>
+        /// Generate the appropriate Get Records endpoint.
+        /// </summary>
+        /// <param name="layout">The layout to use as the context for the response.</param>
         /// <param name="limit">The number of records to return.</param>
         /// <param name="offset">The offset number of records to skip before starting to return records.</param>
         /// <returns>The FileMaker Data API Endpoint for Get Records reqeusts.</returns>
@@ -285,6 +293,81 @@ namespace FMData.Rest
                 // something bad happened. TODO: improve non-OK response handling
                 throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
             }
+        }
+
+        /// <summary>
+        /// Get a single record by FileMaker RecordId
+        /// </summary>
+        /// <typeparam name="T">The type to load the data into.</typeparam>
+        /// <param name="layout">The layout to execute the request on.</param>
+        /// <param name="fileMakerId">The FileMaker RecordId of the record to load.</param>
+        /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
+        /// <returns>A single record matching the FileMaker Record Id.</returns>
+        public override async Task<T> GetByFileMakerIdAsync<T>(
+            string layout, 
+            int fileMakerId, 
+            Func<T, int, object> fmId = null)
+        {
+            // normally required, but internally we can route to the regular record request apis
+            var uriEndpoint = GetRecordEndpoint(layout, fileMakerId);
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uriEndpoint);
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+            var response = await _client.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+
+                JObject joResponse = JObject.Parse(responseJson);
+
+                // get JSON result objects into a list
+                IList<JToken> results = joResponse["response"]["data"].Children().ToList();
+
+                // serialize JSON results into .NET objects
+                IList<T> searchResults = new List<T>();
+                foreach (JToken result in results)
+                {
+                    // JToken.ToObject is a helper method that uses JsonSerializer internally
+                    T searchResult = result["fieldData"].ToObject<T>();
+                    int fmrid = result["recordId"].ToObject<int>();
+                    int modId = result["modId"].ToObject<int>();
+                    fmId?.Invoke(searchResult, fmrid);
+                    searchResults.Add(searchResult);
+                }
+
+                return searchResults.FirstOrDefault();
+            }
+
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                try
+                {
+                    // attempt to read response content
+                    if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
+
+                    var responseJson = await response.Content.ReadAsStringAsync();
+                    var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+                    if (responseObject.Messages.Any(m => m.Code == "401"))
+                    {
+                        return null;
+                    }
+
+                    throw new Exception(responseObject.Messages.First().Message);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Could not read response from Data API.", ex);
+                }
+            }
+
+            // not found, so return empty list
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            // other error TODO: Improve handling
+            throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responed with {response.StatusCode}");
         }
         #endregion
 

@@ -339,5 +339,34 @@ namespace FMData.Tests
             // assert
             await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.SendAsync(new FindRequest<User>() { Query = new List<User> { toFind } }));
         }
+
+        [Fact]
+        public async Task GetByRecordId_ShouldReturnMatchingRecordId()
+        {
+            // arrange
+            Func<User, int, object> FMrecordIdMapper = (o, id) => o.FileMakerRecordId = id;
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "Users";
+            var recordId = 26;
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Get, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/{recordId}")
+                .Respond("application/json", DataApiResponses.SuccessfulGetById(recordId));
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+
+            // act
+            var response = await fdc.GetByFileMakerIdAsync<User>(layout, recordId, FMrecordIdMapper);
+
+            // assert
+            Assert.Equal(recordId, response.FileMakerRecordId);
+        }
     }
 }
