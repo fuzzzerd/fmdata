@@ -10,7 +10,7 @@ namespace FMData.Xml.Responses
         /// <summary>
         /// The response object from the create request.
         /// </summary>
-        public CreateResponseType Response { get; set; }
+        public ActionResponse Response { get; set; }
 
         /// <summary>
         /// The messages from this response.

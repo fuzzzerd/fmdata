@@ -326,19 +326,19 @@ namespace FMData.Rest
         /// <typeparam name="T">Type parameter for this edit.</typeparam>
         /// <param name="req">The edit request object.</param>
         /// <returns></returns>
-        public override async Task<IResponse> SendAsync<T>(IEditRequest<T> req)
+        public override async Task<IEditResponse> SendAsync<T>(IEditRequest<T> req)
         {
             HttpResponseMessage response = await GetEditHttpResponse(req);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                return new BaseResponse("404", "Error");
+                return new BaseResponse("404", "Error") as EditResponse;
             }
 
             try
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<EditResponse>(responseJson);
 
                 return responseObject;
             }
@@ -508,7 +508,7 @@ namespace FMData.Rest
         /// <param name="repetition">Field repetition number.</param>
         /// <param name="content">The content to be inserted into the container field.</param>
         /// <returns>The FileMaker Server Response from this operation.</returns>
-        public override async Task<IResponse> UpdateContainer(
+        public override async Task<IEditResponse> UpdateContainerAsync (
             string layout,
             int recordId,
             string fieldName,
@@ -532,13 +532,13 @@ namespace FMData.Rest
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                return new BaseResponse("404", "Error");
+                return new BaseResponse("404", "Error") as EditResponse;
             }
 
             try
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<EditResponse>(responseJson);
 
                 return responseObject;
             }

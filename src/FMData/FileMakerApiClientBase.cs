@@ -183,7 +183,7 @@ namespace FMData
         /// <param name="recordId">The FileMaker RecordId of the record to be edited.</param>
         /// <param name="input">Object containing the values the record should reflect after the edit.</param>
         /// <returns></returns>
-        public virtual Task<IResponse> EditAsync<T>(int recordId, T input) where T : class, new() => EditAsync(GetTableName(input), recordId, input);
+        public virtual Task<IEditResponse> EditAsync<T>(int recordId, T input) where T : class, new() => EditAsync(GetTableName(input), recordId, input);
 
         /// <summary>
         /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
@@ -194,7 +194,7 @@ namespace FMData
         /// <param name="scriptParameter">Script parameter.</param>
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
         /// <returns></returns>
-        public virtual Task<IResponse> EditAsync<T>(int recordId, string script, string scriptParameter, T input) where T : class, new()
+        public virtual Task<IEditResponse> EditAsync<T>(int recordId, string script, string scriptParameter, T input) where T : class, new()
         {
             var request = _editFactory<T>();
 
@@ -218,7 +218,7 @@ namespace FMData
         /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
         /// <param name="input">Object with the updated values.</param>
         /// <returns></returns>
-        public virtual Task<IResponse> EditAsync<T>(string layout, int recordId, T input) where T : class, new()
+        public virtual Task<IEditResponse> EditAsync<T>(string layout, int recordId, T input) where T : class, new()
         {
             var request = _editFactory<T>();
             request.Layout = layout;
@@ -226,6 +226,7 @@ namespace FMData
             request.Data = input;
             return SendAsync(request);
         }
+
         /// <summary>
         /// Edit a record.
         /// </summary>
@@ -233,7 +234,7 @@ namespace FMData
         /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
         /// <param name="editValues">Object with the updated values.</param>
         /// <returns></returns>
-        public virtual Task<IResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues)
+        public virtual Task<IEditResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues)
         {
             var req = _editFactory<Dictionary<string, string>>();
             req.Data = editValues;
@@ -272,7 +273,7 @@ namespace FMData
         /// <summary>
         /// Send an Edit Record request to the FileMaker API.
         /// </summary>
-        public abstract Task<IResponse> SendAsync<T>(IEditRequest<T> req) where T : class, new();
+        public abstract Task<IEditResponse> SendAsync<T>(IEditRequest<T> req) where T : class, new();
         /// <summary>
         /// Send a Find Record request to the FileMaker API.
         /// </summary>
@@ -302,12 +303,12 @@ namespace FMData
         /// <param name="fileName">The name of the file being inserted into the container field.</param>
         /// <param name="content">The content to be inserted into the container field.</param>
         /// <returns>The FileMaker Server Response from this operation.</returns>
-        public virtual Task<IResponse> UpdateContainerAsync(
+        public virtual Task<IEditResponse> UpdateContainerAsync(
             string layout,
             int recordId,
             string fieldName,
             string fileName,
-            byte[] content) => UpdateContainer(layout, recordId, fieldName, fileName, 1, content); // default repetition of 1.
+            byte[] content) => UpdateContainerAsync(layout, recordId, fieldName, fileName, 1, content); // default repetition of 1.
 
         /// <summary>
         /// Puts the contents of the byte array into the specified container field.
@@ -319,7 +320,7 @@ namespace FMData
         /// <param name="repetition">Field repetition number.</param>
         /// <param name="content">The content to be inserted into the container field.</param>
         /// <returns>The FileMaker Server Response from this operation.</returns>
-        public abstract Task<IResponse> UpdateContainer(
+        public abstract Task<IEditResponse> UpdateContainerAsync(
             string layout,
             int recordId,
             string fieldName,

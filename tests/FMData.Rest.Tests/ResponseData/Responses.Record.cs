@@ -47,8 +47,8 @@ namespace FMData.Tests
     ""messages"":[{{""code"":""0"",""message"":""OK""}}]
 }}";
 
-        public static string SuccessfulEdit() => @"{
-    ""response"": {},
+        public static string SuccessfulEdit(int modId = 3) => @"{
+    ""response"": { ""modId"": """ + modId.ToString() + @""" },
     ""messages"":[{""code"":""0"",""message"":""OK""}]
 }";
 

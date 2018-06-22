@@ -107,17 +107,17 @@ namespace FMData.Xml
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> SendAsync<T>(IEditRequest<T> req)
+        public override Task<IEditResponse> SendAsync<T>(IEditRequest<T> req)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> EditAsync<T>(int recordId, T input)
+        public override Task<IEditResponse> EditAsync<T>(int recordId, T input)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> EditAsync<T>(string layout, int recordId, T input)
+        public override Task<IEditResponse> EditAsync<T>(string layout, int recordId, T input)
         {
             throw new NotImplementedException();
         }
@@ -193,7 +193,7 @@ namespace FMData.Xml
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues)
+        public override Task<IEditResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues)
         {
             throw new NotImplementedException();
         }
@@ -223,12 +223,12 @@ namespace FMData.Xml
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> UpdateContainerAsync(string layout, int recordId, string fieldName, string fileName, byte[] content)
+        public override Task<IEditResponse> UpdateContainerAsync(string layout, int recordId, string fieldName, string fileName, byte[] content)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> UpdateContainer(string layout, int recordId, string fieldName, string fileName, int repetition, byte[] content)
+        public override Task<IEditResponse> UpdateContainerAsync(string layout, int recordId, string fieldName, string fileName, int repetition, byte[] content)
         {
             throw new NotImplementedException();
         }
