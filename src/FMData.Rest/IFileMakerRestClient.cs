@@ -40,6 +40,15 @@ namespace FMData.Rest
         /// <returns>The FileMaker Data API Endpoint for Find requests.</returns>
         string FindEndpoint(string layout);
 
+
+        /// <summary>
+        /// Generate the appropriate Get Records endpoint.
+        /// </summary>
+        /// <param name="layout">The layout to use as the context for the response.</param>
+        /// <param name="recordId">The FileMaker record Id for this request.</param>
+        /// <returns>The FileMaker Data API Endpoint for Get Records reqeusts.</returns>
+        string GetRecordEndpoint(string layout, int recordId);
+
         /// <summary>
         /// Generate the appropriate Get Records endpoint.
         /// </summary>

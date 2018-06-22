@@ -232,6 +232,11 @@ namespace FMData.Xml
         {
             throw new NotImplementedException();
         }
+
+        public override Task<T> GetByFileMakerIdAsync<T>(string layout, int fileMakerId, Func<T, int, object> fmId = null)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }
