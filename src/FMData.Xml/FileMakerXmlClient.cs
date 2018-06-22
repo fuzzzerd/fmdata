@@ -57,7 +57,7 @@ namespace FMData.Xml
         }
         #endregion
 
-        public override async Task<IResponse> CreateAsync<T>(T input)
+        public override async Task<ICreateResponse> CreateAsync<T>(T input)
         {
             // setup 
             var layout = "layout";
@@ -76,19 +76,23 @@ namespace FMData.Xml
             if (response.IsSuccessStatusCode)
             {
                 // process response data return OK
-                return new BaseResponse("", "OK");
+                var resp = new CreateResponse
+                {
+                    Messages = new List<ResponseMessage> { new ResponseMessage { Code = "", Message = "OK" } }
+                };
+                return resp;
             }
 
             throw new Exception("Unable to complete request");
             
         }
 
-        public override Task<IResponse> CreateAsync<T>(string layout, T input)
+        public override Task<ICreateResponse> CreateAsync<T>(string layout, T input)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<IResponse> SendAsync<T>(ICreateRequest<T> req)
+        public override Task<ICreateResponse> SendAsync<T>(ICreateRequest<T> req)
         {
             throw new NotImplementedException();
         }

@@ -15,17 +15,17 @@ namespace FMData
         /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
         /// <returns>The newly created RecordId and/or an error response code.</returns>
-        Task<IResponse> CreateAsync<T>(T input) where T : class, new();
+        Task<ICreateResponse> CreateAsync<T>(T input) where T : class, new();
 
         /// <summary>
         /// <see cref="FileMakerApiClientBase.CreateAsync{T}(T, string, string)"/>
         /// </summary>
-        Task<IResponse> CreateAsync<T>(T input, string script, string scriptParameter) where T : class, new();
+        Task<ICreateResponse> CreateAsync<T>(T input, string script, string scriptParameter) where T : class, new();
 
         /// <summary>
         /// <see cref="FileMakerApiClientBase.CreateAsync{T}(T, string, string, string, string, string, string)"/>
         /// </summary>
-        Task<IResponse> CreateAsync<T>(T input, string script, string scriptParameter, string preRequestScript, string preRequestScriptParam, string preSortScript, string preSortScriptParameter) where T : class, new();
+        Task<ICreateResponse> CreateAsync<T>(T input, string script, string scriptParameter, string preRequestScript, string preRequestScriptParam, string preSortScript, string preSortScriptParameter) where T : class, new();
 
         /// <summary>
         /// Create a record in the file via explicit layout.
@@ -34,7 +34,7 @@ namespace FMData
         /// <param name="layout">The layout to use for the context of the request.</param>
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
         /// <returns>The newly created RecordId and/or an error response code.</returns>
-        Task<IResponse> CreateAsync<T>(string layout, T input) where T : class, new();
+        Task<ICreateResponse> CreateAsync<T>(string layout, T input) where T : class, new();
 
 
 
@@ -194,7 +194,7 @@ namespace FMData
         /// Creates a new record.
         /// </summary>
         /// <param name="req">New record request.</param>
-        Task<IResponse> SendAsync<T>(ICreateRequest<T> req) where T : class, new();
+        Task<ICreateResponse> SendAsync<T>(ICreateRequest<T> req) where T : class, new();
 
         /// <summary>
         /// Find a record or records matching the request.

@@ -35,7 +35,7 @@ namespace FMData
         /// <typeparam name="T">The type parameter to be created.</typeparam>
         /// <param name="input">Object containing the data to be on the newly created record.</param>
         /// <returns></returns>
-        public virtual Task<IResponse> CreateAsync<T>(T input) where T : class, new() => CreateAsync(GetTableName(input), input);
+        public virtual Task<ICreateResponse> CreateAsync<T>(T input) where T : class, new() => CreateAsync(GetTableName(input), input);
         /// <summary>
         /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout and perform a script with parameter.
         /// </summary>
@@ -44,7 +44,7 @@ namespace FMData
         /// <param name="script">The name of a FileMaker script to run.</param>
         /// <param name="scriptParameter">The parameter to pass to the script.</param>
         /// <returns></returns>
-        public virtual Task<IResponse> CreateAsync<T>(T input, string script, string scriptParameter) where T : class, new()
+        public virtual Task<ICreateResponse> CreateAsync<T>(T input, string script, string scriptParameter) where T : class, new()
         {
             return CreateAsync(input, script, scriptParameter, null, null, null, null);
         }
@@ -62,7 +62,7 @@ namespace FMData
         /// <param name="preSortScript">Script to run after the request, but before the sort. See FMS documentation for more details.</param>
         /// <param name="preSortScriptParameter">Parameter for script.</param>
         /// <returns>A response indicating the results of the call to the FileMaker Server Data API.</returns>
-        public virtual Task<IResponse> CreateAsync<T>(T input, string script, string scriptParameter, string preRequestScript, string preRequestScriptParameter, string preSortScript, string preSortScriptParameter) where T : class, new()
+        public virtual Task<ICreateResponse> CreateAsync<T>(T input, string script, string scriptParameter, string preRequestScript, string preRequestScriptParameter, string preSortScript, string preSortScriptParameter) where T : class, new()
         {
             if (input == null)
             {
@@ -100,7 +100,7 @@ namespace FMData
         /// <param name="layout">Layout to use (overrides any [Table] parms on the class.)</param>
         /// <param name="input">The input object containing the values for the record.</param>
         /// <returns></returns>
-        public virtual Task<IResponse> CreateAsync<T>(string layout, T input) where T : class, new()
+        public virtual Task<ICreateResponse> CreateAsync<T>(string layout, T input) where T : class, new()
         {
             var request = _createFactory<T>();
             request.Layout = layout;
@@ -264,7 +264,7 @@ namespace FMData
         /// <summary>
         /// Send a Create Record request to the FileMaker API.
         /// </summary>
-        public abstract Task<IResponse> SendAsync<T>(ICreateRequest<T> req) where T : class, new();
+        public abstract Task<ICreateResponse> SendAsync<T>(ICreateRequest<T> req) where T : class, new();
         /// <summary>
         /// Send a Delete Record request to the FileMaker API.
         /// </summary>

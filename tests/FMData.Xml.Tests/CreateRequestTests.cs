@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using FMData;
-using FMData.Xml;
 using FMData.Xml.Tests.TestModels;
 using RichardSzalay.MockHttp;
+using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FMData.Xml.Tests

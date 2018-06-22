@@ -92,6 +92,42 @@ namespace FMData.Tests
         }
 
         [Fact]
+        public async Task CreateShould_ReturnNewRecordId()
+        {
+            var fdc = GetDataClientWithMockedHandler();
+
+            var newModel = new ModelTest()
+            {
+                Name = "Fuzzzerd",
+                AnotherField = "Different Value"
+            };
+
+            var response = await fdc.CreateAsync("layout", newModel);
+
+            Assert.NotNull(response);
+            Assert.Equal(254, response.Response.RecordId);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
+        }
+
+        [Fact]
+        public async Task Create_ShouldReturn_RecordId()
+        {
+            var fdc = GetDataClientWithMockedHandler();
+
+            var newModel = new TableModelTest()
+            {
+                Name = "Fuzzzerd",
+                AnotherField = "Different Value"
+            };
+
+            var response = await fdc.CreateAsync(newModel);
+
+            Assert.NotNull(response);
+            Assert.Equal(254, response.Response.RecordId);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
+        }
+
+        [Fact]
         public async Task CreateWithoutTableAttirbute_ShouldThrow_WithoutExplicitLayout()
         {
             var fdc = GetDataClientWithMockedHandler();
