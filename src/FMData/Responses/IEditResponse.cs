@@ -3,7 +3,7 @@
     /// <summary>
     /// Create Response interface
     /// </summary>
-    public interface ICreateResponse : IResponse
+    public interface IEditResponse : IResponse
     {
         /// <summary>
         /// The response object
