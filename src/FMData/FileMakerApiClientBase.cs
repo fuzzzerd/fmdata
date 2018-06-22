@@ -112,6 +112,18 @@ namespace FMData
         /// Get a single record by FileMaker RecordId
         /// </summary>
         /// <typeparam name="T">The type to load the data into.</typeparam>
+        /// <param name="fileMakerId">The FileMaker RecordId of the record to load.</param>
+        /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
+        /// <returns>A single record matching the FileMaker Record Id.</returns>
+        public virtual Task<T> GetByFileMakerIdAsync<T>(int fileMakerId, Func<T, int, object> fmId = null) where T : class, new()
+        {
+            var layout = GetTableName(new T()); // probably a better way
+            return GetByFileMakerIdAsync(layout, fileMakerId, fmId);
+        }
+        /// <summary>
+        /// Get a single record by FileMaker RecordId
+        /// </summary>
+        /// <typeparam name="T">The type to load the data into.</typeparam>
         /// <param name="layout">the layout to execute the request on.</param>
         /// <param name="fileMakerId">The FileMaker RecordId of the record to load.</param>
         /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
