@@ -294,7 +294,7 @@ namespace FMData.Rest
         /// <typeparam name="T">The underlying type of record being created.</typeparam>
         /// <param name="req">The request object containing the data to be sent.</param>
         /// <returns></returns>
-        public override async Task<IResponse> SendAsync<T>(ICreateRequest<T> req)
+        public override async Task<ICreateResponse> SendAsync<T>(ICreateRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
@@ -309,7 +309,7 @@ namespace FMData.Rest
             try
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<CreateResponse>(responseJson);
 
                 return responseObject;
             }
