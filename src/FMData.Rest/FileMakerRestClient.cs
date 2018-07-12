@@ -700,10 +700,13 @@ namespace FMData.Rest
         {
             if (_client != null)
             {
-                // end our token, utilize the threadpool to ensure we do not block 
-                // https://blogs.msdn.microsoft.com/pfxteam/2012/04/13/should-i-expose-synchronous-wrappers-for-asynchronous-methods/
-                Task.Run(() => LogoutAsync()).Wait();
-
+                try
+                {
+                    // end our token, utilize the threadpool to ensure we do not block 
+                    // https://blogs.msdn.microsoft.com/pfxteam/2012/04/13/should-i-expose-synchronous-wrappers-for-asynchronous-methods/
+                    Task.Run(() => LogoutAsync()).Wait();
+                }
+                catch { } // wrapping in try...catch since if we are disposing due to other errors; we could get another one during this attempt to logout the token.
                 // dispose our injected http client
                 _client.Dispose();
             }
