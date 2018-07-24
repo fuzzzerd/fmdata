@@ -10,8 +10,9 @@ namespace FMData
     /// Base for implementations to inherit from.
     /// Provides some wrapper and passthrough functionality to expand the API surface without requiring each fo those methods be re-implemented.
     /// </summary>
-    public abstract class FileMakerApiClientBase : IFileMakerApiClient, IDisposable
+    public abstract partial class FileMakerApiClientBase : IFileMakerApiClient, IDisposable
     {
+        #region Request Factory Abstracts
         /// <summary>
         /// Factory to get a new Create Request of the correct type.
         /// </summary>
@@ -27,86 +28,36 @@ namespace FMData
         /// <summary>
         /// Factory to get a new Delete Request of the correct type.
         /// </summary>
-        protected abstract IDeleteRequest _deleteFactory();
+        protected abstract IDeleteRequest _deleteFactory(); 
+        #endregion
+
 
         /// <summary>
-        /// Create a record in the database utilizing the TableAttribute to target the layout.
+        /// Send a Create Record request to the FileMaker API.
         /// </summary>
-        /// <typeparam name="T">The type parameter to be created.</typeparam>
-        /// <param name="input">Object containing the data to be on the newly created record.</param>
-        /// <returns></returns>
-        public virtual Task<ICreateResponse> CreateAsync<T>(T input) where T : class, new() => CreateAsync(GetTableName(input), input);
-        /// <summary>
-        /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout and perform a script with parameter.
-        /// </summary>
-        /// <typeparam name="T">The type to create</typeparam>
-        /// <param name="input">The input record to create.</param>
-        /// <param name="script">The name of a FileMaker script to run.</param>
-        /// <param name="scriptParameter">The parameter to pass to the script.</param>
-        /// <returns></returns>
-        public virtual Task<ICreateResponse> CreateAsync<T>(T input, string script, string scriptParameter) where T : class, new()
-        {
-            return CreateAsync(input, script, scriptParameter, null, null, null, null);
-        }
+        public abstract Task<ICreateResponse> SendAsync<T>(ICreateRequest<T> req) where T : class, new();
 
         /// <summary>
-        /// Creates a record matching the input data. All possible scripts available.
-        /// Empty script names will be ignored.
+        /// Send a Delete Record request to the FileMaker API.
         /// </summary>
-        /// <typeparam name="T">The type of record to be created.</typeparam>
-        /// <param name="input">The data to put in the record.</param>
-        /// <param name="script">Name of the script to run at request completion.</param>
-        /// <param name="scriptParameter">Parameter for script.</param>
-        /// <param name="preRequestScript">Script to run before the request. See FMS documentation for more details.</param>
-        /// <param name="preRequestScriptParameter">Parameter for script.</param>
-        /// <param name="preSortScript">Script to run after the request, but before the sort. See FMS documentation for more details.</param>
-        /// <param name="preSortScriptParameter">Parameter for script.</param>
-        /// <returns>A response indicating the results of the call to the FileMaker Server Data API.</returns>
-        public virtual Task<ICreateResponse> CreateAsync<T>(T input, string script, string scriptParameter, string preRequestScript, string preRequestScriptParameter, string preSortScript, string preSortScriptParameter) where T : class, new()
-        {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
-            var request = _createFactory<T>();
-            request.Layout = GetTableName(input);
-            request.Data = input;
-
-            if (!string.IsNullOrEmpty(script))
-            {
-                request.Script = script;
-                request.ScriptParameter = scriptParameter;
-            }
-            if (!string.IsNullOrEmpty(preRequestScript))
-            {
-                request.PreRequestScript = preRequestScript;
-                request.PreRequestScriptParameter = preRequestScriptParameter;
-            }
-
-            if (!string.IsNullOrEmpty(preSortScript))
-            {
-                request.PreSortScript = preSortScript;
-                request.PreSortScriptParameter = preSortScriptParameter;
-            }
-
-            return SendAsync(request);
-        }
+        public abstract Task<IResponse> SendAsync(IDeleteRequest req);
 
         /// <summary>
-        /// Create a record in the database.
+        /// Send an Edit Record request to the FileMaker API.
         /// </summary>
-        /// <typeparam name="T">The type parameter to be created.</typeparam>
-        /// <param name="layout">Layout to use (overrides any [Table] parms on the class.)</param>
-        /// <param name="input">The input object containing the values for the record.</param>
-        /// <returns></returns>
-        public virtual Task<ICreateResponse> CreateAsync<T>(string layout, T input) where T : class, new()
-        {
-            var request = _createFactory<T>();
-            request.Layout = layout;
-            request.Data = input;
-            return SendAsync(request);
-        }
+        public abstract Task<IEditResponse> SendAsync<T>(IEditRequest<T> req) where T : class, new();
+
+        /// <summary>
+        /// Send a Find Record request to the FileMaker API.
+        /// </summary>
+        public abstract Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req);
+
+        /// <summary>
+        /// Send a Find Record request to the FileMaker API.
+        /// </summary>
+        public abstract Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T, int, object> fmId = null) where T : class, new();
+
+
 
         /// <summary>
         /// Get a single record by FileMaker RecordId
@@ -120,6 +71,7 @@ namespace FMData
             var layout = GetTableName(new T()); // probably a better way
             return GetByFileMakerIdAsync(layout, fileMakerId, fmId);
         }
+
         /// <summary>
         /// Get a single record by FileMaker RecordId
         /// </summary>
@@ -129,180 +81,6 @@ namespace FMData
         /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
         /// <returns>A single record matching the FileMaker Record Id.</returns>
         public abstract Task<T> GetByFileMakerIdAsync<T>(string layout, int fileMakerId, Func<T, int, object> fmId = null) where T : class, new();
-
-        /// <summary>
-        /// Find a record with utilizing a class instance to define the find request field values.
-        /// </summary>
-        /// <typeparam name="T">The type of response objects to return.</typeparam>
-        /// <param name="input">The object with properties to map to the find request.</param>
-        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public virtual Task<IEnumerable<T>> FindAsync<T>(T input) where T : class, new() => FindAsync(GetTableName(input), input);
-        /// <summary>
-        /// Find a record with utilizing a class instance to define the find request field values.
-        /// </summary>
-        /// <typeparam name="T">The type of response objects to return.</typeparam>
-        /// <param name="input">The object with properties to map to the find request.</param>
-        /// <param name="fmid">Function to map a the FileMaker RecordId to each instance T.</param>
-        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public virtual Task<IEnumerable<T>> FindAsync<T>(T input, Func<T, int, object> fmid) where T : class, new()
-        {
-            return FindAsync(input, null, null, fmid);
-        }
-
-        /// <summary>
-        /// Finds a record or records matching the properties of the input request object.
-        /// </summary>
-        /// <param name="input">The object to utilize for the find request parameters.</param>
-        /// <param name="script">Script to run after the request is completed.</param>
-        /// <param name="scriptParameter">Script parameter.</param>
-        /// <param name="fmid">Function to map the FileMaker RecordId to each instance T.</param>
-        /// <returns></returns>
-        public virtual Task<IEnumerable<T>> FindAsync<T>(T input, string script, string scriptParameter, Func<T, int, object> fmid) where T : class, new()
-        {
-            var req = _findFactory<T>();
-
-            if (!string.IsNullOrEmpty(script))
-            {
-                req.Script = script;
-                req.ScriptParameter = scriptParameter;
-            }
-
-            req.Layout = GetTableName(input);
-            req.Query = new List<T>() { input };
-
-            return SendAsync(req, fmid);
-        }
-
-        /// <summary>
-        /// Strongly typed find request.
-        /// </summary>
-        /// <typeparam name="T">The type of response objects to return.</typeparam>
-        /// <param name="layout">The name of the layout to run this request on.</param>
-        /// <param name="request">The object with properties to map to the find request.</param>
-        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public virtual Task<IEnumerable<T>> FindAsync<T>(string layout, T request) where T : class, new()
-        {
-            var req = _findFactory<T>();
-            req.Layout = layout;
-            req.Query = new List<T>() { request };
-            return SendAsync(req);
-        }
-        /// <summary>
-        /// Find a record with utilizing a class instance to define the find request field values.
-        /// </summary>
-        /// <typeparam name="T">The response type to extract and return.</typeparam>
-        /// <param name="layout">The layout to perform the request on.</param>
-        /// <param name="req">The dictionary of key/value pairs to find against.</param>
-        /// <returns></returns>
-        public abstract Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
-
-
-        /// <summary>
-        /// Edit a record by FileMaker RecordId.
-        /// </summary>
-        /// <typeparam name="T">The type to pull the [Table] attribute from for context layout.</typeparam>
-        /// <param name="recordId">The FileMaker RecordId of the record to be edited.</param>
-        /// <param name="input">Object containing the values the record should reflect after the edit.</param>
-        /// <returns></returns>
-        public virtual Task<IEditResponse> EditAsync<T>(int recordId, T input) where T : class, new() => EditAsync(GetTableName(input), recordId, input);
-
-        /// <summary>
-        /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
-        /// </summary>
-        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
-        /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
-        /// <param name="script">script to run after the request.</param>
-        /// <param name="scriptParameter">Script parameter.</param>
-        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
-        /// <returns></returns>
-        public virtual Task<IEditResponse> EditAsync<T>(int recordId, string script, string scriptParameter, T input) where T : class, new()
-        {
-            var request = _editFactory<T>();
-
-            if (!string.IsNullOrEmpty(script))
-            {
-                request.Script = script;
-                request.ScriptParameter = scriptParameter;
-            }
-
-            request.Layout = GetTableName(input);
-            request.RecordId = recordId.ToString();
-            request.Data = input;
-            return SendAsync(request);
-        }
-
-        /// <summary>
-        /// Edit a record.
-        /// </summary>
-        /// <typeparam name="T">Type parameter for this edit.</typeparam>
-        /// <param name="layout">Explicitly define the layout to use.</param>
-        /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
-        /// <param name="input">Object with the updated values.</param>
-        /// <returns></returns>
-        public virtual Task<IEditResponse> EditAsync<T>(string layout, int recordId, T input) where T : class, new()
-        {
-            var request = _editFactory<T>();
-            request.Layout = layout;
-            request.RecordId = recordId.ToString();
-            request.Data = input;
-            return SendAsync(request);
-        }
-
-        /// <summary>
-        /// Edit a record.
-        /// </summary>
-        /// <param name="layout">Explicitly define the layout to use.</param>
-        /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
-        /// <param name="editValues">Object with the updated values.</param>
-        /// <returns></returns>
-        public virtual Task<IEditResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues)
-        {
-            var req = _editFactory<Dictionary<string, string>>();
-            req.Data = editValues;
-            req.Layout = layout;
-            req.RecordId = recordId.ToString();
-            return SendAsync(req);
-        }
-
-
-        /// <summary>
-        /// Delete a record utilizing a generic type with the [Table] attribute specifying the layout and the FileMaker RecordId.
-        /// </summary>
-        /// <typeparam name="T">Class with the [Table] attribute specifying the layout to use.</typeparam>
-        /// <param name="recId">The FileMaker RecordId of the record to delete.</param>
-        /// <returns></returns>
-        public virtual Task<IResponse> DeleteAsync<T>(int recId) where T : class, new() => DeleteAsync(recId, GetTableName(new T()));
-        /// <summary>
-        /// Delete a record by id and layout.
-        /// </summary>
-        public virtual Task<IResponse> DeleteAsync(int recId, string layout)
-        {
-            var request = _deleteFactory();
-            request.RecordId = recId;
-            request.Layout = layout;
-            return SendAsync(request);
-        }
-
-        /// <summary>
-        /// Send a Create Record request to the FileMaker API.
-        /// </summary>
-        public abstract Task<ICreateResponse> SendAsync<T>(ICreateRequest<T> req) where T : class, new();
-        /// <summary>
-        /// Send a Delete Record request to the FileMaker API.
-        /// </summary>
-        public abstract Task<IResponse> SendAsync(IDeleteRequest req);
-        /// <summary>
-        /// Send an Edit Record request to the FileMaker API.
-        /// </summary>
-        public abstract Task<IEditResponse> SendAsync<T>(IEditRequest<T> req) where T : class, new();
-        /// <summary>
-        /// Send a Find Record request to the FileMaker API.
-        /// </summary>
-        public abstract Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req);
-        /// <summary>
-        /// Send a Find Record request to the FileMaker API.
-        /// </summary>
-        public abstract Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T, int, object> fmId = null) where T : class, new();
 
         /// <summary>
         /// Set the value of global fields.
@@ -315,6 +93,7 @@ namespace FMData
         public abstract Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue);
 
 
+        #region Container Uploads
         /// <summary>
         /// Puts the contents of the byte array into the specified container field.
         /// </summary>
@@ -347,7 +126,8 @@ namespace FMData
             string fieldName,
             string fileName,
             int repetition,
-            byte[] content);
+            byte[] content); 
+        #endregion
 
         #region Utility Methods
         /// <summary>
