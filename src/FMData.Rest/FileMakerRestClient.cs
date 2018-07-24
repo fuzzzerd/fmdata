@@ -19,6 +19,7 @@ namespace FMData.Rest
     /// </summary>
     public class FileMakerRestClient : FileMakerApiClientBase, IFileMakerRestClient
     {
+        #region Request Factories
         /// <summary>
         /// Factory to get a new Create Request of the correct type.
         /// </summary>
@@ -34,8 +35,8 @@ namespace FMData.Rest
         /// <summary>
         /// Factory to get a new Delete Request of the correct type.
         /// </summary>
-        protected override IDeleteRequest _deleteFactory() => new DeleteRequest();
-
+        protected override IDeleteRequest _deleteFactory() => new DeleteRequest(); 
+        #endregion
 
         internal readonly int tokenExpiration = 15;
 
@@ -228,8 +229,6 @@ namespace FMData.Rest
         }
         #endregion
 
-        #region Data Minipulation Functions
-
         #region Special Implementations
         /// <summary>
         /// General purpose Find Request method. Supports additional syntaxes like the { "omit" : "true" } operation.
@@ -370,6 +369,8 @@ namespace FMData.Rest
             throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responed with {response.StatusCode}");
         }
         #endregion
+
+        #region SendAsync Implementations
 
         /// <summary>
         /// Create a record in the database using the CreateRequest object.
