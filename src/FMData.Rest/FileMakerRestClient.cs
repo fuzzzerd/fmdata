@@ -83,15 +83,15 @@ namespace FMData.Rest
         {
             _client = client;
 
-            _fmsUri = Uri.EscapeDataString(fmsUri);
+            _fmsUri = fmsUri;
             // trim out the trailing slash if they included it
             if (_fmsUri.EndsWith("/", StringComparison.CurrentCultureIgnoreCase))
             {
                 _fmsUri = fmsUri.Substring(0, fmsUri.Length - 1);
             }
-            _fileName = Uri.EscapeDataString(file);
-            _userName = Uri.EscapeDataString(user);
-            _password = Uri.EscapeDataString(pass);
+            _fileName = file;
+            _userName = user;
+            _password = pass;
         }
         #endregion
 
