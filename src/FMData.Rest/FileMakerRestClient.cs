@@ -38,8 +38,6 @@ namespace FMData.Rest
         protected override IDeleteRequest _deleteFactory() => new DeleteRequest(); 
         #endregion
 
-        internal readonly int tokenExpiration = 15;
-
         private readonly HttpClient _client;
         private readonly string _fmsUri;
         private readonly string _fileName;
