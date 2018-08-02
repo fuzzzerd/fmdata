@@ -11,30 +11,43 @@ using System.Xml.Linq;
 
 namespace FMData.Xml
 {
+    /// <summary>
+    /// FileMaker Xml API Client Implementation.
+    /// </summary>
     public class FileMakerXmlClient : FileMakerApiClientBase, IFileMakerApiClient
     {
+        #region Request Factories
+        /// <summary>
+        /// Factory to get a new Create Request of the correct type.
+        /// </summary>
+        protected override ICreateRequest<T> _createFactory<T>() => new CreateRequest<T>();
+        /// <summary>
+        /// Factory to get a new Edit Request of the correct type.
+        /// </summary>
+        protected override IEditRequest<T> _editFactory<T>()
+        {
+            throw new NotImplementedException();
+        }
+        /// <summary>
+        /// Factory to get a new Find Request of the correct type.
+        /// </summary>
+        protected override IFindRequest<T> _findFactory<T>() => new FindRequest<T>();
+        /// <summary>
+        /// Factory to get a new Delete Request of the correct type.
+        /// </summary>
+        protected override IDeleteRequest _deleteFactory()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
         private readonly XNamespace _ns = "http://www.filemaker.com/xml/fmresultset";
+
         private readonly HttpClient _client;
         private readonly string _fmsUri;
         private readonly string _fileName;
         private readonly string _userName;
         private readonly string _password;
-
-
-        protected override ICreateRequest<T> _createFactory<T>() => new CreateRequest<T>();
-
-        protected override IEditRequest<T> _editFactory<T>()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override IFindRequest<T> _findFactory<T>() => new FindRequest<T>();
-
-        protected override IDeleteRequest _deleteFactory()
-        {
-            throw new NotImplementedException();
-        }
-
 
         #region Constructors
         /// <summary>
@@ -91,14 +104,13 @@ namespace FMData.Xml
         }
         #endregion
 
-
         #region SendAsync Implementations
         /// <summary>
-        /// 
+        /// Executes a Create Record Request
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="req"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">The projected type to be created.</typeparam>
+        /// <param name="req">The request record command.</param>
+        /// <returns>A response containing the results of the operation.</returns>
         public async override Task<ICreateResponse> SendAsync<T>(ICreateRequest<T> req)
         {
             // setup 
@@ -125,7 +137,6 @@ namespace FMData.Xml
             }
 
             throw new Exception("Unable to complete request");
-
         }
 
         public override Task<IResponse> SendAsync(IDeleteRequest req)
@@ -139,12 +150,12 @@ namespace FMData.Xml
         }
 
         /// <summary>
-        /// 
+        /// Executes a Find Request and returns the matching objects projected by the type parameter.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="req"></param>
-        /// <param name="fmId"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">The type to project the results against.</typeparam>
+        /// <param name="req">The Find Request Command.</param>
+        /// <param name="fmId">The function to map FileMaker Record Ids to an object.</param>
+        /// <returns>The projected results matching the find request.</returns>
         public override async Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T, int, object> fmId = null)
         {
             var url = _fmsUri + "/fmi/xml/fmresultset.xml";
@@ -183,7 +194,6 @@ namespace FMData.Xml
             return null;
         }
         #endregion
-
 
         public override Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue)
         {
