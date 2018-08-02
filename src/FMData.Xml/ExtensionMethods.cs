@@ -5,6 +5,9 @@ using System.Reflection;
 
 namespace FMData.Xml
 {
+    /// <summary>
+    /// Extension Method Holding Class
+    /// </summary>
     public static class ExtensionMethods
     {
         /// <summary>
