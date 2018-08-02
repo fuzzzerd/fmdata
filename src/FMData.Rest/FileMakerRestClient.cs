@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace FMData.Rest
 {
     /// <summary>
-    /// FileMaker Data API Client Implementation
+    /// FileMaker Data API Client Implementation.
     /// </summary>
     public class FileMakerRestClient : FileMakerApiClientBase, IFileMakerRestClient
     {
