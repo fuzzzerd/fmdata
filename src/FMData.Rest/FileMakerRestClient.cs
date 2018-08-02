@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace FMData.Rest
 {
     /// <summary>
-    /// FileMaker Data API Client Implementation
+    /// FileMaker Data API Client Implementation.
     /// </summary>
     public class FileMakerRestClient : FileMakerApiClientBase, IFileMakerRestClient
     {
@@ -45,14 +45,6 @@ namespace FMData.Rest
         private readonly string _fileName;
         private readonly string _userName;
         private readonly string _password;
-
-        private string dataToken;
-        private DateTime dataTokenLastUse = DateTime.MinValue;
-        private async Task UpdateTokenDateAsync()
-        {
-            if (!IsAuthenticated) { await RefreshTokenAsync(_userName, _password); }
-            dataTokenLastUse = DateTime.UtcNow;
-        }
 
         /// <summary>
         /// Indicates that the client is authenticated and has a token within the refresh window.
@@ -95,11 +87,20 @@ namespace FMData.Rest
         }
         #endregion
 
+        #region FM DATA SPECIFIC
+        internal readonly int tokenExpiration = 15;
+        private string dataToken;
+        private DateTime dataTokenLastUse = DateTime.MinValue;
+        private async Task UpdateTokenDateAsync()
+        {
+            if (!IsAuthenticated) { await RefreshTokenAsync(_userName, _password); }
+            dataTokenLastUse = DateTime.UtcNow;
+        }
         #region API Endpoint Functions
         /// <summary>
         /// Note we assume _fmsUri has no trailing slash as its cut off in the constructor.
         /// </summary>
-        private string _baseEndPoint => $"{_fmsUri}/fmi/data/v1/databases/{Uri.EscapeUriString(_fileName)}";
+        private string _baseEndPoint => $"{_fmsUri}/fmi/data/v1/databases/{Uri.EscapeDataString(_fileName)}";
         /// <summary>
         /// Generate the appropriate Authentication endpoint uri for this instance of the data client.
         /// </summary>
@@ -111,14 +112,14 @@ namespace FMData.Rest
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <returns>The FileMaker Data API Endpoint for Find requests.</returns>
-        public string FindEndpoint(string layout) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/_find";
+        public string FindEndpoint(string layout) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/_find";
 
         /// <summary>
         /// Generate the appropriate Create endpoint uri for this instance of the data client.
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <returns>The FileMaker Data API Endpoint for Create requests.</returns>
-        public string CreateEndpoint(string layout) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records";
+        public string CreateEndpoint(string layout) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records";
 
         /// <summary>
         /// Generate the appropriate Get Records endpoint.
@@ -126,7 +127,7 @@ namespace FMData.Rest
         /// <param name="layout">The layout to use as the context for the response.</param>
         /// <param name="recordId">The FileMaker record Id for this request.</param>
         /// <returns>The FileMaker Data API Endpoint for Get Records reqeusts.</returns>
-        public string GetRecordEndpoint(string layout, int recordId) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records/{recordId}";
+        public string GetRecordEndpoint(string layout, int recordId) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordId}";
 
         /// <summary>
         /// Generate the appropriate Get Records endpoint.
@@ -135,7 +136,7 @@ namespace FMData.Rest
         /// <param name="limit">The number of records to return.</param>
         /// <param name="offset">The offset number of records to skip before starting to return records.</param>
         /// <returns>The FileMaker Data API Endpoint for Get Records reqeusts.</returns>
-        public string GetRecordsEndpoint(string layout, int limit, int offset) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records?_limit={limit}&_offset={offset}";
+        public string GetRecordsEndpoint(string layout, int limit, int offset) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records?_limit={limit}&_offset={offset}";
 
         /// <summary>
         /// Generate the appropriate Edit/Update endpoint uri for this instance of the data client.
@@ -143,7 +144,7 @@ namespace FMData.Rest
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <param name="recordid">The record ID of the record to edit.</param>
         /// <returns>The FileMaker Data API Endpoint for Update/Edit requests.</returns>
-        public string UpdateEndpoint(string layout, object recordid) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records/{recordid}";
+        public string UpdateEndpoint(string layout, object recordid) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordid}";
 
         /// <summary>
         /// Generate the appropriate Delete endpoint uri for this instance of the data client.
@@ -151,7 +152,7 @@ namespace FMData.Rest
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <param name="recordid">The record ID of the record to edit.</param>
         /// <returns>The FileMaker Data API Endpoint for Delete requests.</returns>
-        public string DeleteEndpoint(string layout, object recordid) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records/{recordid}";
+        public string DeleteEndpoint(string layout, object recordid) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordid}";
 
         /// <summary>
         /// Generate the appropriate Container field endpoint.
@@ -161,7 +162,7 @@ namespace FMData.Rest
         /// <param name="fieldName">The name of the container field.</param>
         /// <param name="repetition">Field repetition number.</param>
         /// <returns></returns>
-        public string ContainerEndpoint(string layout, object recordid, string fieldName, int repetition = 1) => $"{_baseEndPoint}/layouts/{Uri.EscapeUriString(layout)}/records/{recordid}/containers/{Uri.EscapeUriString(fieldName)}/{repetition}";
+        public string ContainerEndpoint(string layout, object recordid, string fieldName, int repetition = 1) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordid}/containers/{Uri.EscapeDataString(fieldName)}/{repetition}";
         #endregion
 
         #region FM Data Token Management
@@ -227,6 +228,7 @@ namespace FMData.Rest
 
             throw new Exception("Could not logout.");
         }
+        #endregion
         #endregion
 
         #region Special Implementations
