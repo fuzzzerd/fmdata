@@ -38,21 +38,11 @@ namespace FMData.Rest
         protected override IDeleteRequest _deleteFactory() => new DeleteRequest(); 
         #endregion
 
-        internal readonly int tokenExpiration = 15;
-
         private readonly HttpClient _client;
         private readonly string _fmsUri;
         private readonly string _fileName;
         private readonly string _userName;
         private readonly string _password;
-
-        private string dataToken;
-        private DateTime dataTokenLastUse = DateTime.MinValue;
-        private async Task UpdateTokenDateAsync()
-        {
-            if (!IsAuthenticated) { await RefreshTokenAsync(_userName, _password); }
-            dataTokenLastUse = DateTime.UtcNow;
-        }
 
         /// <summary>
         /// Indicates that the client is authenticated and has a token within the refresh window.
@@ -95,6 +85,15 @@ namespace FMData.Rest
         }
         #endregion
 
+        #region FM DATA SPECIFIC
+        internal readonly int tokenExpiration = 15;
+        private string dataToken;
+        private DateTime dataTokenLastUse = DateTime.MinValue;
+        private async Task UpdateTokenDateAsync()
+        {
+            if (!IsAuthenticated) { await RefreshTokenAsync(_userName, _password); }
+            dataTokenLastUse = DateTime.UtcNow;
+        }
         #region API Endpoint Functions
         /// <summary>
         /// Note we assume _fmsUri has no trailing slash as its cut off in the constructor.
@@ -227,6 +226,7 @@ namespace FMData.Rest
 
             throw new Exception("Could not logout.");
         }
+        #endregion
         #endregion
 
         #region Special Implementations
