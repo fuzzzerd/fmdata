@@ -3,6 +3,7 @@ using FMData.Xml.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -46,7 +47,7 @@ namespace FMData.Xml
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
         /// <remarks>Pass through constructor with no real body used for injection.</remarks>
         public FileMakerXmlClient(string fmsUri, string file, string user, string pass, string initialLayout)
-            : this(new HttpClient(), fmsUri, file, user, pass, initialLayout) { }
+            : this(new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(user, pass) }), fmsUri, file, user, pass, initialLayout) { }
 
         /// <summary>
         /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"/> instance to the class.
