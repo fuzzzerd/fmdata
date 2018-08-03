@@ -80,6 +80,38 @@ namespace FMData.Tests
         }
 
         [Fact]
+        public async Task FindAsync_WithSkipTake_ShouldHave_LimitOffset()
+        {
+            // arrange
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "Users";
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/_find")
+                .WithPartialContent("limit") // ensure the request contains the expected content
+                .WithPartialContent("offset") // ensure the request contains the expected content
+                .Respond("application/json", DataApiResponses.SuccessfulFind());
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+
+            // act
+            var response = await fdc.FindAsync(new User()
+            {
+                Name = "fuzzzerd"
+            },5,5);
+
+            // assert
+            Assert.NotEmpty(response);
+        }
+
+        [Fact]
         public async Task SendAsync_EmptyFind_ShouldReturnMany()
         {
             var fdc = GetMockedFDC();
@@ -104,7 +136,7 @@ namespace FMData.Tests
         {
             var fdc = GetMockedFDC();
 
-            await Assert.ThrowsAsync<ArgumentException>(async() => await fdc.SendAsync(new FindRequest<Dictionary<string, string>>() { }));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.SendAsync(new FindRequest<Dictionary<string, string>>() { }));
         }
 
         [Fact]
@@ -137,38 +169,6 @@ namespace FMData.Tests
 
         [Fact]
         public async Task Test_DateTime_To_Timestamp_Parsing()
-        {
-            // arrange
-            var mockHttp = new MockHttpMessageHandler();
-
-            var server = "http://localhost";
-            var file = "test-file";
-            var user = "unit";
-            var pass = "test";
-            var layout = "Users";
-
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
-                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
-
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/_find")
-                .WithPartialContent("fuzzzerd") // ensure the request contains the expected content
-                .Respond("application/json", DataApiResponses.SuccessfulFind());
-
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
-
-            // act
-            var response = await fdc.FindAsync(new User()
-            {
-                Name = "fuzzzerd"
-            });
-
-            // assert
-            var responseDataContainsResult = response.Any(r => r.Name.Contains("Buzz"));
-            Assert.True(responseDataContainsResult);
-        }
-
-        [Fact]
-        public async Task Find_WithoutExplicitRequest_ShouldReturnData()
         {
             // arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -344,7 +344,7 @@ namespace FMData.Tests
         public async Task GetByRecordId_ShouldReturnMatchingRecordId()
         {
             // arrange
-            Func<User, int, object> FMrecordIdMapper = (o, id) => o.FileMakerRecordId = id;
+            object FMrecordIdMapper(User o, int id) => o.FileMakerRecordId = id;
             var mockHttp = new MockHttpMessageHandler();
 
             var server = "http://localhost";
