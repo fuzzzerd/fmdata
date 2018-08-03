@@ -60,7 +60,7 @@ namespace FMData.Xml
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
         /// <remarks>Pass through constructor with no real body used for injection.</remarks>
         public FileMakerXmlClient(string fmsUri, string file, string user, string pass, string initialLayout)
-            : this(new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(user, pass) }), fmsUri, file, user, pass, initialLayout) { }
+            : this(new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(user, pass) }), fmsUri, file, user, pass) { }
 
         /// <summary>
         /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"/> instance to the class.
@@ -71,7 +71,7 @@ namespace FMData.Xml
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
-        public FileMakerXmlClient(HttpClient client, string fmsUri, string file, string user, string pass, string initialLayout)
+        public FileMakerXmlClient(HttpClient client, string fmsUri, string file, string user, string pass)
         {
             _client = client;
 
