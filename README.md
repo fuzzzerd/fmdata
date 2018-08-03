@@ -29,42 +29,41 @@ The recommended way to consume this library is using a strongly typed model.
 A model should roughly match a table in your solution. Its accessed via layout.
 
 ```csharp
-    [Table("NameOfYourLayout")] // use the Table attribute to specify the layout
-    public class Model
-    {
-        public string Name { get; set; }
-
-        // if your model name does not match
-        // the JsonProperty attribute to map to the right field
-        [JsonProperty("overrideFieldName")] // the filemaker field to use
-        public string Address { get; set; }
-    }
+[Table("NameOfYourLayout")] // use the Table attribute to specify the layout
+public class Model
+{
+    public string Name { get; set; }
+    // if your model name does not match
+    // the JsonProperty attribute to map to the right field
+    [JsonProperty("overrideFieldName")] // the filemaker field to use
+    public string Address { get; set; }
+}
 ```
 
 ### Performing a Find
 
 ```csharp
-    var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
-    var toFind = new Model { Name = "someName" };
-    var resuts = await client.FindAsync(toFind);
-    // results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
+var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
+var toFind = new Model { Name = "someName" };
+var resuts = await client.FindAsync(toFind);
+// results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
 ```
 
 ### Create a new record
 
 ```csharp
-    var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
-    var toCreate = new Model { Name = "someName", Address = "123 Main Street" };
-    var resuts = await client.CreateAsync(toCreate);
+var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
+var toCreate = new Model { Name = "someName", Address = "123 Main Street" };
+var resuts = await client.CreateAsync(toCreate);
 ```
 
 ### Updating a record
 
 ```csharp
-    var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
-    var fileMakerRecordId = 1; // this is the value from the calculation: Get(RecordID)
-    var toUpdate = new Model { Name = "someName", Address = "123 Main Street" };
-    var resuts = await client.EditAsync(fileMakerRecordId, toCreate);
+var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
+var fileMakerRecordId = 1; // this is the value from the calculation: Get(RecordID)
+var toUpdate = new Model { Name = "someName", Address = "123 Main Street" };
+var resuts = await client.EditAsync(fileMakerRecordId, toCreate);
 ```
 
 ### Find with FileMaker Id Mapping
@@ -72,11 +71,11 @@ A model should roughly match a table in your solution. Its accessed via layout.
 Note you need to add an int property to the Model `public int FileMakerRecordId {get; set; }` and provide the Func to the `FindAsync` method to tell FMData how to map the FileMaker Id returned from the API to your model.
 
 ```csharp
-    Func<Model, int, object> FMRecordIdMapper = (o, id) => o.FileMakerRecordId = id;
-    var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
-    var toFind = new Model { Name = "someName" };
-    var resuts = await client.FindAsync(toFind, FMRecordIdMapper);
-    // results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
+Func<Model, int, object> FMRecordIdMapper = (o, id) => o.FileMakerRecordId = id;
+var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
+var toFind = new Model { Name = "someName" };
+var resuts = await client.FindAsync(toFind, FMRecordIdMapper);
+// results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
 ```
 
 Alternatively, you could create a calculated field `Get(RecordID)`, put it on your layout, and map it the normal way.
