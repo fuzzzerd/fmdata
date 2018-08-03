@@ -26,7 +26,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard1.3\FMData.Xml.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard1.3\FMData.Xml.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
