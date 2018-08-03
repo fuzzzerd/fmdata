@@ -71,9 +71,29 @@ namespace FMData
         /// Finds a record or records matching the properties of the input request object.
         /// </summary>
         /// <param name="request">The object to utilize for the find request parameters.</param>
+        /// <param name="skip">Number of records to skip.</param>
+        /// <param name="take">Number of records to return.</param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> FindAsync<T>(T request, int skip, int take) where T : class, new();
+
+
+        /// <summary>
+        /// Finds a record or records matching the properties of the input request object.
+        /// </summary>
+        /// <param name="request">The object to utilize for the find request parameters.</param>
         /// <param name="fmid">Function to map the FileMaker RecordId to each instance T.</param>
         /// <returns></returns>
         Task<IEnumerable<T>> FindAsync<T>(T request, Func<T, int, object> fmid) where T : class, new();
+
+        /// <summary>
+        /// Finds a record or records matching the properties of the input request object.
+        /// </summary>
+        /// <param name="request">The object to utilize for the find request parameters.</param>
+        /// <param name="fmid">Function to map the FileMaker RecordId to each instance T.</param>
+        /// <param name="skip">Number of records to skip.</param>
+        /// <param name="take">Number of records to return.</param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> FindAsync<T>(T request, int skip, int take, Func<T, int, object> fmid) where T : class, new();
 
         /// <summary>
         /// Finds a record or records matching the properties of the input request object.
@@ -84,6 +104,18 @@ namespace FMData
         /// <param name="fmid">Function to map the FileMaker RecordId to each instance T.</param>
         /// <returns></returns>
         Task<IEnumerable<T>> FindAsync<T>(T request, string script, string scriptParameter, Func<T, int, object> fmid) where T : class, new();
+
+        /// <summary>
+        /// Finds a record or records matching the properties of the input request object.
+        /// </summary>
+        /// <param name="request">The object to utilize for the find request parameters.</param>
+        /// <param name="skip">Number of records to skip.</param>
+        /// <param name="take">Number of records to return.</param>
+        /// <param name="script">Script to run after the request is completed.</param>
+        /// <param name="scriptParameter">Script parameter.</param>
+        /// <param name="fmid">Function to map the FileMaker RecordId to each instance T.</param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> FindAsync<T>(T request, int skip, int take, string script, string scriptParameter, Func<T, int, object> fmid) where T : class, new();
 
         /// <summary>
         /// Finds a record or records matching the properties of the input request object.
