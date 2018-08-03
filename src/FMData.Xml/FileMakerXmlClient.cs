@@ -163,7 +163,7 @@ namespace FMData.Xml
             var dictionary = req.Query.First().AsDictionary(false);
 
             var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeDataString(i.Key)}={Uri.EscapeDataString(i.Value.ToString())}"));
-            var httpRequestContent = new StringContent($"–find&-db={_fileName}&-lay={req.Layout}{stringContent}");
+            var httpRequestContent = new StringContent($"-db={_fileName}&-lay={req.Layout}{stringContent}&–find");
 
             var response = await _client.PostAsync(url, httpRequestContent);
 
