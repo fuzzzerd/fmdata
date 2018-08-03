@@ -1,13 +1,9 @@
+using FMData.Xml.Tests.TestModels;
+using RichardSzalay.MockHttp;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using FMData;
-using FMData.Xml;
-using FMData.Xml.Tests.TestModels;
-using RichardSzalay.MockHttp;
 using Xunit;
 
 namespace FMData.Xml.Tests
@@ -30,7 +26,7 @@ namespace FMData.Xml.Tests
                 .WithPartialContent(Uri.EscapeDataString("Spring in Giverny 3"))
                 .Respond(HttpStatusCode.OK, "application/xml", XmlResponses.GrammarSample_fmresultset);
 
-            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
             var findRequest = new Art()
             {
@@ -54,7 +50,7 @@ namespace FMData.Xml.Tests
                 .WithPartialContent(Uri.EscapeDataString("Spring in Giverny 3"))
                 .Respond(HttpStatusCode.OK, "application/xml", XmlResponses.GrammarSample_fmresultset);
 
-            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
             var findRequest = new Art()
             {

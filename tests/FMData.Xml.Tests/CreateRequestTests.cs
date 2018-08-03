@@ -27,7 +27,7 @@ namespace FMData.Xml.Tests
                 .WithPartialContent(nameToMatch)
                 .Respond(HttpStatusCode.OK, "application/json", "");
 
-            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), server, file, user, pass, layout);
+            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
             var mtoCreate = new User()
             {

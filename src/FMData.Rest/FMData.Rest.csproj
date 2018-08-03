@@ -15,7 +15,7 @@
     <RepositoryType>GitHub</RepositoryType>
     <Authors>Nate Bross</Authors>
     <Company />
-    <PackageTags>filemaker filemaker-rest filemaker-api netstandard json dotnet-standard</PackageTags>
+    <PackageTags>filemaker data api filemaker-rest filemaker-api netstandard json dotnet-standard</PackageTags>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
