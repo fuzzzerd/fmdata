@@ -173,6 +173,14 @@ namespace FMData.Xml
                 var xdoc = XDocument.Load(await response.Content.ReadAsStreamAsync());
 
                 // act
+                var metadata = xdoc
+                    .Descendants(_ns + "metadata")
+                    .Elements(_ns + "field-definition")
+                    .ToDictionary(
+                        k => k.Attribute("name").Value,
+                        v => v.Attribute("result").Value
+                    );
+
                 var dict = new Dictionary<string, string>();
                 var records = xdoc
                     .Descendants(_ns + "resultset")
@@ -184,7 +192,20 @@ namespace FMData.Xml
                         FieldData = r.Elements(_ns + "field")
                             .ToDictionary(
                                 k => k.Attribute("name").Value,
-                                v => v.Attribute("name").Value == "length" ? Convert.ChangeType(v.Value, typeof(int)) : v.Value
+                                v => {
+                                    switch (metadata[v.Attribute("name").Value])
+                                    {
+                                        case "number":
+                                            return Convert.ChangeType(v.Value, typeof(int));
+                                        case "date":
+                                        case "timestamp":
+                                            return Convert.ChangeType(v.Value, typeof(DateTime));
+                                        case "time":
+                                            return Convert.ChangeType(v.Value, typeof(TimeSpan));
+                                        default:
+                                            return (object)v.Value;
+                                    }
+                                }
                             ).ToObject<T>()
                     });
 
