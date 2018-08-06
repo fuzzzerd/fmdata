@@ -8,6 +8,8 @@ Data access is wrapped around the `IFileMakerApiClient` interface which is defin
 
 The implementation for consuming data via the Data API is located in `FMData.Rest` and the implementation for Xml will be located in `FMData.Xml`.
 
+*Note: Xml support is experimental.*
+
 | Build Status | Activity | MyGet | Nuget | License |
 |---|---|---|---|---|
 | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![FMData repository/commit activity](https://img.shields.io/github/commit-activity/w/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://img.shields.io/nuget/dt/FMData.svg?style=flat-square)](https://www.nuget.org/packages/FMData/) | [![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE) |
