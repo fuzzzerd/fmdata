@@ -48,6 +48,28 @@ namespace FMData
         /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
         /// <returns>A single record matching the FileMaker Record Id.</returns>
         Task<T> GetByFileMakerIdAsync<T>(int fileMakerId, Func<T, int, object> fmId = null) where T : class, new();
+
+        /// <summary>
+        /// Get a single record by FileMaker RecordId
+        /// </summary>
+        /// <typeparam name="T">The type to load the data into.</typeparam>
+        /// <param name="fileMakerId">The FileMaker RecordId of the record to load.</param>
+        /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
+        /// <param name="fmMod">The funtion to use to map the FileMaker ModId to the return object.</param>
+        /// <returns>A single record matching the FileMaker Record Id.</returns>
+        Task<T> GetByFileMakerIdAsync<T>(int fileMakerId, Func<T, int, object> fmId = null, Func<T, int, object> fmMod = null) where T : class, new();
+
+        /// <summary>
+        /// Get a single record by FileMaker RecordId
+        /// </summary>
+        /// <typeparam name="T">The type to load the data into.</typeparam>
+        /// <param name="layout">The layout to execute the request against.</param>
+        /// <param name="fileMakerId">The FileMaker RecordId of the record to load.</param>
+        /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
+        /// <param name="fmMod">The funtion to use to map the FileMaker ModId to the return object.</param>
+        /// <returns>A single record matching the FileMaker Record Id.</returns>
+        Task<T> GetByFileMakerIdAsync<T>(string layout, int fileMakerId, Func<T, int, object> fmId = null, Func<T, int, object> fmMod = null) where T : class, new();
+
         /// <summary>
         /// Get a single record by FileMaker RecordId
         /// </summary>

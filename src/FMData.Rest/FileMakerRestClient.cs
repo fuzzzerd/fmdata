@@ -305,7 +305,8 @@ namespace FMData.Rest
         public override async Task<T> GetByFileMakerIdAsync<T>(
             string layout, 
             int fileMakerId, 
-            Func<T, int, object> fmId = null)
+            Func<T, int, object> fmId = null,
+            Func<T, int, object> modId = null)
         {
             // normally required, but internally we can route to the regular record request apis
             var uriEndpoint = GetRecordEndpoint(layout, fileMakerId);
@@ -329,8 +330,9 @@ namespace FMData.Rest
                     // JToken.ToObject is a helper method that uses JsonSerializer internally
                     T searchResult = result["fieldData"].ToObject<T>();
                     int fmrid = result["recordId"].ToObject<int>();
-                    int modId = result["modId"].ToObject<int>();
+                    int fmmodId = result["modId"].ToObject<int>();
                     fmId?.Invoke(searchResult, fmrid);
+                    modId?.Invoke(searchResult, fmmodId);
                     searchResults.Add(searchResult);
                 }
 
