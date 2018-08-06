@@ -477,7 +477,10 @@ namespace FMData.Rest
         /// <param name="req">The find request parameters.</param>
         /// <param name="fmId">Function to assign the FileMaker RecordId to each instnace of {T}</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public override async Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T, int, object> fmId = null)
+        public override async Task<IEnumerable<T>> SendAsync<T>(
+            IFindRequest<T> req, 
+            Func<T, int, object> fmId = null,
+            Func<T, int, object> modId = null)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
@@ -499,8 +502,9 @@ namespace FMData.Rest
                     // JToken.ToObject is a helper method that uses JsonSerializer internally
                     T searchResult = result["fieldData"].ToObject<T>();
                     int fileMakerId = result["recordId"].ToObject<int>();
-                    int modId = result["modId"].ToObject<int>();
+                    int fmmodId = result["modId"].ToObject<int>();
                     fmId?.Invoke(searchResult, fileMakerId);
+                    modId?.Invoke(searchResult, fmmodId);
                     searchResults.Add(searchResult);
                 }
 
