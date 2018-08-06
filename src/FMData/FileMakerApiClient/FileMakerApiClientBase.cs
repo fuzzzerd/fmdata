@@ -55,7 +55,10 @@ namespace FMData
         /// <summary>
         /// Send a Find Record request to the FileMaker API.
         /// </summary>
-        public abstract Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T, int, object> fmId = null) where T : class, new();
+        public abstract Task<IEnumerable<T>> SendAsync<T>(
+            IFindRequest<T> req,
+            Func<T, int, object> fmId = null,
+            Func<T, int, object> modId = null) where T : class, new();
 
 
 

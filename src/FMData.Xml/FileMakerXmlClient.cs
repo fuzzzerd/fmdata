@@ -156,7 +156,10 @@ namespace FMData.Xml
         /// <param name="req">The Find Request Command.</param>
         /// <param name="fmId">The function to map FileMaker Record Ids to an object.</param>
         /// <returns>The projected results matching the find request.</returns>
-        public override async Task<IEnumerable<T>> SendAsync<T>(IFindRequest<T> req, Func<T, int, object> fmId = null)
+        public override async Task<IEnumerable<T>> SendAsync<T>(
+            IFindRequest<T> req,
+            Func<T, int, object> fmId = null,
+            Func<T, int, object> modId = null)
         {
             var url = _fmsUri + "/fmi/xml/fmresultset.xml";
 
@@ -203,7 +206,7 @@ namespace FMData.Xml
                                         case "time":
                                             return Convert.ChangeType(v.Value, typeof(TimeSpan));
                                         default:
-                                            return (object)v.Value;
+                                            return v.Value;
                                     }
                                 }
                             ).ToObject<T>()

@@ -168,6 +168,20 @@ namespace FMData.Tests
         }
 
         [Fact]
+        public async Task SendAsync_StrongType_FindShould_ReturnData_AndGetModID()
+        {
+            // arrange
+            var fdc = GetMockedFDC();
+
+            // act
+            var response = await fdc.SendAsync(FindUserReqWithLayoutOverride, null, (u, i) => u.FileMakerModId = i);
+
+            // assert (any becuase our data is mixed and has both)
+            var responseDataContainsResult = response.Any(r => r.FileMakerModId != 0);
+            Assert.True(responseDataContainsResult);
+        }
+
+        [Fact]
         public async Task Test_DateTime_To_Timestamp_Parsing()
         {
             // arrange
