@@ -54,5 +54,19 @@ namespace FMData.Xml.Tests
             // assert
             Assert.False(d.ContainsKey("length"));
         }
+
+        [Fact]
+        public void DictionaryToModel_ShouldPutData_IntoDataMemberIfSpecified()
+        {
+            // arrange
+            var expected = "theField";
+            var d = new Dictionary<string, object>{ { "alt-Title", expected} };
+
+            // act
+            var a = d.ToObject<ArtDataCM>();
+
+            // assert
+            Assert.Equal(expected, a.Title);
+        }
     }
 }
