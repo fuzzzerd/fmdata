@@ -88,7 +88,7 @@ namespace FMData.Xml
         #endregion
 
         #region Special Implementations
-        public override Task<T> GetByFileMakerIdAsync<T>(string layout, int fileMakerId, Func<T, int, object> fmId = null)
+        public override Task<T> GetByFileMakerIdAsync<T>(string layout, int fileMakerId, Func<T, int, object> fmId = null, Func<T, int, object> modId = null)
         {
             throw new NotImplementedException();
         }
