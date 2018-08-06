@@ -59,7 +59,7 @@ namespace FMData.Xml
         /// <param name="pass">Account to connect with.</param>
         /// <param name="initialLayout">Layout to use for the initial authentication request.</param>
         /// <remarks>Pass through constructor with no real body used for injection.</remarks>
-        public FileMakerXmlClient(string fmsUri, string file, string user, string pass, string initialLayout)
+        public FileMakerXmlClient(string fmsUri, string file, string user, string pass)
             : this(new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(user, pass) }), fmsUri, file, user, pass) { }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace FMData.Xml
             var dictionary = req.Query.First().AsDictionary(false);
 
             var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeDataString(i.Key)}={Uri.EscapeDataString(i.Value.ToString())}"));
-            var httpRequestContent = new StringContent($"-db={_fileName}&-lay={req.Layout}{stringContent}&–find");
+            var httpRequestContent = new StringContent($"-find&-db={_fileName}&-lay={req.Layout}{stringContent}");
 
             var response = await _client.PostAsync(url, httpRequestContent);
 
