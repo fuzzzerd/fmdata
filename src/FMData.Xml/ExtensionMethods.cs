@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace FMData.Xml
 {
@@ -34,16 +36,20 @@ namespace FMData.Xml
         /// </summary>
         public static IDictionary<string, object> AsDictionary(this object source, bool includeNulls = true)
         {
-            var props = source.GetType().GetTypeInfo().DeclaredProperties;
+            var props = source
+                .GetType()
+                .GetTypeInfo()
+                .DeclaredProperties
+                .Where(p => p.GetCustomAttribute<NotMappedAttribute>() == null);
 
             if (!includeNulls)
             {
                 props = props.Where(p => p.GetValue(source, null) != null);
             }
-
+            
             return props.ToDictionary
             (
-                propInfo => propInfo.Name,
+                propInfo => propInfo.GetCustomAttribute<DataMemberAttribute>() == null ? propInfo.Name : propInfo.GetCustomAttribute<DataMemberAttribute>().Name,
                 propInfo => propInfo.GetValue(source, null)
             );
         }
