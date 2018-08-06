@@ -64,6 +64,22 @@ namespace FMData
         /// <returns></returns>
         public virtual Task<IEnumerable<T>> FindAsync<T>(T request, int skip, int take, string script, string scriptParameter, Func<T, int, object> fmid) where T : class, new()
         {
+            return FindAsync(request, skip, take, script, scriptParameter, fmid, null);
+        }
+
+        /// <summary>
+        /// Finds a record or records matching the properties of the input request object.
+        /// </summary>
+        /// <param name="request">The object to utilize for the find request parameters.</param>
+        /// <param name="skip">Number of records to skip.</param>
+        /// <param name="take">Number of records to return.</param>
+        /// <param name="script">Script to run after the request is completed.</param>
+        /// <param name="scriptParameter">Script parameter.</param>
+        /// <param name="fmid">Function to map the FileMaker RecordId to each instance T.</param>
+        /// <param name="modid">Function to map hte FileMaker ModId to each instance of T.</param>
+        /// <returns></returns>
+        public virtual Task<IEnumerable<T>> FindAsync<T>(T request, int skip, int take, string script, string scriptParameter, Func<T, int, object> fmid, Func<T, int, object> modid) where T : class, new()
+        {
             var req = _findFactory<T>();
 
             if (!string.IsNullOrEmpty(script))
@@ -78,7 +94,7 @@ namespace FMData
             req.Layout = GetTableName(request);
             req.Query = new List<T>() { request };
 
-            return SendAsync(req, fmid);
+            return SendAsync(req, fmid, modid);
         }
 
         /// <summary>
