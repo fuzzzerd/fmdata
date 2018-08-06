@@ -38,8 +38,5 @@ namespace FMData.Xml.Tests
 </record>
 </resultset>
 </fmresultset>";
-
-
-
     }
 }

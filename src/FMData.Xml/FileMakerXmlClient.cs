@@ -24,10 +24,7 @@ namespace FMData.Xml
         /// <summary>
         /// Factory to get a new Edit Request of the correct type.
         /// </summary>
-        protected override IEditRequest<T> _editFactory<T>()
-        {
-            throw new NotImplementedException();
-        }
+        protected override IEditRequest<T> _editFactory<T>() => new EditRequest<T>();
         /// <summary>
         /// Factory to get a new Find Request of the correct type.
         /// </summary>
@@ -116,8 +113,7 @@ namespace FMData.Xml
             // setup 
             var layout = req.Layout;
 
-            var dictionary = req.Data.GetType().GetTypeInfo().DeclaredProperties
-                .ToDictionary(prop => prop.Name, prop => prop.GetValue(req.Data, null));
+            var dictionary = req.Data.AsDictionary(false);
 
             var url = _fmsUri + "/fmi/xml/fmresultset.xml";
 
@@ -144,9 +140,31 @@ namespace FMData.Xml
             throw new NotImplementedException();
         }
 
-        public override Task<IEditResponse> SendAsync<T>(IEditRequest<T> req)
+        public override async Task<IEditResponse> SendAsync<T>(IEditRequest<T> req)
         {
-            throw new NotImplementedException();
+            // setup 
+            var layout = req.Layout;
+
+            var dictionary = req.Data.AsDictionary(false);
+
+            var url = _fmsUri + "/fmi/xml/fmresultset.xml";
+
+            var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeDataString(i.Key)}={Uri.EscapeDataString(i.Value.ToString())}"));
+            var httpRequestContent = new StringContent($"-edit&-db={_fileName}&-lay={layout}{stringContent}");
+
+            var response = await _client.PostAsync(url, httpRequestContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // process response data return OK
+                var resp = new EditResponse
+                {
+                    Messages = new List<ResponseMessage> { new ResponseMessage { Code = "", Message = "OK" } }
+                };
+                return resp;
+            }
+
+            throw new Exception("Unable to complete request");
         }
 
         /// <summary>
@@ -154,7 +172,8 @@ namespace FMData.Xml
         /// </summary>
         /// <typeparam name="T">The type to project the results against.</typeparam>
         /// <param name="req">The Find Request Command.</param>
-        /// <param name="fmId">The function to map FileMaker Record Ids to an object.</param>
+        /// <param name="fmId">The function to map FileMaker Record Ids to an instance of T.</param>
+        /// <param name="modId">The function to map FileMaker Modid to an instance of T</param>
         /// <returns>The projected results matching the find request.</returns>
         public override async Task<IEnumerable<T>> SendAsync<T>(
             IFindRequest<T> req,
