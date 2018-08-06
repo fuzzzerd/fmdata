@@ -76,11 +76,38 @@ namespace FMData
         /// Get a single record by FileMaker RecordId
         /// </summary>
         /// <typeparam name="T">The type to load the data into.</typeparam>
+        /// <param name="fileMakerId">The FileMaker RecordId of the record to load.</param>
+        /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
+        /// <param name="fmMod">The funtion to use to map the FileMaker ModId to the return object.</param>
+        /// <returns>A single record matching the FileMaker Record Id.</returns>
+        public virtual Task<T> GetByFileMakerIdAsync<T>(int fileMakerId, Func<T, int, object> fmId = null, Func<T, int, object> fmMod = null) where T : class, new()
+        {
+            var layout = GetTableName(new T()); // probably a beter way
+            return GetByFileMakerIdAsync(layout, fileMakerId, fmId, fmMod);
+        }
+
+        /// <summary>
+        /// Get a single record by FileMaker RecordId
+        /// </summary>
+        /// <typeparam name="T">The type to load the data into.</typeparam>
         /// <param name="layout">the layout to execute the request on.</param>
         /// <param name="fileMakerId">The FileMaker RecordId of the record to load.</param>
         /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
         /// <returns>A single record matching the FileMaker Record Id.</returns>
-        public abstract Task<T> GetByFileMakerIdAsync<T>(string layout, int fileMakerId, Func<T, int, object> fmId = null) where T : class, new();
+        public virtual Task<T> GetByFileMakerIdAsync<T>(string layout, int fileMakerId, Func<T, int, object> fmId = null) where T : class, new()
+        {
+            return GetByFileMakerIdAsync(layout, fileMakerId, fmId, null);
+        }
+
+        /// <summary>
+        /// Get a single record by FileMaker RecordId
+        /// </summary>
+        /// <typeparam name="T">The type to load the data into.</typeparam>
+        /// <param name="layout">The layout to execute the request against.</param>
+        /// <param name="fileMakerId">The FileMaker RecordId of the record to load.</param>
+        /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
+        /// <returns>A single record matching the FileMaker Record Id.</returns>
+        public abstract Task<T> GetByFileMakerIdAsync<T>(string layout, int fileMakerId, Func<T, int, object> fmId = null, Func<T, int, object> fmMod = null) where T : class, new();
 
         /// <summary>
         /// Set the value of global fields.
