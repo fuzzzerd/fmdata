@@ -26,7 +26,7 @@ namespace FMData.Xml
                     .DeclaredProperties
                     .FirstOrDefault(k 
                         => k.Name.Equals(item.Key, StringComparison.CurrentCultureIgnoreCase)
-                        || k.GetCustomAttribute<DataMemberAttribute>().Name.Equals(item.Key, StringComparison.CurrentCultureIgnoreCase)
+                        || (k.GetCustomAttribute<DataMemberAttribute>() != null && k.GetCustomAttribute<DataMemberAttribute>().Name.Equals(item.Key, StringComparison.CurrentCultureIgnoreCase))
                         )
                     ?.SetValue(someObject, item.Value, null);
             }
