@@ -1,9 +1,11 @@
+using FMData.Xml.Tests.TestModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Xunit;
+using FMData.Xml;
 
 namespace FMData.Xml.Tests
 {
@@ -38,6 +40,19 @@ namespace FMData.Xml.Tests
             Assert.Contains(records, r => r.RecordId == 14);
             Assert.Contains(records.SelectMany(f => f.FieldData), r => r.Key == "Title");
             Assert.Contains(records.SelectMany(f => f.FieldData), r => r.Value == "Spring in Giverny 3");
+        }
+
+        [Fact]
+        public void ObjectToDictionary_Should_ProcessData()
+        {
+            // arrange
+            var a = new Art { Title = "Test" };
+
+            // act
+            var d = a.AsDictionary(false);
+
+            // assert
+            Assert.False(d.ContainsKey("length"));
         }
     }
 }
