@@ -48,9 +48,9 @@ namespace FMData.Xml
                     .Where(p => p.GetValue(source, null) != null)
                     // need a way to exclude 'default' values for ints, dates, etc
                     .Where(p 
-                        => p.GetType().GetTypeInfo().IsValueType
-                        && p.GetType() != typeof(string)
-                        && p.GetValue(source, null) != Activator.CreateInstance(p.GetType()))
+                        => !(p.PropertyType.GetTypeInfo().IsValueType == true
+                        && p.GetValue(source, null) != Activator.CreateInstance(p.PropertyType))
+                    )
                     ;
             }
             
