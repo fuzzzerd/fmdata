@@ -11,7 +11,7 @@ using System.Net.Http;
 // this is apparently necessary to work in appveyor / myget
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
-namespace FMData.Tests
+namespace FMData.Rest.Tests
 {
     public class AuthenticationTests
     {

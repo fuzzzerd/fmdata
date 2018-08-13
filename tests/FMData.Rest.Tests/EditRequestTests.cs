@@ -1,6 +1,6 @@
 using FMData.Rest;
 using FMData.Rest.Requests;
-using FMData.Tests.TestModels;
+using FMData.Rest.Tests.TestModels;
 using RichardSzalay.MockHttp;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FMData.Tests
+namespace FMData.Rest.Tests
 {
     public class EditRequestTests
     {

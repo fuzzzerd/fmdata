@@ -5,7 +5,7 @@ using FMData.Rest.Requests;
 using RichardSzalay.MockHttp;
 using Xunit;
 
-namespace FMData.Tests
+namespace FMData.Rest.Tests
 {
     public class DeleteRequestTests
     {

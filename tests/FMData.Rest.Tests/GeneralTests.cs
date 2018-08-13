@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using FMData.Rest.Requests;
-using FMData.Tests.TestModels;
+using FMData.Rest.Tests.TestModels;
 using Xunit;
 
-namespace FMData.Tests
+namespace FMData.Rest.Tests
 {
     public class GeneralTests
     {

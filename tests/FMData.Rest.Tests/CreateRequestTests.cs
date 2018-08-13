@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using FMData;
 using FMData.Rest;
 using FMData.Rest.Requests;
-using FMData.Tests.TestModels;
+using FMData.Rest.Tests.TestModels;
 using RichardSzalay.MockHttp;
 using Xunit;
 
-namespace FMData.Tests
+namespace FMData.Rest.Tests
 {
     public class CreateRequestTests
     {
