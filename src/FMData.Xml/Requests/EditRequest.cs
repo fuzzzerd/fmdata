@@ -10,7 +10,13 @@ namespace FMData.Xml.Requests
         /// The field data for the create request.
         /// </summary>
         public T Data { get; set; }
+        /// <summary>
+        /// Modification Id
+        /// </summary>
         public string ModId { get; set; }
+        /// <summary>
+        /// RecordId
+        /// </summary>
         public string RecordId { get; set; }
     }
 }
