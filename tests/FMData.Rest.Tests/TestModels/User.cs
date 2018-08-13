@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FMData.Tests.TestModels
+namespace FMData.Rest.Tests.TestModels
 {
     [Table("Users")]
     public class User
