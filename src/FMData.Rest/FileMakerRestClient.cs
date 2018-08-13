@@ -475,7 +475,8 @@ namespace FMData.Rest
         /// </summary>
         /// <typeparam name="T">The type of response objects to return.</typeparam>
         /// <param name="req">The find request parameters.</param>
-        /// <param name="fmId">Function to assign the FileMaker RecordId to each instnace of {T}</param>
+        /// <param name="fmId">Function to assign the FileMaker RecordId to each instnace of {T}.</param>
+        /// <param name="modId">Function to assign the FileMaker ModId to each instance of {T}.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         public override async Task<IEnumerable<T>> SendAsync<T>(
             IFindRequest<T> req, 
