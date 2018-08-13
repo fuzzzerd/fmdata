@@ -1,14 +1,12 @@
 # Use the FMData API Client to Access FileMaker Databases via the FileMaker Data API with C# and .NET
 
-FMData is a C# client library for accessing data from FileMaker databases. It currently supports the FileMaker Data API. With slow work towards compatibility with the existing FileMaker Xml API.
+FMData is a C# client wrapper library for accessing data from FileMaker databases. It currently supports the FileMaker Data API. Using the client is simple and straight forward and exposes a blended experience between C# norms and FileMaker standards.
 
 ## About FMData
 
-Data access is wrapped around the `IFileMakerApiClient` interface which is defined in `FMData`. There are multiple implementations. Currently one for Data/JSON and one for Xml. The design is meant to mirror FileMaker constructs and should be portable to future technologies exposed by FileMaker.
+Data access is wrapped around the `IFileMakerApiClient` interface which is defined in `FMData`. There are multiple implementations. The design is meant to mirror FileMaker constructs and should be portable to future technologies exposed by FileMaker. The implementation for consuming data via the Data API is located in the `FMData.Rest` package. The implementation for consuming CWP/Xml is located in the `FMData.Xml` package.
 
-The implementation for consuming data via the Data API is located in `FMData.Rest` and the implementation for Xml will be located in `FMData.Xml`.
-
-*Note: Xml support is experimental.*
+*Note: Xml support is experimental, if you need full cwp/xml coverage check out fmDotNet.*
 
 | Build Status | Activity | MyGet | Nuget | License |
 |---|---|---|---|---|
@@ -24,7 +22,7 @@ Install via `dotnet add` or nuget.
 
 ## Example Usage
 
-The recommended way to consume this library is using a strongly typed model.
+The recommended way to consume this library is using a strongly typed model as follows.
 
 ### Setting up your model
 
@@ -36,9 +34,13 @@ public class Model
 {
     public string Name { get; set; }
     // if your model name does not match
-    // the JsonProperty attribute to map to the right field
-    [JsonProperty("overrideFieldName")] // the filemaker field to use
+    // use DataMember
+    [DataMember(Name="overrideFieldName")] // the filemaker field to use
     public string Address { get; set; }
+
+    // if your model has properties you don't want mapped use
+    [NotMapped] // to skip mapping of the field
+    public string NotNeededField { get; set; }
 }
 ```
 
@@ -47,8 +49,8 @@ public class Model
 ```csharp
 var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
 var toFind = new Model { Name = "someName" };
-var resuts = await client.FindAsync(toFind);
-// results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
+var results = await client.FindAsync(toFind);
+// results = IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
 ```
 
 ### Create a new record
@@ -56,7 +58,8 @@ var resuts = await client.FindAsync(toFind);
 ```csharp
 var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
 var toCreate = new Model { Name = "someName", Address = "123 Main Street" };
-var resuts = await client.CreateAsync(toCreate);
+var results  = await client.CreateAsync(toCreate);
+//  results is an ICreateResponse which indicates success (0/OK or Failure with FMS code/message)
 ```
 
 ### Updating a record
@@ -65,22 +68,23 @@ var resuts = await client.CreateAsync(toCreate);
 var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
 var fileMakerRecordId = 1; // this is the value from the calculation: Get(RecordID)
 var toUpdate = new Model { Name = "someName", Address = "123 Main Street" };
-var resuts = await client.EditAsync(fileMakerRecordId, toCreate);
+var results = await client.EditAsync(fileMakerRecordId, toCreate);
+//  results is an IEditResponse which indicates success (0/OK or Failure with FMS code/message)
 ```
 
 ### Find with FileMaker Id Mapping
 
-Note you need to add an int property to the Model `public int FileMakerRecordId {get; set; }` and provide the Func to the `FindAsync` method to tell FMData how to map the FileMaker Id returned from the API to your model.
+Note you need to add an int property to the Model `public int FileMakerRecordId { get; set; }` and provide the Func to the `FindAsync` method to tell FMData how to map the FileMaker Id returned from the API to your model.
 
 ```csharp
 Func<Model, int, object> FMRecordIdMapper = (o, id) => o.FileMakerRecordId = id;
 var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
 var toFind = new Model { Name = "someName" };
-var resuts = await client.FindAsync(toFind, FMRecordIdMapper);
+var results = await client.FindAsync(toFind, FMRecordIdMapper);
 // results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
 ```
 
-Alternatively, you could create a calculated field `Get(RecordID)`, put it on your layout, and map it the normal way.
+Alternatively, if you create a calculated field `Get(RecordID)` and put it on your layout, you can map it the normal way.
 
 ## Contributing
 
