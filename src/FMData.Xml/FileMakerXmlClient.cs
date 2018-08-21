@@ -83,16 +83,24 @@ namespace FMData.Xml
         #endregion
 
         #region Special Implementations
+        /// <summary>
+        /// Gets a record by its FileMaker Id and Layout.
+        /// </summary>
         public override Task<T> GetByFileMakerIdAsync<T>(string layout, int fileMakerId, Func<T, int, object> fmId = null, Func<T, int, object> modId = null)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Find a record using a dictionary of input parameters.
+        /// </summary>
         public override Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req)
         {
             throw new NotImplementedException();
         }
-
+        /// <summary>
+        /// Finds records using a layout and a dictionary of strings as criteria.
+        /// </summary>
         public override Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req)
         {
             throw new NotImplementedException();
@@ -133,11 +141,17 @@ namespace FMData.Xml
             throw new Exception("Unable to complete request");
         }
 
+        /// <summary>
+        /// Executes a delete request.
+        /// </summary>
         public override Task<IResponse> SendAsync(IDeleteRequest req)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Executes an edit request.
+        /// </summary>
         public override async Task<IEditResponse> SendAsync<T>(IEditRequest<T> req)
         {
             // setup 
@@ -235,12 +249,23 @@ namespace FMData.Xml
             return null;
         }
         #endregion
-
+        /// <summary>
+        /// Sets a global field. Not directly supported by Xml API.
+        /// TODO: Work around this limitation somehow?
+        /// </summary>
+        /// <param name="baseTable"></param>
+        /// <param name="fieldName"></param>
+        /// <param name="targetValue"></param>
+        /// <returns></returns>
         public override Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Upload data to a container field.
+        /// TODO: Workaround with B64 encoding and container auto-enter?
+        /// </summary>
         public override Task<IEditResponse> UpdateContainerAsync(string layout, int recordId, string fieldName, string fileName, int repetition, byte[] content)
         {
             throw new NotImplementedException();
