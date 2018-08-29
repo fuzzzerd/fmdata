@@ -243,6 +243,14 @@ namespace FMData.Xml
                             ).ToObject<T>()
                     });
 
+                // handle record and modid
+                foreach (var record in records)
+                {
+                    fmId?.Invoke(record.FieldData, record.RecordId);
+                    modId?.Invoke(record.FieldData, record.ModId);
+                }
+
+
                 return records.Select(r => r.FieldData);
             }
 
