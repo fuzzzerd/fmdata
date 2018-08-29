@@ -91,5 +91,10 @@ namespace FMData.Rest.Tests
     ""response"": {}
 }";
 
+        public static string SuccessfulFindWithPortal()
+        {
+            return System.IO.File.ReadAllText("ResponseData\\fms-find-with-portal.json");
+        }
+
     }
 }

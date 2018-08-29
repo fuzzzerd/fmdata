@@ -382,5 +382,41 @@ namespace FMData.Rest.Tests
             // assert
             Assert.Equal(recordId, response.FileMakerRecordId);
         }
+
+
+        [Fact]
+        public async Task SendAsync_Dictionary_WithPortals_ShouldHaveData()
+        {
+            // arrange
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "the-layout";
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/_find")
+                .Respond(HttpStatusCode.OK, "application/json", DataApiResponses.SuccessfulFindWithPortal());
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+
+            var fr = new FindRequest<Dictionary<string, string>> {
+                Layout = layout,
+                Query = new List<Dictionary<string, string>>
+                {
+                    new Dictionary<string, string> { { "one", "one" } }
+                }
+            };
+
+            // act
+            var response = await fdc.SendAsync(fr);
+
+            // assert
+            Assert.NotEmpty(response.Response.Data);
+        }
     }
 }
