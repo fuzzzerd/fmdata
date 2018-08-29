@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace FMData
@@ -28,7 +29,7 @@ namespace FMData
         /// <summary>
         /// Factory to get a new Delete Request of the correct type.
         /// </summary>
-        protected abstract IDeleteRequest _deleteFactory(); 
+        protected abstract IDeleteRequest _deleteFactory();
         #endregion
 
 
@@ -157,7 +158,7 @@ namespace FMData
             string fieldName,
             string fileName,
             int repetition,
-            byte[] content); 
+            byte[] content);
         #endregion
 
         #region Utility Methods
@@ -171,9 +172,18 @@ namespace FMData
             string lay;
             try
             {
+                var ti = typeof(T).GetTypeInfo();
+                var ta = ti.GetCustomAttribute<TableAttribute>();
                 // try to get the 'layout' name out of the 'table' attribute.
                 // not the best but tries to utilize a built in component that is fairly standard vs a custom component dirtying up consumers pocos
-                lay = typeof(T).GetTypeInfo().GetCustomAttribute<TableAttribute>().Name;
+                if (ta != null)
+                {
+                    lay = ta.Name;
+                }
+                else
+                {
+                    lay = ti.GetCustomAttribute<DataContractAttribute>().Name;
+                }
             }
             catch
             {
