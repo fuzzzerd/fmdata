@@ -159,7 +159,7 @@ namespace FMData.Rest.Tests
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
-            var b64String = System.IO.File.ReadAllText("b64-string.dat");
+            var b64String = System.IO.File.ReadAllText("ResponseData\\b64-string.dat");
             var bytes = Convert.FromBase64String(b64String);
 
             var response = await fdc.UpdateContainerAsync(layout, 12, "field", "test.jpg", bytes);

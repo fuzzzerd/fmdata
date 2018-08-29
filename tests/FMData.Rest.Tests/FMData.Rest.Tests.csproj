@@ -8,10 +8,14 @@
 
   <ItemGroup>
     <None Remove="b64-string.dat" />
+    <None Remove="jsontest.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="b64-string.dat">
+    <Content Include="ResponseData\b64-string.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ResponseData\fms-find-with-portal.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
