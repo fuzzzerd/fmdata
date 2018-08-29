@@ -5,6 +5,16 @@
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="b64-string.dat" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="b64-string.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\..\src\FMData.Rest\FMData.Rest.csproj" />
