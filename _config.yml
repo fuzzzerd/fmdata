@@ -1,5 +1,5 @@
 theme: jekyll-theme-leap-day
-title: FMData is a simple C# client (built for .NET Standard) to access FileMaker Data via Data API, XML, or ODBC.
+title: .NET client for accessing data in FileMaker
 url: https://fmdata.io
 author: Nate Bross
 description: FMData is a C# client wrapper library for accessing data from FileMaker databases. It currently supports the FileMaker Data API. Using the client is simple and straight forward and exposes a blended experience between C# norms and FileMaker standards.
