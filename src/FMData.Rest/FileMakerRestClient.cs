@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -502,10 +503,19 @@ namespace FMData.Rest
                 {
                     // JToken.ToObject is a helper method that uses JsonSerializer internally
                     T searchResult = result["fieldData"].ToObject<T>();
+                    
+                    // recordId
                     int fileMakerId = result["recordId"].ToObject<int>();
-                    int fmmodId = result["modId"].ToObject<int>();
                     fmId?.Invoke(searchResult, fileMakerId);
+
+                    // modid
+                    int fmmodId = result["modId"].ToObject<int>();
                     modId?.Invoke(searchResult, fmmodId);
+
+                    // container handling
+                    await ProcessContainer(searchResult);
+
+                    // add to response list
                     searchResults.Add(searchResult);
                 }
 
@@ -638,6 +648,26 @@ namespace FMData.Rest
             {
                 // something bad happened. TODO: improve non-OK response handling
                 throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        protected async Task ProcessContainer<T>(T instance)
+        {
+            var ti = typeof(T).GetTypeInfo();
+            var props = ti.DeclaredProperties.Where(p => p.GetCustomAttribute<ContainerDataForAttribute>() != null);
+            foreach(var prop in props)
+            {
+                var containerField = prop.GetCustomAttribute<ContainerDataForAttribute>().ContainerField;
+                var containerEndPoint = ti.GetDeclaredProperty(containerField).GetValue(instance) as string;
+                var data = await _client.GetAsync(containerEndPoint);
+                var dataBytes = await data.Content.ReadAsByteArrayAsync();
+                prop.SetValue(instance, dataBytes);
             }
         }
 
