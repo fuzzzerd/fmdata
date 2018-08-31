@@ -331,10 +331,19 @@ namespace FMData.Rest
                 {
                     // JToken.ToObject is a helper method that uses JsonSerializer internally
                     T searchResult = result["fieldData"].ToObject<T>();
-                    int fmrid = result["recordId"].ToObject<int>();
+                    
+                    // recordId
+                    int fId = result["recordId"].ToObject<int>();
+                    fmId?.Invoke(searchResult, fId);
+
+                    // modid
                     int fmmodId = result["modId"].ToObject<int>();
-                    fmId?.Invoke(searchResult, fmrid);
                     modId?.Invoke(searchResult, fmmodId);
+
+                    // container handling
+                    await ProcessContainer(searchResult);
+
+                    // add to response list
                     searchResults.Add(searchResult);
                 }
 
