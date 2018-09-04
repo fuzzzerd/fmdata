@@ -521,9 +521,6 @@ namespace FMData.Rest
                     int fmmodId = result["modId"].ToObject<int>();
                     modId?.Invoke(searchResult, fmmodId);
 
-                    // container handling
-                    await ProcessContainer(searchResult);
-
                     // add to response list
                     searchResults.Add(searchResult);
                 }
