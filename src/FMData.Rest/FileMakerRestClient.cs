@@ -303,7 +303,7 @@ namespace FMData.Rest
         /// <param name="fileMakerId">The FileMaker RecordId of the record to load.</param>
         /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
         /// <param name="modId">The function to use to map the ModId to the return object.</param>
-        /// <returns>A single record matching the FileMaker Record Id.</returns>
+        /// <returns>A single record matching the FileMaker Record Id.</returns> 
         public override async Task<T> GetByFileMakerIdAsync<T>(
             string layout, 
             int fileMakerId, 
