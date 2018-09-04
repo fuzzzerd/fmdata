@@ -29,7 +29,7 @@ The recommended way to consume this library is using a strongly typed model as f
 A model should roughly match a table in your solution. Its accessed via layout.
 
 ```csharp
-[Table("NameOfYourLayout")] // use the Table attribute to specify the layout
+[DataContract(Name="NameOfYourLayout")] // use the DataContract attribute to specify the layout
 public class Model
 {
     public string Name { get; set; }
@@ -50,6 +50,7 @@ public class Model
 var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
 var toFind = new Model { Name = "someName" };
 var results = await client.FindAsync(toFind);
+// optional await client.ProcessContainers(results); 
 // results = IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
 ```
 
@@ -85,6 +86,18 @@ var results = await client.FindAsync(toFind, FMRecordIdMapper);
 ```
 
 Alternatively, if you create a calculated field `Get(RecordID)` and put it on your layout, you can map it the normal way.
+
+### Find and load Container Data
+
+Make sure you use the `[ContainerDataFor("NameOfContainer")]` attribute along with a `byte[]` property for processing of your model.
+
+```csharp
+var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
+var toFind = new Model { Name = "someName" };
+var results = await client.FindAsync(toFind);
+await client.ProcessContainers(results); 
+// results = IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
+```
 
 ## Contributing
 
