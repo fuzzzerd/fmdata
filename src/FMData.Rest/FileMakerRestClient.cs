@@ -661,12 +661,11 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// 
+        /// Load the contents of the container data into the attributed property of the model.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="instance"></param>
-        /// <returns></returns>
-        protected async Task ProcessContainer<T>(T instance)
+        /// <typeparam name="T">The type of object to populate.</typeparam>
+        /// <param name="instance">Instance of the object that has container data with the ContainerDataForAttribute.</param>
+        public override async Task ProcessContainer<T>(T instance)
         {
             var ti = typeof(T).GetTypeInfo();
             var props = ti.DeclaredProperties.Where(p => p.GetCustomAttribute<ContainerDataForAttribute>() != null);

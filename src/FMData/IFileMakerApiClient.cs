@@ -282,6 +282,19 @@ namespace FMData
             byte[] content);
         #endregion
 
+        /// <summary>
+        /// Load the contents of the container data into the attributed property of the model.
+        /// </summary>
+        /// <typeparam name="T">The type of object to populate.</typeparam>
+        /// <param name="instance">Instance of the object that has container data with the ContainerDataForAttribute.</param>
+        Task ProcessContainer<T>(T instance);
+
+        /// <summary>
+        /// Load the contents of the container data into the attributed property of the models.
+        /// </summary>
+        /// <typeparam name="T">The type of object to populate.</typeparam>
+        /// <param name="instances">Collection of objects that have container data with the ContainerDataForAttribute.</param>
+        Task ProcessContainers<T>(IEnumerable<T> instances);
 
         #region Send Request Methods
         /// <summary>
