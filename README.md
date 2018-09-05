@@ -10,9 +10,7 @@ To that end, the project is organized in three packages. `FMData` is the core. I
 
 If you've found a bug, please submit a bug report. If you have a feature idea, open an issue and consider creating a pull request.
 
-> Note: Xml support is experimental, if you need full cwp/xml coverage check out fmDotNet. 
-
-> Note: I'm curious if a wrapper accessing the ODBC interface to FileMaker would be worth while?
+> Note: Xml support is experimental, if you need full cwp/xml coverage check out fmDotNet.
 
 | Package | Build Status |  MyGet | Nuget |
 |---|---|---|---|---|---|
