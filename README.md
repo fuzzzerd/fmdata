@@ -39,14 +39,21 @@ The recommended way to consume this library is using a strongly typed model as f
 A model should roughly match a table in your solution. Its accessed via layout.
 
 ```csharp
-[DataContract(Name="NameOfYourLayout")] // use the DataContract attribute to specify the layout
+// use the DataContract attribute to specify the layout
+[DataContract(Name="NameOfYourLayout")]
 public class Model
 {
     public string Name { get; set; }
-    // if your model name does not match
-    // use DataMember
+    // if your model name does not match use DataMember
     [DataMember(Name="overrideFieldName")] // the filemaker field to use
     public string Address { get; set; }
+
+    // can use [DataMember] here to have a different property than container field name
+    public string SomeContainerField { get; set; }
+
+    // use the ContainerDataFor attribute to map container data to your byte[]
+    [ContainerDataFor("SomeContainerField")] // use the name in your C# model
+    public byte[] DataForSomeContainerField { get; set; }
 
     // if your model has properties you don't want mapped use
     [NotMapped] // to skip mapping of the field
@@ -104,7 +111,7 @@ Make sure you use the `[ContainerDataFor("NameOfContainer")]` attribute along wi
 var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
 var toFind = new Model { Name = "someName" };
 var results = await client.FindAsync(toFind);
-await client.ProcessContainers(results); 
+await client.ProcessContainers(results);
 // results = IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
 ```
 
