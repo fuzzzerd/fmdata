@@ -1,22 +1,34 @@
-# Use the FMData API Client to Access FileMaker Databases via the FileMaker Data API with C# and .NET
+# FMData A C# Client for FileMaker
 
 FMData is a C# client wrapper library for accessing data from FileMaker databases. It currently supports the FileMaker Data API. Using the client is simple and straight forward and exposes a blended experience between C# norms and FileMaker standards.
 
 ## About FMData
 
-Data access is wrapped around the `IFileMakerApiClient` interface which is defined in `FMData`. There are multiple implementations. The design is meant to mirror FileMaker constructs and should be portable to future technologies exposed by FileMaker. The implementation for consuming data via the Data API is located in the `FMData.Rest` package. The implementation for consuming CWP/Xml is located in the `FMData.Xml` package.
+There are plenty of ways to consume RESTful apis from .NET; but the goal of this project is to provide a blended FileMaker-idiomatic and .NET-idiomatic interface for consuming data in FileMaker databases.
 
-*Note: Xml support is experimental, if you need full cwp/xml coverage check out fmDotNet.*
+To that end, the project is organized in three packages. `FMData` is the core. It contains the abstract classes utilized by the other implementations. `FMdata.Rest` is for the Data API and `FMData.Xml` is for consuming the legacy Xml/CWP API.
 
-| Build Status | Activity | MyGet | Nuget | License |
-|---|---|---|---|---|
-| [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![FMData repository/commit activity](https://img.shields.io/github/commit-activity/w/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://img.shields.io/nuget/dt/FMData.svg?style=flat-square)](https://www.nuget.org/packages/FMData/) | [![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE) |
+If you've found a bug, please submit a bug report. If you have a feature idea, open an issue and consider creating a pull request.
+
+> Note: Xml support is experimental, if you need full cwp/xml coverage check out fmDotNet. 
+
+> Note: I'm curious if a wrapper accessing the ODBC interface to FileMaker would be worth while?
+
+| Package | Build Status |  MyGet | Nuget |
+|---|---|---|---|---|---|
+| FMData | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://img.shields.io/nuget/dt/FMData.svg?style=flat-square)](https://www.nuget.org/packages/FMData/) |
+| FMData.Rest | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.rest.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest) | [![NuGet](https://img.shields.io/nuget/dt/FMData.Rest.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Rest/)|
+| FMData.Xml | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.xml.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Xml) | [![NuGet](https://img.shields.io/nuget/dt/FMData.Xml.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Xml/)|
+
+| Activity | License |
+| ---- | ---- |
+| [![FMData repository/commit activity](https://img.shields.io/github/commit-activity/w/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master)|[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE) |
+
+-----
 
 ## Installation
 
-Install via `dotnet add` or nuget.
-
-### Stable Builds are on NuGet and CI builds are on MyGet
+Install via `dotnet add` or nuget. Stable releases are on NuGet and CI builds are on MyGet.
 
     dotnet add package FMData.Rest
 
@@ -86,15 +98,6 @@ var results = await client.FindAsync(toFind, FMRecordIdMapper);
 
 Alternatively, if you create a calculated field `Get(RecordID)` and put it on your layout, you can map it the normal way.
 
-## Contributing
-
-- If you've found a bug or have a suggestion, add it to our [![FMData issues](https://img.shields.io/github/issues/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/issues) log.
-- Fork the repository and submit a pull request with a bug fix or new feature.
-
-## Planned Features
-
-Check out the issues log to see what features are planned. Feel free to contribute by adding issues or submitting a pull request.
-
 ## Upstream Documentation
 
 ### FileMaker REST / Data API Documentation
@@ -114,6 +117,8 @@ We use [Semantic Versioning](http://semver.org/). Using the Major.Minor.Patch sy
  1. MAJOR version when you make incompatible API changes,
  2. MINOR version when you add functionality in a backwards-compatible manner, and
  3. PATCH version when you make backwards-compatible bug fixes.
+
+-----
 
 ## Repository Statistics
 
