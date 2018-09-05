@@ -303,7 +303,7 @@ namespace FMData.Rest
         /// <param name="fileMakerId">The FileMaker RecordId of the record to load.</param>
         /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
         /// <param name="modId">The function to use to map the ModId to the return object.</param>
-        /// <returns>A single record matching the FileMaker Record Id.</returns>
+        /// <returns>A single record matching the FileMaker Record Id.</returns> 
         public override async Task<T> GetByFileMakerIdAsync<T>(
             string layout, 
             int fileMakerId, 
@@ -521,9 +521,6 @@ namespace FMData.Rest
                     int fmmodId = result["modId"].ToObject<int>();
                     modId?.Invoke(searchResult, fmmodId);
 
-                    // container handling
-                    await ProcessContainer(searchResult);
-
                     // add to response list
                     searchResults.Add(searchResult);
                 }
@@ -661,12 +658,11 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// 
+        /// Load the contents of the container data into the attributed property of the model.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="instance"></param>
-        /// <returns></returns>
-        protected async Task ProcessContainer<T>(T instance)
+        /// <typeparam name="T">The type of object to populate.</typeparam>
+        /// <param name="instance">Instance of the object that has container data with the ContainerDataForAttribute.</param>
+        public override async Task ProcessContainer<T>(T instance)
         {
             var ti = typeof(T).GetTypeInfo();
             var props = ti.DeclaredProperties.Where(p => p.GetCustomAttribute<ContainerDataForAttribute>() != null);

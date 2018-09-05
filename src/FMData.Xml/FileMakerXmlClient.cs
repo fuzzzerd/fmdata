@@ -257,6 +257,7 @@ namespace FMData.Xml
             return null;
         }
         #endregion
+
         /// <summary>
         /// Sets a global field. Not directly supported by Xml API.
         /// TODO: Work around this limitation somehow?
@@ -277,6 +278,25 @@ namespace FMData.Xml
         public override Task<IEditResponse> UpdateContainerAsync(string layout, int recordId, string fieldName, string fileName, int repetition, byte[] content)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Load the contents of the container data into the attributed property of the model.
+        /// </summary>
+        /// <typeparam name="T">The type of object to populate.</typeparam>
+        /// <param name="instance">Instance of the object that has container data with the ContainerDataForAttribute.</param>
+        public override async Task ProcessContainer<T>(T instance)
+        {
+            var ti = typeof(T).GetTypeInfo();
+            var props = ti.DeclaredProperties.Where(p => p.GetCustomAttribute<ContainerDataForAttribute>() != null);
+            foreach(var prop in props)
+            {
+                var containerField = prop.GetCustomAttribute<ContainerDataForAttribute>().ContainerField;
+                var containerEndPoint = ti.GetDeclaredProperty(containerField).GetValue(instance) as string;
+                var data = await _client.GetAsync(containerEndPoint);
+                var dataBytes = await data.Content.ReadAsByteArrayAsync();
+                prop.SetValue(instance, dataBytes);
+            }
         }
 
         #region Private Helpers and utility methods

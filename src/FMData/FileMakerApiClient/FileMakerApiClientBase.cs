@@ -124,6 +124,32 @@ namespace FMData
         /// <returns>FileMaker Response</returns>
         public abstract Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue);
 
+        #region Container Handling
+        /// <summary>
+        /// Load the contents of the container data into the attributed property of the model.
+        /// </summary>
+        /// <typeparam name="T">The type of object to populate.</typeparam>
+        /// <param name="instance">Instance of the object that has container data with the ContainerDataForAttribute.</param>
+        public abstract Task ProcessContainer<T>(T instance);
+
+        /// <summary>
+        /// Load the contents of the container data into the attributed property of the models.
+        /// </summary>
+        /// <typeparam name="T">The type of object to populate.</typeparam>
+        /// <param name="instances">Collection of objects that have container data with the ContainerDataForAttribute.</param>
+        public virtual Task ProcessContainers<T>(IEnumerable<T> instances)
+        {
+            List<Task> instanceTasks = new List<Task>();
+
+            foreach(var instance in instances)
+            {
+                instanceTasks.Add(ProcessContainer(instance));
+            }
+
+            return Task.WhenAll(instanceTasks);
+        }
+        #endregion
+
 
         #region Container Uploads
         /// <summary>
