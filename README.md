@@ -1,8 +1,12 @@
 # FMData: a C# client for FileMaker
 
-FMData is a C# client wrapper library for accessing data from FileMaker databases. It currently supports the FileMaker Data API.
+FMData is a C# client wrapper for accessing data from FileMaker databases.
 
-## About FMData
+| Package | Build Status |  MyGet | Downloads | Version |
+|---|---|---|---| --- |
+| FMData | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://img.shields.io/nuget/dt/FMData.svg?style=flat-square)](https://www.nuget.org/packages/FMData/)|[![NuGet](https://img.shields.io/nuget/v/FMData.svg?style=flat-square)](https://www.nuget.org/packages/FMData)|
+| FMData.Rest | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.rest.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest) | [![NuGet](https://img.shields.io/nuget/dt/FMData.Rest.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Rest/)|[![NuGet](https://img.shields.io/nuget/v/FMData.Rest.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Rest)|
+| FMData.Xml | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.xml.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Xml) | [![NuGet](https://img.shields.io/nuget/dt/FMData.Xml.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Xml/)|[![NuGet](https://img.shields.io/nuget/v/FMData.Xml.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Xml)|
 
 There are plenty of ways to consume RESTful apis from .NET; but the goal of this project is to provide a blended FileMaker-idiomatic and .NET-idiomatic interface for consuming data in FileMaker databases.
 
@@ -11,12 +15,6 @@ To that end, the project is organized in three packages. `FMData` is the core. I
 If you've found a bug, please submit a bug report. If you have a feature idea, open an issue and consider creating a pull request.
 
 > Note: Xml support is experimental, if you need full cwp/xml coverage check out fmDotNet.
-
-| Package | Build Status |  MyGet | Downloads | Version |
-|---|---|---|---| --- |
-| FMData | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://img.shields.io/nuget/dt/FMData.svg?style=flat-square)](https://www.nuget.org/packages/FMData/)|[![NuGet](https://img.shields.io/nuget/v/FMData.svg?style=flat-square)](https://www.nuget.org/packages/FMData)|
-| FMData.Rest | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.rest.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest) | [![NuGet](https://img.shields.io/nuget/dt/FMData.Rest.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Rest/)|[![NuGet](https://img.shields.io/nuget/v/FMData.Rest.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Rest)|
-| FMData.Xml | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.xml.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Xml) | [![NuGet](https://img.shields.io/nuget/dt/FMData.Xml.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Xml/)|[![NuGet](https://img.shields.io/nuget/v/FMData.Xml.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Xml)|
 
 | Activity | License |
 | ---- | ---- |
