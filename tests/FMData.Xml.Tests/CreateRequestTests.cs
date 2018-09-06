@@ -24,6 +24,7 @@ namespace FMData.Xml.Tests
 
             mockHttp.When($"{server}/fmi/xml/fmresultset.xml")
                 .WithPartialContent($"-new")
+                .WithPartialContent($"-db={file}")
                 .WithPartialContent(nameToMatch)
                 .Respond(HttpStatusCode.OK, "application/json", "");
 

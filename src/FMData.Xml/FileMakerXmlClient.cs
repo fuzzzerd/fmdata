@@ -117,15 +117,15 @@ namespace FMData.Xml
         public async override Task<ICreateResponse> SendAsync<T>(ICreateRequest<T> req)
         {
             // setup 
-            var layout = req.Layout;
-
-            var dictionary = req.Data.AsDictionary(false);
-
             var url = _fmsUri + "/fmi/xml/fmresultset.xml";
 
-            var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeDataString(i.Key)}={Uri.EscapeDataString(i.Value.ToString())}"));
-            var httpRequestContent = new StringContent($"-new&-db={_fileName}&-lay={layout}{stringContent}");
+            // get the actual request content
+            var requestContent = req.SerializeRequest();
 
+            // append fileName to request since thats not represented in the request itself
+            var httpRequestContent = new StringContent(requestContent + $"&-db={_fileName}");
+
+            // execute the request by posting to fms
             var response = await _client.PostAsync(url, httpRequestContent);
 
             if (response.IsSuccessStatusCode)
