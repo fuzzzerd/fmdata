@@ -1,20 +1,24 @@
 # FMData: a C# client for FileMaker
 
-FMData is a C# client wrapper for accessing data from FileMaker databases.
+FMData is a C# wrapper for accessing data from FileMaker databases.
 
-| Package | Build Status |  MyGet | Downloads | Version |
-|---|---|---|---| --- |
-| FMData | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://img.shields.io/nuget/dt/FMData.svg?style=flat-square)](https://www.nuget.org/packages/FMData/)|[![NuGet](https://img.shields.io/nuget/v/FMData.svg?style=flat-square)](https://www.nuget.org/packages/FMData)|
-| FMData.Rest | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.rest.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest) | [![NuGet](https://img.shields.io/nuget/dt/FMData.Rest.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Rest/)|[![NuGet](https://img.shields.io/nuget/v/FMData.Rest.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Rest)|
-| FMData.Xml | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.xml.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Xml) | [![NuGet](https://img.shields.io/nuget/dt/FMData.Xml.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Xml/)|[![NuGet](https://img.shields.io/nuget/v/FMData.Xml.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Xml)|
+| Package | Build Status |  MyGet Version | MyGet Downloads | Nuget Version | Nuget Downloads |
+|---|---|---|---| --- | --- |
+| FMData | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![FMData](https://img.shields.io/myget/filemaker/vpre/FMData.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://img.shields.io/nuget/v/FMData.svg?style=flat-square)](https://www.nuget.org/packages/FMData/) | [![NuGet](https://img.shields.io/nuget/dt/FMData.svg?style=flat-square)](https://www.nuget.org/packages/FMData/)|
+| FMData.Rest | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet Pre Release](https://img.shields.io/myget/filemaker/vpre/FMData.Rest.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.rest.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest) | [![NuGet](https://img.shields.io/nuget/v/FMData.Rest.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Rest/) | [![NuGet](https://img.shields.io/nuget/dt/FMData.Rest.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Rest/)|
+| FMData.Xml  | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![FMData.Xml](https://img.shields.io/myget/filemaker/vpre/FMData.Xml.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Xml/) | [![MyGet](https://img.shields.io/myget/filemaker/dt/fmdata.xml.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Xml/) | [![NuGet](https://img.shields.io/nuget/v/FMData.Xml.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Xml/) | [![NuGet](https://img.shields.io/nuget/dt/FMData.Xml.svg?style=flat-square)](https://www.nuget.org/packages/FMData.Xml/)|
 
-There are plenty of ways to consume RESTful apis from .NET; but the goal of this project is to provide a blended FileMaker-idiomatic and .NET-idiomatic interface for consuming data in FileMaker databases.
+There are plenty of ways to consume RESTful APIs from .NET, but the goal of this project is to provide a blended FileMaker-idiomatic and .NET-idiomatic experience for developers consuming data from FileMaker databases in .NET applications.
 
-To that end, the project is organized in three packages. `FMData` is the core. It contains the abstract classes utilized by the other implementations. `FMdata.Rest` is for the Data API and `FMData.Xml` is for consuming the legacy Xml/CWP API.
+The project is organized as three packages.
 
-If you've found a bug, please submit a bug report. If you have a feature idea, open an issue and consider creating a pull request.
+- `FMData` is the core and it contains the base and abstract classes utilized by the other implementations.
+- `FMdata.Rest` is for the Data API and 
+- `FMData.Xml` is for consuming the legacy Xml/CWP API.
 
 > Note: Xml support is experimental, if you need full cwp/xml coverage check out fmDotNet.
+
+If you've found a bug, please submit a bug report. If you have a feature idea, open an issue and consider creating a pull request.
 
 | Activity | License |
 | ---- | ---- |
@@ -26,7 +30,11 @@ If you've found a bug, please submit a bug report. If you have a feature idea, o
 
 Install via `dotnet add` or nuget. Stable releases are on NuGet and CI builds are on MyGet.
 
-    dotnet add package FMData.Rest
+```ps
+dotnet add package FMData.Rest
+```
+
+-----
 
 ## Example Usage
 
@@ -37,19 +45,19 @@ The recommended way to consume this library is using a strongly typed model as f
 A model should roughly match a table in your solution. Its accessed via layout.
 
 ```csharp
-// use the DataContract attribute to specify the layout
+// use the DataContract attribute to link your model to a layout
 [DataContract(Name="NameOfYourLayout")]
 public class Model
 {
     public string Name { get; set; }
+
     // if your model name does not match use DataMember
     [DataMember(Name="overrideFieldName")] // the filemaker field to use
     public string Address { get; set; }
 
-    // can use [DataMember] here to have a different property than container field name
     public string SomeContainerField { get; set; }
 
-    // use the ContainerDataFor attribute to map container data to your byte[]
+    // use the ContainerDataFor attribute to map container data to a byte[]
     [ContainerDataFor("SomeContainerField")] // use the name in your C# model
     public byte[] DataForSomeContainerField { get; set; }
 
@@ -99,7 +107,7 @@ var results = await client.FindAsync(toFind, FMRecordIdMapper);
 // results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
 ```
 
-Alternatively, if you create a calculated field `Get(RecordID)` and put it on your layout, you can map it the normal way.
+Alternatively, if you create a calculated field `Get(RecordID)` and put it on your layout then map it the normal way.
 
 ### Find and load Container Data
 
@@ -113,15 +121,19 @@ await client.ProcessContainers(results);
 // results = IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
 ```
 
-### FileMaker REST / Data API Documentation
+-----
+
+## FileMaker REST / Data API Documentation
 
 - [FileMaker Data API Documentation (FMS17)](http://fmhelp.filemaker.com/docs/17/en/dataapi/)
 - [FileMaker REST API Documentation (FMS16)](https://fmhelp.filemaker.com/docs/16/en/restapi/) -- Not Supported by this project.
 
-### FileMaker CWP with Xml Guide
+## FileMaker CWP with Xml Guide
 
 - [FileMaker Server 16 Web Publishing Guide](https://fmhelp.filemaker.com/docs/16/en/fms16_cwp_guide.pdf)
 - [FileMaker Server 15 Web Publishing Guide](https://fmhelp.filemaker.com/docs/15/en/fms15_cwp_guide.pdf)
+
+-----
 
 ## Versioning
 
@@ -144,3 +156,5 @@ We use [Semantic Versioning](http://semver.org/). Using the Major.Minor.Patch sy
 [![Language Count](https://img.shields.io/github/languages/count/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master)
 
 [![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE)
+
+-----
