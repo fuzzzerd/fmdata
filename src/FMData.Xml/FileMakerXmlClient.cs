@@ -155,14 +155,11 @@ namespace FMData.Xml
         public override async Task<IEditResponse> SendAsync<T>(IEditRequest<T> req)
         {
             // setup 
-            var layout = req.Layout;
-
-            var dictionary = req.Data.AsDictionary(false);
-
             var url = _fmsUri + "/fmi/xml/fmresultset.xml";
 
-            var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeDataString(i.Key)}={Uri.EscapeDataString(i.Value.ToString())}"));
-            var httpRequestContent = new StringContent($"-edit&-db={_fileName}&-lay={layout}{stringContent}");
+            var requestContent = req.SerializeRequest();
+
+            var httpRequestContent = new StringContent(requestContent + $"&-db={_fileName}");
 
             var response = await _client.PostAsync(url, httpRequestContent);
 
