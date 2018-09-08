@@ -210,10 +210,10 @@ namespace FMData.Xml
         {
             var url = _fmsUri + "/fmi/xml/fmresultset.xml";
 
-            var dictionary = req.Query.First().AsDictionary(false);
+            var requestContent = req.SerializeRequest();
 
-            var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeDataString(i.Key)}={Uri.EscapeDataString(i.Value.ToString())}"));
-            var httpRequestContent = new StringContent($"-find&-db={_fileName}&-lay={req.Layout}{stringContent}");
+            var httpRequestContent = new StringContent(requestContent + $"&-db={_fileName}");
+
 
             var response = await _client.PostAsync(url, httpRequestContent);
 
