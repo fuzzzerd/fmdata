@@ -512,7 +512,35 @@ namespace FMData.Rest
                 {
                     // JToken.ToObject is a helper method that uses JsonSerializer internally
                     T searchResult = result["fieldData"].ToObject<T>();
-                    
+
+                    var portals = typeof(T).GetTypeInfo().DeclaredProperties.Where(p => p.GetCustomAttribute<PortalDataAttribute>() != null);
+                    foreach(var portal in portals)
+                    {
+                        var namedPortal = portal.GetCustomAttribute<PortalDataAttribute>().NamedPortalInstance;
+                        var portalInstanceType = portal.PropertyType.GetTypeInfo().GenericTypeArguments[0];
+                        var pt = portal.PropertyType;
+                        JToken portalJ = result["portalData"][namedPortal];
+
+                        // .ToList() here so we iterate on a different copy of the collection
+                        // which allows for calling add/remove on the list ;) clever
+                        // https://stackoverflow.com/a/26864676/86860 - explination 
+                        // https://stackoverflow.com/a/604843/86860 - solution
+                        foreach (JObject jo in portalJ.ToList())
+                        {
+                            foreach (JProperty jp in jo.Properties().ToList())
+                            {
+                                if (jp.Name.Contains(namedPortal + "::"))
+                                {
+                                    jo.Add(jp.Name.Replace(namedPortal + "::", ""), jp.Value);
+                                    jo.Remove(jp.Name);
+                                }
+                            }
+                        }
+
+                        var x = portalJ.ToObject(pt);
+                        portal.SetValue(searchResult, x);
+                    }
+
                     // recordId
                     int fileMakerId = result["recordId"].ToObject<int>();
                     fmId?.Invoke(searchResult, fileMakerId);
