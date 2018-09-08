@@ -24,6 +24,7 @@ namespace FMData.Xml.Tests
             var mockHttp = new MockHttpMessageHandler();
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/xml/fmresultset.xml")
+                .WithPartialContent("-find")
                 .WithPartialContent(Uri.EscapeDataString("Spring in Giverny 3"))
                 .Respond(HttpStatusCode.OK, "application/xml", XmlResponses.GrammarSample_fmresultset);
 
@@ -48,6 +49,7 @@ namespace FMData.Xml.Tests
             var mockHttp = new MockHttpMessageHandler();
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/xml/fmresultset.xml")
+                .WithPartialContent("-find")
                 .WithPartialContent(Uri.EscapeDataString("Spring in Giverny 3"))
                 .Respond(HttpStatusCode.OK, "application/xml", XmlResponses.GrammarSample_fmresultset);
 
