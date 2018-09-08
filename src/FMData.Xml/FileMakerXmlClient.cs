@@ -32,10 +32,7 @@ namespace FMData.Xml
         /// <summary>
         /// Factory to get a new Delete Request of the correct type.
         /// </summary>
-        protected override IDeleteRequest _deleteFactory()
-        {
-            throw new NotImplementedException();
-        }
+        protected override IDeleteRequest _deleteFactory() => new DeleteRequest();
         #endregion
 
         private readonly XNamespace _ns = "http://www.filemaker.com/xml/fmresultset";
@@ -144,9 +141,31 @@ namespace FMData.Xml
         /// <summary>
         /// Executes a delete request.
         /// </summary>
-        public override Task<IResponse> SendAsync(IDeleteRequest req)
+        public override async Task<IResponse> SendAsync(IDeleteRequest req)
         {
-            throw new NotImplementedException();
+            // setup 
+            var url = _fmsUri + "/fmi/xml/fmresultset.xml";
+
+            // get the actual request content
+            var requestContent = req.SerializeRequest();
+
+            // append fileName to request since thats not represented in the request itself
+            var httpRequestContent = new StringContent(requestContent + $"&-db={_fileName}");
+
+            // execute the request by posting to fms
+            var response = await _client.PostAsync(url, httpRequestContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // process response data return OK
+                var resp = new CreateResponse
+                {
+                    Messages = new List<ResponseMessage> { new ResponseMessage { Code = "", Message = "OK" } }
+                };
+                return resp;
+            }
+
+            throw new Exception("Unable to complete request");
         }
 
         /// <summary>
