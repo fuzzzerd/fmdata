@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Net;
-
-using System.Globalization;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+
 namespace FMData.Rest.Requests
 {
     /// <summary>
