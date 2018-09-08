@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FMData.Xml.Requests
 {
@@ -64,7 +66,10 @@ namespace FMData.Xml.Requests
         /// <returns>The string representation for this request to be sent along the wire to FMS.</returns>
         public string SerializeRequest()
         {
-            throw new System.NotImplementedException();
+            var dictionary = Query.First().AsDictionary(false);
+            var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeDataString(i.Key)}={Uri.EscapeDataString(i.Value.ToString())}"));
+            var requestContent = $"-find&-lay={Layout}{stringContent}";
+            return requestContent;
         }
     }
 }
