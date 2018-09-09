@@ -447,6 +447,8 @@ namespace FMData.Rest.Tests
             // assert
             Assert.NotEmpty(response);
             Assert.NotEmpty(response.SelectMany(p => p.Actions));
+            // hard coded from sample data, if changed update here
+            Assert.Equal(16, response.First().Actions.First().ID);
         }
 
 
