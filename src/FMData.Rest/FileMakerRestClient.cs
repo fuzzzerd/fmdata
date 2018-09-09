@@ -743,7 +743,8 @@ namespace FMData.Rest
             var portals = typeof(T).GetTypeInfo().DeclaredProperties.Where(p => p.GetCustomAttribute<PortalDataAttribute>() != null);
             foreach (var portal in portals)
             {
-                var namedPortal = portal.GetCustomAttribute<PortalDataAttribute>().NamedPortalInstance;
+                var portalDataAttr = portal.GetCustomAttribute<PortalDataAttribute>();
+                var namedPortal = portalDataAttr.NamedPortalInstance;
                 var portalInstanceType = portal.PropertyType.GetTypeInfo().GenericTypeArguments[0];
                 var pt = portal.PropertyType;
                 JToken portalJ = input["portalData"][namedPortal];
@@ -756,9 +757,9 @@ namespace FMData.Rest
                 {
                     foreach (JProperty jp in jo.Properties().ToList())
                     {
-                        if (jp.Name.Contains(namedPortal + "::"))
+                        if (jp.Name.Contains(portalDataAttr.TablePrefixFieldNames + "::"))
                         {
-                            jo.Add(jp.Name.Replace(namedPortal + "::", ""), jp.Value);
+                            jo.Add(jp.Name.Replace(portalDataAttr.TablePrefixFieldNames + "::", ""), jp.Value);
                             jo.Remove(jp.Name);
                         }
                     }

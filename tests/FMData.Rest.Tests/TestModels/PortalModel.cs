@@ -12,7 +12,7 @@ namespace FMData.Rest.Tests.TestModels
         public int ES_TWO { get; set; }
         public int ES_UTCDTO { get; set; }
 
-        [PortalData("action")]
+        [PortalData("action", TablePrefixFieldNames = "action")]
         public IEnumerable<Action> Actions { get; set; }
     }
 
