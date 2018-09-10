@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 namespace FMData.Xml.Tests.TestModels
@@ -20,5 +23,25 @@ namespace FMData.Xml.Tests.TestModels
         public string Artist { get; set; }
         public string Style { get; set; }
         public int length { get; set; }
+    }
+
+    [DataContract(Name = "layout")]
+    public class ArtWithPortal
+    {
+        [DataMember(Name = "alt-Title")]
+        public string Title { get; set; }
+        public string Artist { get; set; }
+        public string Style { get; set; }
+        public int length { get; set; }
+
+        [PortalData("artlocations", TablePrefixFieldNames = "artlocations")]
+        public IEnumerable<Locations> Locations { get; set; }
+    }
+
+    [DataContract(Name = "locations")]
+    public class Locations
+    {
+        public string Location{ get; set; }
+        public DateTime Date { get; set; }
     }
 }
