@@ -670,6 +670,16 @@ namespace FMData.Rest
             {
                 var containerField = prop.GetCustomAttribute<ContainerDataForAttribute>().ContainerField;
                 var containerEndPoint = ti.GetDeclaredProperty(containerField).GetValue(instance) as string;
+
+                if (string.IsNullOrEmpty(containerEndPoint))
+                {
+                    continue;
+                }
+                else if (!Uri.IsWellFormedUriString(containerEndPoint, UriKind.Absolute))
+                {
+                    continue;
+                }
+
                 var data = await _client.GetAsync(containerEndPoint);
                 var dataBytes = await data.Content.ReadAsByteArrayAsync();
                 prop.SetValue(instance, dataBytes);
