@@ -419,6 +419,39 @@ namespace FMData.Rest.Tests
             Assert.Equal(bytes, response.SomeContainerFieldData);
         }
 
+        [Theory]
+        [InlineData((string)null)]
+        [InlineData("//somefile")]
+        [InlineData("http:/localhost/somefile")]
+        [InlineData("s:localhost/")]
+        [InlineData("somefolder/somefile.ext")]
+        public async Task ProcessContainerData_Should_Skip_InvalidUris(string uri)
+        {
+            // arrange
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+
+            var model = new ContainerFieldTestModel
+            {
+                SomeContainerField = uri
+            };
+
+            // act
+            await fdc.ProcessContainer(model);
+
+            // assert
+            Assert.Null(model.SomeContainerFieldData);
+        }
+
 
         [Fact]
         public async Task SendAsync_Dictionary_WithPortals_ShouldHaveData()
