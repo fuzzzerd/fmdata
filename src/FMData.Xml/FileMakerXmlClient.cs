@@ -235,7 +235,7 @@ namespace FMData.Xml
                 var records = xdoc
                     .Descendants(_ns + "resultset")
                     .Elements(_ns + "record")
-                    .Select(r => new RecordBase<T, T>
+                    .Select(r => new RecordBase<T, Dictionary<string, IEnumerable<Dictionary<string, object>>>>
                     {
                         RecordId = Convert.ToInt32(r.Attribute("record-id").Value),
                         ModId = Convert.ToInt32(r.Attribute("mod-id").Value),
@@ -256,7 +256,30 @@ namespace FMData.Xml
                                             return v.Value;
                                     }
                                 }
-                            ).ToObject<T>()
+                            ).ToObject<T>(),
+                        PortalData = r.Elements(_ns + "relatedset")
+                            .ToDictionary(
+                                k => k.Attribute("name").Value,
+                                v => v.Elements(_ns + "record")
+                                    .Select(e => e.Elements(_ns+"field").ToDictionary(
+                                        k => k.Attribute("name").Value,
+                                        va =>
+                                        {
+                                            switch (metadata[va.Attribute("name").Value])
+                                            {
+                                                case "number":
+                                                    return Convert.ChangeType(va.Value, typeof(int));
+                                                case "date":
+                                                case "timestamp":
+                                                    return Convert.ChangeType(va.Value, typeof(DateTime));
+                                                case "time":
+                                                    return Convert.ChangeType(va.Value, typeof(TimeSpan));
+                                                default:
+                                                    return va.Value;
+                                            }
+                                        })
+                                    )
+                            )
                     });
 
                 // handle record and modid
@@ -264,6 +287,8 @@ namespace FMData.Xml
                 {
                     fmId?.Invoke(record.FieldData, record.RecordId);
                     modId?.Invoke(record.FieldData, record.ModId);
+
+                    // TODO: update each record's FieldData instance with the contents of its PortalData
                 }
 
 
