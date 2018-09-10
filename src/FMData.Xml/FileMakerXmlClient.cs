@@ -1,6 +1,7 @@
 ﻿using FMData.Xml.Requests;
 using FMData.Xml.Responses;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -231,56 +232,41 @@ namespace FMData.Xml
                         v => v.Attribute("result").Value
                     );
 
+                // load in relatedSet metadatas
+                var relatedMeta = xdoc
+                    .Descendants(_ns + "metadata")
+                    .Elements(_ns + "relatedset-definition")
+                    .ToDictionary(
+                        k => k.Attribute("table").Value,
+                        val => val.Elements(_ns + "field-definition")
+                            .ToDictionary(
+                                k => k.Attribute("name").Value,
+                                v => v.Attribute("result").Value
+                            )
+                    );
+
                 var dict = new Dictionary<string, string>();
                 var records = xdoc
                     .Descendants(_ns + "resultset")
                     .Elements(_ns + "record")
-                    .Select(r => new RecordBase<T, Dictionary<string, IEnumerable<Dictionary<string, object>>>>
+                    .Select(r => new RecordBase<T, Dictionary<string, IEnumerable<Dictionary<string,object>>>>
                     {
                         RecordId = Convert.ToInt32(r.Attribute("record-id").Value),
                         ModId = Convert.ToInt32(r.Attribute("mod-id").Value),
-                        FieldData = r.Elements(_ns + "field")
-                            .ToDictionary(
-                                k => k.Attribute("name").Value,
-                                v => {
-                                    switch (metadata[v.Attribute("name").Value])
-                                    {
-                                        case "number":
-                                            return Convert.ChangeType(v.Value, typeof(int));
-                                        case "date":
-                                        case "timestamp":
-                                            return Convert.ChangeType(v.Value, typeof(DateTime));
-                                        case "time":
-                                            return Convert.ChangeType(v.Value, typeof(TimeSpan));
-                                        default:
-                                            return v.Value;
-                                    }
-                                }
-                            ).ToObject<T>(),
+                        FieldData = FieldDataToDictionary(metadata, r.Elements(_ns + "field")).ToObject<T>(),
                         PortalData = r.Elements(_ns + "relatedset")
                             .ToDictionary(
                                 k => k.Attribute("table").Value,
                                 v => v.Elements(_ns + "record")
-                                    .Select(e => e.Elements(_ns+"field").ToDictionary(
-                                        k => k.Attribute("name").Value,
-                                        va =>
-                                        {
-                                            switch (metadata[va.Attribute("name").Value])
-                                            {
-                                                case "number":
-                                                    return Convert.ChangeType(va.Value, typeof(int));
-                                                case "date":
-                                                case "timestamp":
-                                                    return Convert.ChangeType(va.Value, typeof(DateTime));
-                                                case "time":
-                                                    return Convert.ChangeType(va.Value, typeof(TimeSpan));
-                                                default:
-                                                    return va.Value;
-                                            }
-                                        })
+                                    .Select(rc => 
+                                        FieldDataToDictionary(
+                                            relatedMeta[v.Attribute("table").Value],
+                                            rc.Elements(_ns + "field")
+                                        )
                                     )
                             )
-                    });
+                    })
+                    .ToList(); // make sure to ToList here since if we don't subsequent setting of child fields/properties are lost for every time its enumerated again
 
                 // handle record and modid
                 foreach (var record in records)
@@ -289,8 +275,39 @@ namespace FMData.Xml
                     modId?.Invoke(record.FieldData, record.ModId);
 
                     // TODO: update each record's FieldData instance with the contents of its PortalData
-                }
+                    var portals = typeof(T).GetTypeInfo().DeclaredProperties.Where(p => p.GetCustomAttribute<PortalDataAttribute>() != null);
+                    foreach (var portal in portals)
+                    {
+                        var portalDataAttr = portal.GetCustomAttribute<PortalDataAttribute>();
+                        var namedPortal = portalDataAttr.NamedPortalInstance;
+                        var portalInstanceType = portal.PropertyType.GetTypeInfo().GenericTypeArguments[0];
+                        var pt = portal.PropertyType;
 
+                        var dataPortal = record.PortalData[namedPortal].ToList();
+
+                        // .ToList() here so we iterate on a different copy of the collection
+                        // which allows for calling add/remove on the list ;) clever
+                        // https://stackoverflow.com/a/26864676/86860 - explination 
+                        // https://stackoverflow.com/a/604843/86860 - solution
+                        foreach (var row in dataPortal.ToList())
+                        {
+                            foreach (var kvp in row.ToList())
+                            {
+                                if (kvp.Key.Contains(portalDataAttr.TablePrefixFieldNames + "::"))
+                                {
+                                    row.Add(kvp.Key.Replace(portalDataAttr.TablePrefixFieldNames + "::", ""), kvp.Value);
+                                    row.Remove(kvp.Key);
+                                }
+                            }
+                        }
+
+                        var x = dataPortal.Select(portalRow=> portalRow.ToObject(portalInstanceType));
+                        var y = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(portalInstanceType));
+                        foreach (var z in x) y.Add(z);
+                        portal.SetValue(record.FieldData, y);
+                    }
+
+                }
 
                 return records.Select(r => r.FieldData);
             }
@@ -341,7 +358,32 @@ namespace FMData.Xml
         }
 
         #region Private Helpers and utility methods
-
+        /// <summary>
+        /// Convert a FMS XML Field Data into a <see cref="Dictionary{String, Object}"/>
+        /// </summary>
+        /// <param name="metadata">The Metadata for this FieldSet</param>
+        /// <param name="enumerable">The collection of XElements containing the FieldData</param>
+        private Dictionary<string, object> FieldDataToDictionary(
+            Dictionary<string, string> metadata,
+            IEnumerable<XElement> enumerable)
+        {
+            return enumerable.ToDictionary(
+                k => k.Attribute("name").Value,
+                v => {
+                    switch (metadata[v.Attribute("name").Value])
+                    {
+                        case "number":
+                            return Convert.ChangeType(v.Value, typeof(int));
+                        case "date":
+                        case "timestamp":
+                            return Convert.ChangeType(v.Value, typeof(DateTime));
+                        case "time":
+                            return Convert.ChangeType(v.Value, typeof(TimeSpan));
+                        default:
+                            return v.Value;
+                    }
+                });
+        }
         #endregion
 
         #region IDisposable Implementation
