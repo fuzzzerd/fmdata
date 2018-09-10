@@ -259,7 +259,7 @@ namespace FMData.Xml
                             ).ToObject<T>(),
                         PortalData = r.Elements(_ns + "relatedset")
                             .ToDictionary(
-                                k => k.Attribute("name").Value,
+                                k => k.Attribute("table").Value,
                                 v => v.Elements(_ns + "record")
                                     .Select(e => e.Elements(_ns+"field").ToDictionary(
                                         k => k.Attribute("name").Value,
