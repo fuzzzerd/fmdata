@@ -62,7 +62,7 @@ public class Model
     public byte[] DataForSomeContainerField { get; set; }
 
     // if your model has properties you don't want mapped use
-    [NotMapped] // to skip mapping of the field
+    [IgnoreDataMember] // to skip mapping of the field
     public string NotNeededField { get; set; }
 }
 ```
