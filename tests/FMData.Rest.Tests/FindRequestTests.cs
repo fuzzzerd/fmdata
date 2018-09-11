@@ -1,4 +1,3 @@
-using FMData.Rest;
 using FMData.Rest.Requests;
 using FMData.Rest.Tests.TestModels;
 using RichardSzalay.MockHttp;
@@ -105,7 +104,7 @@ namespace FMData.Rest.Tests
             var response = await fdc.FindAsync(new User()
             {
                 Name = "fuzzzerd"
-            },5,5);
+            }, 5, 5);
 
             // assert
             Assert.NotEmpty(response);
@@ -402,7 +401,7 @@ namespace FMData.Rest.Tests
 
             var b64String = System.IO.File.ReadAllText("ResponseData\\b64-string.dat");
             var bytes = Convert.FromBase64String(b64String);
-            var b64= new ByteArrayContent(bytes);
+            var b64 = new ByteArrayContent(bytes);
 
             mockHttp.When(HttpMethod.Get, $"{server}/some-data-path")
                 .Respond(b64);
@@ -452,6 +451,37 @@ namespace FMData.Rest.Tests
             Assert.Null(model.SomeContainerFieldData);
         }
 
+        [Fact]
+        public async Task FindAsync_WithPortals_ShouldHaveData()
+        {
+            // arrange
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "the-layout";
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/_find")
+                .Respond(HttpStatusCode.OK, "application/json", DataApiResponses.SuccessfulFindWithPortal());
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+
+            var toFind = new PortalModel() { ES_ONE = "" };
+
+            // act
+            var response = await fdc.FindAsync(toFind);
+
+            // assert
+            Assert.NotEmpty(response);
+            Assert.NotEmpty(response.SelectMany(p => p.Actions));
+            // hard coded from sample data, if changed update here
+            Assert.Equal(16, response.First().Actions.First().ID);
+        }
 
         [Fact]
         public async Task SendAsync_Dictionary_WithPortals_ShouldHaveData()
@@ -473,7 +503,8 @@ namespace FMData.Rest.Tests
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
-            var fr = new FindRequest<Dictionary<string, string>> {
+            var fr = new FindRequest<Dictionary<string, string>>
+            {
                 Layout = layout,
                 Query = new List<Dictionary<string, string>>
                 {

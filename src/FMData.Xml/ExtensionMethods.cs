@@ -2,16 +2,43 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization;
 
 namespace FMData.Xml
 {
+    
+
+
     /// <summary>
     /// Extension Method Holding Class
     /// </summary>
     public static class ExtensionMethods
     {
+
+        /// <summary>
+        /// Converts a Dictionary to an Object.
+        /// </summary>
+        public static object ToObject(this IDictionary<string, object> source, Type type)
+        {
+            var someObject = Activator.CreateInstance(type);
+            var someObjectType = someObject.GetType().GetTypeInfo();
+
+            foreach (var item in source)
+            {
+                someObjectType
+                    .DeclaredProperties
+                    .FirstOrDefault(k
+                        => k.Name.Equals(item.Key, StringComparison.CurrentCultureIgnoreCase)
+                        || (k.GetCustomAttribute<DataMemberAttribute>() != null && k.GetCustomAttribute<DataMemberAttribute>().Name.Equals(item.Key, StringComparison.CurrentCultureIgnoreCase))
+                        )
+                    ?.SetValue(someObject, item.Value, null);
+            }
+
+            return someObject;
+        }
+
         /// <summary>
         /// https://stackoverflow.com/a/4944547/86860
         /// </summary>
