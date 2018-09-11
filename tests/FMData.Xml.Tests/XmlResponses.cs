@@ -34,7 +34,16 @@ namespace FMData.Xml.Tests
 <field name=""length"">
 <data>19</data>
 </field>
-<relatedset count=""0"" table=""artlocations""/>
+<relatedset count=""0"" table=""artlocations"">
+<record>
+<field name=""artlocations::Location"">
+<data>Chicago</data>
+</field>
+<field name=""artlocations::Date"">
+<data>08/08/15</data>
+</field>
+</record>
+</relatedset>
 </record>
 </resultset>
 </fmresultset>";

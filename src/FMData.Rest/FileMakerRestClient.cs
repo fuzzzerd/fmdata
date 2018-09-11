@@ -330,15 +330,7 @@ namespace FMData.Rest
                 foreach (JToken result in results)
                 {
                     // JToken.ToObject is a helper method that uses JsonSerializer internally
-                    T searchResult = result["fieldData"].ToObject<T>();
-                    
-                    // recordId
-                    int fId = result["recordId"].ToObject<int>();
-                    fmId?.Invoke(searchResult, fId);
-
-                    // modid
-                    int fmmodId = result["modId"].ToObject<int>();
-                    modId?.Invoke(searchResult, fmmodId);
+                    T searchResult = ConvertJTokenToInstance(fmId, modId, result);
 
                     // container handling
                     await ProcessContainer(searchResult);
@@ -510,16 +502,7 @@ namespace FMData.Rest
                 IList<T> searchResults = new List<T>();
                 foreach (JToken result in results)
                 {
-                    // JToken.ToObject is a helper method that uses JsonSerializer internally
-                    T searchResult = result["fieldData"].ToObject<T>();
-                    
-                    // recordId
-                    int fileMakerId = result["recordId"].ToObject<int>();
-                    fmId?.Invoke(searchResult, fileMakerId);
-
-                    // modid
-                    int fmmodId = result["modId"].ToObject<int>();
-                    modId?.Invoke(searchResult, fmmodId);
+                    T searchResult = ConvertJTokenToInstance(fmId, modId, result);
 
                     // add to response list
                     searchResults.Add(searchResult);
@@ -560,7 +543,6 @@ namespace FMData.Rest
             // other error TODO: Improve handling
             throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responed with {response.StatusCode}");
         }
-
         #endregion
 
         /// <summary>
@@ -744,6 +726,58 @@ namespace FMData.Rest
             return response;
         }
 
+
+        /// <summary>
+        /// Converts a JToken instance and maps it to the generic type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fmId"></param>
+        /// <param name="modId"></param>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        private static T ConvertJTokenToInstance<T>(Func<T, int, object> fmId, Func<T, int, object> modId, JToken input) where T : class, new()
+        {
+            // JToken.ToObject is a helper method that uses JsonSerializer internally
+            T searchResult = input["fieldData"].ToObject<T>();
+
+            var portals = typeof(T).GetTypeInfo().DeclaredProperties.Where(p => p.GetCustomAttribute<PortalDataAttribute>() != null);
+            foreach (var portal in portals)
+            {
+                var portalDataAttr = portal.GetCustomAttribute<PortalDataAttribute>();
+                var namedPortal = portalDataAttr.NamedPortalInstance;
+                var portalInstanceType = portal.PropertyType.GetTypeInfo().GenericTypeArguments[0];
+                var pt = portal.PropertyType;
+                JToken portalJ = input["portalData"][namedPortal];
+
+                // .ToList() here so we iterate on a different copy of the collection
+                // which allows for calling add/remove on the list ;) clever
+                // https://stackoverflow.com/a/26864676/86860 - explination 
+                // https://stackoverflow.com/a/604843/86860 - solution
+                foreach (JObject jo in portalJ.ToList())
+                {
+                    foreach (JProperty jp in jo.Properties().ToList())
+                    {
+                        if (jp.Name.Contains(portalDataAttr.TablePrefixFieldNames + "::"))
+                        {
+                            jo.Add(jp.Name.Replace(portalDataAttr.TablePrefixFieldNames + "::", ""), jp.Value);
+                            jo.Remove(jp.Name);
+                        }
+                    }
+                }
+
+                var x = portalJ.ToObject(pt);
+                portal.SetValue(searchResult, x);
+            }
+
+            // recordId
+            int fileMakerId = input["recordId"].ToObject<int>();
+            fmId?.Invoke(searchResult, fileMakerId);
+
+            // modid
+            int fmmodId = input["modId"].ToObject<int>();
+            modId?.Invoke(searchResult, fmmodId);
+            return searchResult;
+        }
         #endregion
 
         #region IDisposable Implementation
