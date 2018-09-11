@@ -451,7 +451,6 @@ namespace FMData.Rest.Tests
             Assert.Null(model.SomeContainerFieldData);
         }
 
-
         [Fact]
         public async Task FindAsync_WithPortals_ShouldHaveData()
         {
@@ -483,7 +482,6 @@ namespace FMData.Rest.Tests
             // hard coded from sample data, if changed update here
             Assert.Equal(16, response.First().Actions.First().ID);
         }
-
 
         [Fact]
         public async Task SendAsync_Dictionary_WithPortals_ShouldHaveData()
