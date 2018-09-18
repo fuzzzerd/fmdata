@@ -9,6 +9,25 @@ namespace FMData
     /// </summary>
     public interface IFileMakerApiClient
     {
+        #region Request Factory Abstracts
+        /// <summary>
+        /// Get a new Create Request of the correct type.
+        /// </summary>
+        ICreateRequest<T> GenerateCreateRequest<T>();
+        /// <summary>
+        /// Get a new Edit Request of the correct type.
+        /// </summary>
+        IEditRequest<T> GenerateEditRequest<T>();
+        /// <summary>
+        /// Get a new Find Request of the correct type.
+        /// </summary>
+        IFindRequest<T> GenerateFindRequest<T>();
+        /// <summary>
+        /// Get a new Delete Request of the correct type.
+        /// </summary>
+        IDeleteRequest GenerateDeleteRequest();
+        #endregion
+
         #region Create
         /// <summary>
         /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout.
