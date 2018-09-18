@@ -3,7 +3,6 @@ namespace FMData.Xml.Requests
     /// <summary>
     /// Create Request Wrapper
     /// </summary>
-    /// <typeparam name="T">The type to create.</typeparam>
     public class DeleteRequest : RequestBase, IDeleteRequest
     {
         /// <summary>
