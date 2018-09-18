@@ -13,7 +13,7 @@ There are plenty of ways to consume RESTful APIs from .NET, but the goal of this
 The project is organized as three packages.
 
 - `FMData` is the core and it contains the base and abstract classes utilized by the other implementations.
-- `FMdata.Rest` is for the Data API and 
+- `FMdata.Rest` is for the Data API and
 - `FMData.Xml` is for consuming the legacy Xml/CWP API.
 
 > Note: Xml support is experimental, if you need full cwp/xml coverage check out fmDotNet.
