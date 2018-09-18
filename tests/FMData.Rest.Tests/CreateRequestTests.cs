@@ -158,7 +158,6 @@ namespace FMData.Rest.Tests
             await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.SendAsync(req));
         }
 
-
         [Fact]
         public async Task CreateFromDictionaryStringString_ShouldReturnOK_FromSendAsync()
         {

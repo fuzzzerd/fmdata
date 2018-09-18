@@ -325,7 +325,6 @@ namespace FMData.Rest.Tests
             Assert.Empty(response);
         }
 
-
         [Fact]
         public async Task SendAsyncFind_WithoutLayout_ShouldThrow()
         {
