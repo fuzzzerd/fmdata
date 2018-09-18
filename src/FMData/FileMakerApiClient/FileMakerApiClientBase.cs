@@ -15,17 +15,38 @@ namespace FMData
     {
         #region Request Factory Abstracts
         /// <summary>
+        /// Make a new instance of the Create Request class for Type T.
+        /// </summary>
+        public ICreateRequest<T> GenerateCreateRequest<T>() => _createFactory<T>();
+        /// <summary>
         /// Factory to get a new Create Request of the correct type.
         /// </summary>
         protected abstract ICreateRequest<T> _createFactory<T>();
+
+        /// <summary>
+        /// Make a new instance of the Edit Request class for Type T.
+        /// </summary>
+        public IEditRequest<T> GenerateEditRequest<T>() => _editFactory<T>();
+
         /// <summary>
         /// Factory to get a new Edit Request of the correct type.
         /// </summary>
         protected abstract IEditRequest<T> _editFactory<T>();
+        
+        /// <summary>
+        /// Make a new instance of the Find Request for Type T.
+        /// </summary>
+        public IFindRequest<T> GenerateFindRequest<T>() => _findFactory<T>();
+
         /// <summary>
         /// Factory to get a new Find Request of the correct type.
         /// </summary>
         protected abstract IFindRequest<T> _findFactory<T>();
+
+        /// <summary>
+        /// Make a new instance of the Delete Request.
+        /// </summary>
+        public IDeleteRequest GenerateDeleteRequest() => _deleteFactory();
         /// <summary>
         /// Factory to get a new Delete Request of the correct type.
         /// </summary>
