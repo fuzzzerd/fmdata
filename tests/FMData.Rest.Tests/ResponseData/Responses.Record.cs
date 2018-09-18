@@ -71,7 +71,6 @@ public static string SuccessfulGetByIdWithContainer(int id, string containerPath
     ""messages"":[{{""code"":""0"",""message"":""OK""}}]
 }}";
 
-
         public static string LayoutNotFound() => @"{
     ""response"": {},
     ""messages"":[{""code"":""105"",""message"":""Layout is missing""}]
@@ -97,7 +96,6 @@ public static string SuccessfulGetByIdWithContainer(int id, string containerPath
     ""messages"":[{""code"":""0"",""message"":""OK""}]
 }";
 
-
         public static string SuccessfulDelete() => @"{
     ""response"": {},
     ""messages"":[{""code"":""0"",""message"":""OK""}]
@@ -116,6 +114,5 @@ public static string SuccessfulGetByIdWithContainer(int id, string containerPath
         {
             return System.IO.File.ReadAllText("ResponseData\\fms-find-with-portal.json");
         }
-
     }
 }

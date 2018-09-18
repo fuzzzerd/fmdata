@@ -215,7 +215,6 @@ namespace FMData.Xml
 
             var httpRequestContent = new StringContent(requestContent + $"&-db={_fileName}");
 
-
             var response = await _client.PostAsync(url, httpRequestContent);
 
             if (response.IsSuccessStatusCode)
@@ -306,9 +305,8 @@ namespace FMData.Xml
                         foreach (var z in x) y.Add(z);
                         portal.SetValue(record.FieldData, y);
                     }
-
                 }
-
+                
                 return records.Select(r => r.FieldData);
             }
 
