@@ -36,7 +36,6 @@ namespace FMData.Rest.Tests
                 {
                     Assert.False(fdc.IsAuthenticated);
                 }
-
             }
         }
 
@@ -99,7 +98,7 @@ namespace FMData.Rest.Tests
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication("someOtherToken"));
 
             mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/sessions*")
-    .Respond(HttpStatusCode.OK, "application/json", "");
+                .Respond(HttpStatusCode.OK, "application/json", "");
 
             // pass in actual values here since we DON'T want this to blow up on constructor 
             using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, "user", "pass"))

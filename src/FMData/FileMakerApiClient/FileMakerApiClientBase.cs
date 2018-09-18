@@ -53,7 +53,6 @@ namespace FMData
         protected abstract IDeleteRequest _deleteFactory();
         #endregion
 
-
         /// <summary>
         /// Send a Create Record request to the FileMaker API.
         /// </summary>
@@ -81,8 +80,6 @@ namespace FMData
             IFindRequest<T> req,
             Func<T, int, object> fmId = null,
             Func<T, int, object> modId = null) where T : class, new();
-
-
 
         /// <summary>
         /// Get a single record by FileMaker RecordId
@@ -170,7 +167,6 @@ namespace FMData
             return Task.WhenAll(instanceTasks);
         }
         #endregion
-
 
         #region Container Uploads
         /// <summary>
