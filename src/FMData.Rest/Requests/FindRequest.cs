@@ -39,21 +39,4 @@ namespace FMData.Rest.Requests
         /// <returns>An instance of the FindRequest object from the provided Json string.</returns>
         public static FindRequest<T> FromJson<T>(string json) => JsonConvert.DeserializeObject<FindRequest<T>>(json);
     }
-
-    /// <summary>
-    /// Data Class For Sort
-    /// </summary>
-    public partial class Sort : ISort
-    {
-        /// <summary>
-        /// The name of the sort field.
-        /// </summary>
-        [JsonProperty("fieldName")]
-        public string FieldName { get; set; }
-        /// <summary>
-        /// Sort direction (ascend/descend).
-        /// </summary>
-        [JsonProperty("sortOrder")]
-        public string SortOrder { get; set; }
-    }
 }
