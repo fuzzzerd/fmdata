@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -148,7 +149,35 @@ namespace FMData
         /// </summary>
         /// <typeparam name="T">The type of object to populate.</typeparam>
         /// <param name="instance">Instance of the object that has container data with the ContainerDataForAttribute.</param>
-        public abstract Task ProcessContainer<T>(T instance);
+        public virtual async Task ProcessContainer<T>(T instance)
+        {
+            var ti = typeof(T).GetTypeInfo();
+            var props = ti.DeclaredProperties.Where(p => p.GetCustomAttribute<ContainerDataForAttribute>() != null);
+            foreach(var prop in props)
+            {
+                var containerField = prop.GetCustomAttribute<ContainerDataForAttribute>().ContainerField;
+                var containerEndPoint = ti.GetDeclaredProperty(containerField).GetValue(instance) as string;
+
+                if (string.IsNullOrEmpty(containerEndPoint))
+                {
+                    continue;
+                }
+                else if (!Uri.IsWellFormedUriString(containerEndPoint, UriKind.Absolute))
+                {
+                    continue;
+                }
+
+                var dataBytes = await GetContainerOnClient(containerEndPoint);
+                prop.SetValue(instance, dataBytes);
+            }
+        }
+
+        /// <summary>
+        /// Utility method that must be overridden in implemenations. Takes a containerfield url and populpates a byte array utilizing the instance's http client.
+        /// </summary>
+        /// <param name="containerEndPoint">The container field to load.</param>
+        /// <returns>An array of bytes with the data from the container field.</returns>
+        protected abstract Task<byte[]> GetContainerOnClient(string containerEndPoint);
 
         /// <summary>
         /// Load the contents of the container data into the attributed property of the models.
