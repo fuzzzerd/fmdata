@@ -80,10 +80,9 @@ namespace FMData.Xml
                     .Where(p 
                         => !(p.PropertyType.GetTypeInfo().IsValueType == true
                         && p.GetValue(source, null) != Activator.CreateInstance(p.PropertyType))
-                    )
-                    ;
+                    );
             }
-            
+
             return props.ToDictionary
             (
                 propInfo => propInfo.GetCustomAttribute<DataMemberAttribute>() == null ? propInfo.Name : propInfo.GetCustomAttribute<DataMemberAttribute>().Name,
