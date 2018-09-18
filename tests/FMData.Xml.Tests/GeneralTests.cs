@@ -6,6 +6,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Xunit;
 using FMData.Xml;
+using FMData.Xml.Requests;
 
 namespace FMData.Xml.Tests
 {
@@ -31,7 +32,7 @@ namespace FMData.Xml.Tests
                     FieldData = r
                         .Elements(ns + "field")
                         .ToDictionary(
-                            k => k.Attribute("name").Value, 
+                            k => k.Attribute("name").Value,
                             v => v.Value
                         )
                 });
@@ -60,13 +61,65 @@ namespace FMData.Xml.Tests
         {
             // arrange
             var expected = "theField";
-            var d = new Dictionary<string, object>{ { "alt-Title", expected} };
+            var d = new Dictionary<string, object> { { "alt-Title", expected } };
 
             // act
             var a = d.ToObject<ArtDataCM>();
 
             // assert
             Assert.Equal(expected, a.Title);
+        }
+
+        [Fact]
+        public void GenCreate_ShouldBeCreateRequest()
+        {
+            //arrange 
+            var fmc = new FileMakerXmlClient("", "", "", "");
+
+            // act
+            var req = fmc.GenerateCreateRequest<TestModels.User>();
+
+            //assert
+            Assert.IsAssignableFrom<CreateRequest<TestModels.User>>(req);
+        }
+
+        [Fact]
+        public void GenFind_ShouldBeFindRequest()
+        {
+            //arrange 
+            var fmc = new FileMakerXmlClient("", "", "", "");
+
+            // act
+            var req = fmc.GenerateFindRequest<TestModels.User>();
+
+            //assert
+            Assert.IsAssignableFrom<FindRequest<TestModels.User>>(req);
+        }
+
+        [Fact]
+        public void GenEdit_ShouldBeEditRequest()
+        {
+            //arrange 
+            var fmc = new FileMakerXmlClient("", "", "", "");
+
+            // act
+            var req = fmc.GenerateEditRequest<TestModels.User>();
+
+            //assert
+            Assert.IsAssignableFrom<EditRequest<TestModels.User>>(req);
+        }
+
+        [Fact]
+        public void GenDelete_ShouldBeDeleteRequest()
+        {
+            //arrange 
+            var fmc = new FileMakerXmlClient("", "", "", "");
+
+            // act
+            var req = fmc.GenerateDeleteRequest();
+
+            //assert
+            Assert.IsAssignableFrom<DeleteRequest>(req);
         }
     }
 }

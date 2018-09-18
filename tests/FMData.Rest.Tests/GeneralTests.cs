@@ -20,7 +20,7 @@ namespace FMData.Rest.Tests
             Layout = "layout"
         };
 
-        [DataContract(Name ="SomeName")]
+        [DataContract(Name = "SomeName")]
         private class DCModel
         {
             public DCModel()
@@ -69,6 +69,56 @@ namespace FMData.Rest.Tests
             Assert.DoesNotContain("\"Id\":1", json);
         }
 
-        
+        [Fact]
+        public void GenCreate_ShouldBeCreateRequest()
+        {
+            //arrange 
+            var fmc = new FileMakerRestClient("", "", "", "");
+
+            // act
+            var req = fmc.GenerateCreateRequest<TestModels.User>();
+
+            //assert
+            Assert.IsAssignableFrom<CreateRequest<TestModels.User>>(req);
+        }
+
+        [Fact]
+        public void GenFind_ShouldBeFindRequest()
+        {
+            //arrange 
+            var fmc = new FileMakerRestClient("", "", "", "");
+
+            // act
+            var req = fmc.GenerateFindRequest<TestModels.User>();
+
+            //assert
+            Assert.IsAssignableFrom<FindRequest<TestModels.User>>(req);
+        }
+
+        [Fact]
+        public void GenEdit_ShouldBeEditRequest()
+        {
+            //arrange 
+            var fmc = new FileMakerRestClient("", "", "", "");
+
+            // act
+            var req = fmc.GenerateEditRequest<TestModels.User>();
+
+            //assert
+            Assert.IsAssignableFrom<EditRequest<TestModels.User>>(req);
+        }
+
+        [Fact]
+        public void GenDelete_ShouldBeDeleteRequest()
+        {
+            //arrange 
+            var fmc = new FileMakerRestClient("", "", "", "");
+
+            // act
+            var req = fmc.GenerateDeleteRequest();
+
+            //assert
+            Assert.IsAssignableFrom<DeleteRequest>(req);
+        }
     }
 }
