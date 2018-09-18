@@ -57,7 +57,6 @@ namespace FMData
         Task<ICreateResponse> CreateAsync<T>(string layout, T input) where T : class, new();
         #endregion
 
-
         #region Get
         /// <summary>
         /// Get a single record by FileMaker RecordId
@@ -189,7 +188,6 @@ namespace FMData
         Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
         #endregion
 
-
         #region Edit
         /// <summary>
         /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
@@ -231,7 +229,6 @@ namespace FMData
         Task<IEditResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues);
         #endregion
 
-
         #region Delete
         /// <summary>
         /// Delete a record by FileMaker RecordId. 
@@ -251,7 +248,6 @@ namespace FMData
         Task<IResponse> DeleteAsync(int recId, string layout);
         #endregion
 
-
         #region Set Globals
         /// <summary>
         /// Set the value of global fields.
@@ -263,7 +259,6 @@ namespace FMData
         /// <returns>FileMaker Response</returns>
         Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue);
         #endregion
-
 
         #region Set Containers
         /// <summary>
