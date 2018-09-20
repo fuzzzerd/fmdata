@@ -22,7 +22,7 @@ If you've found a bug, please submit a bug report. If you have a feature idea, o
 
 | Tests | Grade | Activity | License |
 | ---- | ---- | ---- | ---- |
-| [![AppVeyor tests branch](https://img.shields.io/?style=flat-square)](https://ci.appveyor.com/project/fuzzzerd/fmdata/build/tests) | [![CodeFactor](https://www.codefactor.io/repository/github/fuzzzerd/fmdata/badge/dev)](https://www.codefactor.io/repository/github/fuzzzerd/fmdata/overview/dev) | [![FMData repository/commit activity](https://img.shields.io/github/commit-activity/w/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master)|[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE) |
+| [![AppVeyor tests branch](https://img.shields.io/appveyor/tests/fuzzzerd/fmdata/dev.svg?style=flat-square)](https://ci.appveyor.com/project/fuzzzerd/fmdata/build/tests) | [![CodeFactor](https://www.codefactor.io/repository/github/fuzzzerd/fmdata/badge/dev)](https://www.codefactor.io/repository/github/fuzzzerd/fmdata/overview/dev) | [![FMData repository/commit activity](https://img.shields.io/github/commit-activity/w/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master)|[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE) |
 
 -----
 
