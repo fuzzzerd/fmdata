@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 namespace FMData.Xml.Tests.TestModels
 {
-    [Table("layout")]
-    public class Art
+    [DataContract(Name ="layout")]
+    public class ArtDataCM
     {
+        [DataMember(Name ="alt-Title")]
         public string Title { get; set; }
         public string Artist { get; set; }
         public string Style { get; set; }
