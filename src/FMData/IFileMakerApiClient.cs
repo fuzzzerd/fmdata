@@ -116,7 +116,6 @@ namespace FMData
         /// <returns></returns>
         Task<IEnumerable<T>> FindAsync<T>(T request, int skip, int take) where T : class, new();
 
-
         /// <summary>
         /// Finds a record or records matching the properties of the input request object.
         /// </summary>
