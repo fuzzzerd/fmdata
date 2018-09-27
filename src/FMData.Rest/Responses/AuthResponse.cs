@@ -10,6 +10,4 @@
         /// </summary>
         public AuthResponseResult Response { get; set; }
     }
-    
-    
 }
