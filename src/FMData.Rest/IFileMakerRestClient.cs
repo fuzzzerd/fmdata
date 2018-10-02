@@ -1,4 +1,5 @@
 ﻿using FMData.Rest.Responses;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FMData.Rest
@@ -90,6 +91,18 @@ namespace FMData.Rest
         /// <returns></returns>
         string ContainerEndpoint(string layout, object recordid, string fieldName, int repetitionNumber = 1);
         #endregion
+
+        /// <summary>
+        /// Utility method for exposing the raw request data from FMS.
+        /// </summary>
+        /// <param name="method">The http method to execute for this request (GET, POST, PATCH, DELETE).</param>
+        /// <param name="requestUri">The Endpoint to execute the request at.</param>
+        /// <param name="req">The request object to send to FMS.</param>
+        /// <returns>An HttpResponseMessage from executing the request.</returns>
+        Task<HttpResponseMessage> ExecuteRequestAsync(
+            HttpMethod method,
+            string requestUri,
+            IFileMakerRequest req);
 
         /// <summary>
         /// Indicates if the client is authenticated or not.
