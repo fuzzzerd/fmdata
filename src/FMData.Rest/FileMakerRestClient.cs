@@ -242,7 +242,10 @@ namespace FMData.Rest
         /// <remarks>Can't be a relay method, since we have to process the data specially to get our output</remarks>
         public override async Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req)
         {
-            var response = await GetFindHttpResponseAsync(new FindRequest<Dictionary<string, string>> { Layout = layout, Query = new List<Dictionary<string, string>> { req } });
+            if (string.IsNullOrEmpty(layout)) throw new ArgumentException("Layout is required on the request.");
+
+            var fmdataRequest = new FindRequest<Dictionary<string, string>> { Layout = layout, Query = new List<Dictionary<string, string>> { req } };
+            var response = await ExecuteRequestAsync(HttpMethod.Post, FindEndpoint(layout), fmdataRequest);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -272,7 +275,10 @@ namespace FMData.Rest
         /// <returns>A <see cref="Dictionary{String,String}"/> wrapped in a FindResponse containing both record data and portal data.</returns>
         public override async Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req)
         {
-            var response = await GetFindHttpResponseAsync(req);
+            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
+
+            var uri = FindEndpoint(req.Layout);
+            var response = await ExecuteRequestAsync(HttpMethod.Post, uri, req);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -310,11 +316,11 @@ namespace FMData.Rest
             Func<T, int, object> fmId = null,
             Func<T, int, object> modId = null)
         {
+            if (string.IsNullOrEmpty(layout)) throw new ArgumentException("Layout is required on the request.");
+
             // normally required, but internally we can route to the regular record request apis
             var uriEndpoint = GetRecordEndpoint(layout, fileMakerId);
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uriEndpoint);
-            await UpdateTokenDateAsync(); // we're about to use the token so update date used
-            var response = await _client.SendAsync(requestMessage);
+            var response = await ExecuteRequestAsync(HttpMethod.Get, uriEndpoint, new FindRequest<T>());
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -387,25 +393,18 @@ namespace FMData.Rest
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
-            var str = req.SerializeRequest();
-            var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
-
-            await UpdateTokenDateAsync(); // we're about to use the token so update date used
-
-            // run the post action
-            var response = await _client.PostAsync(CreateEndpoint(req.Layout), httpContent);
+            var requestUri = CreateEndpoint(req.Layout);
+            var responseMessage = await ExecuteRequestAsync(HttpMethod.Post, requestUri, req);
 
             try
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonConvert.DeserializeObject<CreateResponse>(responseJson);
-
-                return responseObject;
+                var responseJson = await responseMessage.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<CreateResponse>(responseJson);
             }
             catch (Exception ex)
             {
                 // something bad happened. TODO: improve non-OK response handling
-                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+                throw new Exception($"Non-OK Response: Status = {responseMessage.StatusCode}.", ex);
             }
         }
 
@@ -417,7 +416,11 @@ namespace FMData.Rest
         /// <returns></returns>
         public override async Task<IEditResponse> SendAsync<T>(IEditRequest<T> req)
         {
-            HttpResponseMessage response = await GetEditHttpResponse(req);
+            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
+            if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
+
+            var uri = UpdateEndpoint(req.Layout, req.RecordId);
+            HttpResponseMessage response = await ExecuteRequestAsync(new HttpMethod("PATCH"), uri, req);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -448,10 +451,9 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (req.RecordId == 0) throw new ArgumentException("RecordId is required on the request and must not be zero.");
 
-            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+            var uri = DeleteEndpoint(req.Layout, req.RecordId);
 
-            // add a default request header of our data token to nuke
-            var response = await _client.DeleteAsync(DeleteEndpoint(req.Layout, req.RecordId));
+            var response = await ExecuteRequestAsync(HttpMethod.Delete, uri, req);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -462,7 +464,6 @@ namespace FMData.Rest
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
-
                 return responseObject;
             }
             catch (Exception ex)
@@ -485,9 +486,19 @@ namespace FMData.Rest
             Func<T, int, object> fmId = null,
             Func<T, int, object> modId = null)
         {
-            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
+            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
 
-            var response = await GetFindHttpResponseAsync(req);
+            var uri = FindEndpoint(req.Layout);
+            var method = HttpMethod.Post;
+
+            if (req.Query == null || req.Query.Count() == 0)
+            {
+                // if this is an empty query, just punch it in to the Records API instead of the Find API.
+                uri = GetRecordsEndpoint(req.Layout, req.Limit, req.Offset);
+                method = HttpMethod.Get;
+            }
+
+            var response = await ExecuteRequestAsync(method, uri, req);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -546,6 +557,33 @@ namespace FMData.Rest
         #endregion
 
         /// <summary>
+        /// Executes a FileMaker Request to a JSON string.
+        /// </summary>
+        /// <param name="method">The http method to use for the request.</param>
+        /// <param name="requestUri"></param>
+        /// <param name="req">The request to execute.</param>
+        /// <returns>The JSON string returned from FMS.</returns>
+        public async Task<HttpResponseMessage> ExecuteRequestAsync(
+            HttpMethod method,
+            string requestUri,
+            IFileMakerRequest req)
+        {
+            var str = req.SerializeRequest();
+            var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
+            var httpRequest = new HttpRequestMessage(method, requestUri)
+            {
+                Content = httpContent
+            };
+
+            // we're about to use the token so update date used, and refresh if needed.
+            await UpdateTokenDateAsync();
+
+            // run and return the action
+            var response = await _client.SendAsync(httpRequest);
+            return response;
+        }
+
+        /// <summary>
         /// Set the value of global fields.
         /// // https://fmhelp.filemaker.com/docs/17/en/dataapi/#set-global-fields
         /// </summary>
@@ -559,13 +597,16 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(fieldName)) throw new ArgumentException("fieldName is required on set global.");
             if (string.IsNullOrEmpty(targetValue)) throw new ArgumentException("targetValue is required on set global.");
 
+            // build the request for global fields manually
             var str = $"{{ \"globalFields\" : {{ \"{baseTable}::{fieldName}\" : \"{targetValue}\" }} }}";
             var method = new HttpMethod("PATCH");
             var requestMessage = new HttpRequestMessage(method, $"{_baseEndPoint}/globals")
             {
                 Content = new StringContent(str, Encoding.UTF8, "application/json")
             };
+
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
+            
             // run the patch action
             var response = await _client.SendAsync(requestMessage);
 
@@ -578,7 +619,6 @@ namespace FMData.Rest
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
-
                 return responseObject;
             }
             catch (Exception ex)
@@ -652,63 +692,6 @@ namespace FMData.Rest
         }
 
         #region Private Helpers and utility methods
-
-        /// <summary>
-        /// Utility method to handle processing of find requests.
-        /// </summary>
-        /// <typeparam name="T">The type parameter of the data request.</typeparam>
-        /// <param name="req">The request object to send.</param>
-        /// <returns>The task that will return the http response from this</returns>
-        private async Task<HttpResponseMessage> GetFindHttpResponseAsync<T>(IFindRequest<T> req)
-        {
-            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
-
-            if (req.Query == null || req.Query.Count() == 0)
-            {
-                // normally required, but internally we can route to the regular record request apis
-                var uriEndpoint = GetRecordsEndpoint(req.Layout, req.Limit, req.Offset);
-                var requestMessage = new HttpRequestMessage(HttpMethod.Get, uriEndpoint);
-                await UpdateTokenDateAsync(); // we're about to use the token so update date used
-                return await _client.SendAsync(requestMessage);
-            }
-
-            var json = req.SerializeRequest();
-            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-            var requestMessage2 = new HttpRequestMessage(HttpMethod.Post, FindEndpoint(req.Layout))
-            {
-                Content = httpContent
-            };
-
-            await UpdateTokenDateAsync(); // we're about to use the token so update date used
-
-            var response = await _client.SendAsync(requestMessage2);
-
-            return response;
-        }
-
-        /// <summary>
-        /// Utility method to handle processing of edit requests.
-        /// </summary>
-        /// <typeparam name="T">The type parameter of the data request.</typeparam>
-        /// <param name="req">The request object to send.</param>
-        /// <returns></returns>
-        private async Task<HttpResponseMessage> GetEditHttpResponse<T>(IEditRequest<T> req)
-        {
-            if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
-            if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
-
-            var str = req.SerializeRequest();
-            var method = new HttpMethod("PATCH");
-            var requestMessage = new HttpRequestMessage(method, UpdateEndpoint(req.Layout, req.RecordId))
-            {
-                Content = new StringContent(str, Encoding.UTF8, "application/json")
-            };
-            await UpdateTokenDateAsync(); // we're about to use the token so update date used
-            // run the patch action
-            var response = await _client.SendAsync(requestMessage);
-            return response;
-        }
-
         /// <summary>
         /// Converts a JToken instance and maps it to the generic type.
         /// </summary>
