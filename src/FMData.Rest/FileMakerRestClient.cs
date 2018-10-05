@@ -393,8 +393,7 @@ namespace FMData.Rest
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
-            var requestUri = CreateEndpoint(req.Layout);
-            var responseMessage = await ExecuteRequestAsync(HttpMethod.Post, requestUri, req);
+            var responseMessage = await ExecuteRequestAsync(req);
 
             try
             {
@@ -419,8 +418,7 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
 
-            var uri = UpdateEndpoint(req.Layout, req.RecordId);
-            HttpResponseMessage response = await ExecuteRequestAsync(new HttpMethod("PATCH"), uri, req);
+            HttpResponseMessage response = await ExecuteRequestAsync(req);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -451,9 +449,7 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (req.RecordId == 0) throw new ArgumentException("RecordId is required on the request and must not be zero.");
 
-            var uri = DeleteEndpoint(req.Layout, req.RecordId);
-
-            var response = await ExecuteRequestAsync(HttpMethod.Delete, uri, req);
+            var response = await ExecuteRequestAsync(req);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -582,6 +578,24 @@ namespace FMData.Rest
             var response = await _client.SendAsync(httpRequest);
             return response;
         }
+
+        /// <summary>
+        /// Helper For Getting Raw Responses from Data API.
+        /// </summary>
+        public Task<HttpResponseMessage> ExecuteRequestAsync<T>(ICreateRequest<T> req) => ExecuteRequestAsync(HttpMethod.Post, CreateEndpoint(req.Layout), req);
+        /// <summary>
+        /// Helper For Getting Raw Responses from Data API.
+        /// </summary>
+        public Task<HttpResponseMessage> ExecuteRequestAsync<T>(IEditRequest<T> req) => ExecuteRequestAsync(new HttpMethod("PATCH"), UpdateEndpoint(req.Layout, req.RecordId), req);
+        /// <summary>
+        /// Helper For Getting Raw Responses from Data API.
+        /// </summary>
+        public Task<HttpResponseMessage> ExecuteRequestAsync<T>(IFindRequest<T> req) => ExecuteRequestAsync(HttpMethod.Post, FindEndpoint(req.Layout), req);
+
+        /// <summary>
+        /// Helper For Getting Raw Responses from Data API.
+        /// </summary>
+        public Task<HttpResponseMessage> ExecuteRequestAsync(IDeleteRequest req) => ExecuteRequestAsync(HttpMethod.Delete, DeleteEndpoint(req.Layout, req.RecordId), req);
 
         /// <summary>
         /// Set the value of global fields.

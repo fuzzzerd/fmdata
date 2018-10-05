@@ -105,6 +105,26 @@ namespace FMData.Rest
             IFileMakerRequest req);
 
         /// <summary>
+        /// Helper For Getting Raw Responses from Data API.
+        /// </summary>
+        Task<HttpResponseMessage> ExecuteRequestAsync<T>(ICreateRequest<T> req);
+        
+        /// <summary>
+        /// Helper For Getting Raw Responses from Data API.
+        /// </summary>
+        Task<HttpResponseMessage> ExecuteRequestAsync<T>(IEditRequest<T> req);
+        
+        /// <summary>
+        /// Helper For Getting Raw Responses from Data API.
+        /// </summary>
+        Task<HttpResponseMessage> ExecuteRequestAsync<T>(IFindRequest<T> req);
+
+        /// <summary>
+        /// Helper For Getting Raw Responses from Data API.
+        /// </summary>
+        Task<HttpResponseMessage> ExecuteRequestAsync(IDeleteRequest req);
+
+        /// <summary>
         /// Indicates if the client is authenticated or not.
         /// </summary>
         bool IsAuthenticated { get; }
