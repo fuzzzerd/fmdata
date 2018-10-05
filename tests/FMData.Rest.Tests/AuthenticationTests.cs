@@ -1,18 +1,18 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
-using Xunit;
-using FMData.Rest;
+using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using Xunit;
 
 // this is apparently necessary to work in appveyor / myget
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace FMData.Rest.Tests
 {
+    /// <summary>
+    /// Tests to ensure the proper authentication json is created.
+    /// </summary>
     public class AuthenticationTests
     {
         [Fact]
