@@ -116,22 +116,7 @@ namespace FMData.Xml
         /// <returns>A response containing the results of the operation.</returns>
         public async override Task<ICreateResponse> SendAsync<T>(ICreateRequest<T> req)
         {
-            // setup 
-            var url = _fmsUri + "/fmi/xml/fmresultset.xml";
-
-            // get the actual request content
-            var requestContent = req.SerializeRequest();
-
-            var globals = string.Join("", _globalsToAdd);
-            _globalsToAdd.Clear();
-
-            var sContent = requestContent + globals + $"&-db={_fileName}";
-
-            // append fileName to request since thats not represented in the request itself
-            var httpRequestContent = new StringContent(sContent);
-            
-            // execute the request by posting to fms
-            var response = await _client.PostAsync(url, httpRequestContent);
+            HttpResponseMessage response = await ExecuteRequestAsync(req);
 
             if (response.IsSuccessStatusCode)
             {
@@ -151,23 +136,7 @@ namespace FMData.Xml
         /// </summary>
         public override async Task<IResponse> SendAsync(IDeleteRequest req)
         {
-            // setup 
-            var url = _fmsUri + "/fmi/xml/fmresultset.xml";
-
-            // get the actual request content
-            var requestContent = req.SerializeRequest();
-
-            var globals = string.Join("", _globalsToAdd);
-            _globalsToAdd.Clear();
-
-            // append fileName to request since thats not represented in the request itself
-            // append globals
-            var sContent = requestContent + globals + $"&-db={_fileName}";
-
-            var httpRequestContent = new StringContent(sContent);
-
-            // execute the request by posting to fms
-            var response = await _client.PostAsync(url, httpRequestContent);
+            HttpResponseMessage response = await ExecuteRequestAsync(req);
 
             if (response.IsSuccessStatusCode)
             {
@@ -187,21 +156,7 @@ namespace FMData.Xml
         /// </summary>
         public override async Task<IEditResponse> SendAsync<T>(IEditRequest<T> req)
         {
-            // setup 
-            var url = _fmsUri + "/fmi/xml/fmresultset.xml";
-
-            var requestContent = req.SerializeRequest();
-
-            var globals = string.Join("", _globalsToAdd);
-            _globalsToAdd.Clear();
-
-            // append fileName to request since thats not represented in the request itself
-            // append globals
-            var sContent = requestContent + globals + $"&-db={_fileName}";
-
-            var httpRequestContent = new StringContent(sContent);
-
-            var response = await _client.PostAsync(url, httpRequestContent);
+            HttpResponseMessage response = await ExecuteRequestAsync(req);
 
             if (response.IsSuccessStatusCode)
             {
@@ -229,20 +184,7 @@ namespace FMData.Xml
             Func<T, int, object> fmId = null,
             Func<T, int, object> modId = null)
         {
-            var url = _fmsUri + "/fmi/xml/fmresultset.xml";
-
-            var requestContent = req.SerializeRequest();
-
-            var globals = string.Join("", _globalsToAdd);
-            _globalsToAdd.Clear();
-
-            // append fileName to request since thats not represented in the request itself
-            // append globals
-            var sContent = requestContent + globals + $"&-db={_fileName}";
-
-            var httpRequestContent = new StringContent(sContent);
-
-            var response = await _client.PostAsync(url, httpRequestContent);
+            HttpResponseMessage response = await ExecuteRequestAsync(req);
 
             if (response.IsSuccessStatusCode)
             {
@@ -275,7 +217,7 @@ namespace FMData.Xml
                 var records = xdoc
                     .Descendants(_ns + "resultset")
                     .Elements(_ns + "record")
-                    .Select(r => new RecordBase<T, Dictionary<string, IEnumerable<Dictionary<string,object>>>>
+                    .Select(r => new RecordBase<T, Dictionary<string, IEnumerable<Dictionary<string, object>>>>
                     {
                         RecordId = Convert.ToInt32(r.Attribute("record-id").Value),
                         ModId = Convert.ToInt32(r.Attribute("mod-id").Value),
@@ -284,7 +226,7 @@ namespace FMData.Xml
                             .ToDictionary(
                                 k => k.Attribute("table").Value,
                                 v => v.Elements(_ns + "record")
-                                    .Select(rc => 
+                                    .Select(rc =>
                                         FieldDataToDictionary(
                                             relatedMeta[v.Attribute("table").Value],
                                             rc.Elements(_ns + "field")
@@ -327,13 +269,13 @@ namespace FMData.Xml
                             }
                         }
 
-                        var x = dataPortal.Select(portalRow=> portalRow.ToObject(portalInstanceType));
+                        var x = dataPortal.Select(portalRow => portalRow.ToObject(portalInstanceType));
                         var y = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(portalInstanceType));
                         foreach (var z in x) y.Add(z);
                         portal.SetValue(record.FieldData, y);
                     }
                 }
-                
+
                 return records.Select(r => r.FieldData);
             }
 
@@ -376,6 +318,30 @@ namespace FMData.Xml
         }
 
         #region Private Helpers and utility methods
+        /// <summary>
+        /// Execute the POST request to FMS XML
+        /// </summary>
+        /// <param name="req">The Request To Execute.</param>
+        /// <returns>The HttpResponseMessage From The Request.</returns>
+        private async Task<HttpResponseMessage> ExecuteRequestAsync(IFileMakerRequest req)
+        {
+            var url = _fmsUri + "/fmi/xml/fmresultset.xml";
+
+            var requestContent = req.SerializeRequest();
+
+            var globals = string.Join("", _globalsToAdd);
+            _globalsToAdd.Clear();
+
+            // append fileName to request since thats not represented in the request itself
+            // append globals
+            var sContent = requestContent + globals + $"&-db={_fileName}";
+
+            var httpRequestContent = new StringContent(sContent);
+
+            var response = await _client.PostAsync(url, httpRequestContent);
+            return response;
+        }
+
         /// <summary>
         /// Convert a FMS XML Field Data into a <see cref="Dictionary{String, Object}"/>
         /// </summary>
