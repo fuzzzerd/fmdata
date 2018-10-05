@@ -15,7 +15,6 @@ namespace FMData.Xml.Tests
         string file = "test-file";
         string user = "unit";
         string pass = "test";
-        string layout = "layout";
 
         [Fact]
         public async Task FindRecord_Should_MatchName()
