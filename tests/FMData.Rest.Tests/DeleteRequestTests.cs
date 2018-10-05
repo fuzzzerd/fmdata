@@ -1,8 +1,7 @@
-using System.Net.Http;
-using System.Threading.Tasks;
-using FMData.Rest;
 using FMData.Rest.Requests;
 using RichardSzalay.MockHttp;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FMData.Rest.Tests
@@ -31,7 +30,7 @@ namespace FMData.Rest.Tests
             return fdc;
         }
 
-        [Fact]
+        [Fact(DisplayName = "Generic Model And FMRecId Should Delete")]
         public async Task DeleteByModel_Should_ReturnOK()
         {
             // arrange 
@@ -62,7 +61,37 @@ namespace FMData.Rest.Tests
             Assert.Contains(response.Messages, r => r.Message == "OK");
         }
 
-        [Fact]
+        [Fact(DisplayName ="Layout and ID Should Delete OK")]
+        public async Task DeleteByIdandLayout_Should_ReturnOK()
+        {
+            var fdc = GetMockedClient();
+
+            var response = await fdc.DeleteAsync(2, "layout");
+
+            Assert.NotNull(response);
+            Assert.Contains(response.Messages, r => r.Message == "OK");
+        }
+
+        [Fact(DisplayName ="Invalid Layout Should Return 404")]
+        public async Task DeleteByWrongLayout_Should_ReturnFourOhFour()
+        {
+            // arrange 
+            var fdc = GetMockedClient();
+
+            // act
+            var response = await fdc.DeleteAsync(2, "not-valid-layout");
+
+            // assert
+            Assert.NotNull(response);
+            Assert.Contains(response.Messages, r => r.Code == "404");
+            Assert.Contains(response.Messages, r => r.Message == "Error");
+        }
+
+        //==\\
+        // Send Async
+        //==//
+
+        [Fact(DisplayName ="By Delete Request Should Return OK")]
         public async Task DeleteShould_ReturnOK()
         {
             var fdc = GetMockedClient();
@@ -76,32 +105,6 @@ namespace FMData.Rest.Tests
 
             Assert.NotNull(response);
             Assert.Contains(response.Messages, r => r.Message == "OK");
-        }
-
-        [Fact]
-        public async Task DeleteByIdandLayout_Should_ReturnOK()
-        {
-            var fdc = GetMockedClient();
-
-            var response = await fdc.DeleteAsync(2, "layout");
-
-            Assert.NotNull(response);
-            Assert.Contains(response.Messages, r => r.Message == "OK");
-        }
-
-        [Fact]
-        public async Task DeleteByWrongLayout_Should_ReturnFourOhFour()
-        {
-            // arrange 
-            var fdc = GetMockedClient();
-
-            // act
-            var response = await fdc.DeleteAsync<TestModels.User>(2);
-
-            // assert
-            Assert.NotNull(response);
-            Assert.Contains(response.Messages, r => r.Code == "404");
-            Assert.Contains(response.Messages, r => r.Message == "Error");
         }
     }
 }

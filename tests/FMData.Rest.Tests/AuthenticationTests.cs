@@ -1,21 +1,21 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
-using Xunit;
-using FMData.Rest;
+using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using Xunit;
 
 // this is apparently necessary to work in appveyor / myget
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace FMData.Rest.Tests
 {
+    /// <summary>
+    /// Tests to ensure the proper authentication json is created.
+    /// </summary>
     public class AuthenticationTests
     {
-        [Fact]
+        [Fact(DisplayName = "Client is Unauthenticated Until Action Is Invoked")]
         public void DoesNotGetTokenOnConstructor()
         {
             using (var mockHttp = new MockHttpMessageHandler())
@@ -39,7 +39,7 @@ namespace FMData.Rest.Tests
             }
         }
 
-        [Fact]
+        [Fact(DisplayName ="FMS 401 Should Result In Unauthorized Client")]
         public void DataCliet_ShouldHandle_401_From_Sessions()
         {
             var mockHttp = new MockHttpMessageHandler();
@@ -61,7 +61,7 @@ namespace FMData.Rest.Tests
             }
         }
 
-        [Fact]
+        [Fact(DisplayName ="Refresh Token Should Generate New Token")]
         public async Task RefreshToken_ShouldGet_NewToken()
         {
             var mockHttp = new MockHttpMessageHandler();
@@ -84,7 +84,7 @@ namespace FMData.Rest.Tests
             }
         }
 
-        [Theory]
+        [Theory(DisplayName = "Refresh Token Requires Username and Password")]
         [InlineData("", "test")]
         [InlineData("integration", "")]
         public async Task RefreshToken_Requires_AllParameters(string user, string pass)
