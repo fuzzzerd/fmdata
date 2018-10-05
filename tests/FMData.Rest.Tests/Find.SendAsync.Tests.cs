@@ -22,8 +22,6 @@ namespace FMData.Rest.Tests
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            
-
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 

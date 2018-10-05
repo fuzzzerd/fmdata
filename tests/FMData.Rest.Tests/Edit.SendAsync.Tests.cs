@@ -9,16 +9,16 @@ namespace FMData.Rest.Tests
 {
     public class EditRequestTests
     {
+        private static readonly string server = "http://localhost";
+        private static readonly string file = "test-file";
+        private static readonly string user = "unit";
+        private static readonly string pass = "test";
+        private static readonly string layout = "layout";
+
         [Fact(DisplayName ="With ID Edit Should Succeed")]
         public async Task EditShould_UpdateRecord_WithId()
         {
             var mockHttp = new MockHttpMessageHandler();
-
-            var server = "http://localhost";
-            var file = "test-file";
-            var user = "unit";
-            var pass = "test";
-            var layout = "layout";
 
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
@@ -49,12 +49,6 @@ namespace FMData.Rest.Tests
         public async Task Edit_ShouldReturn_NewModId()
         {
             var mockHttp = new MockHttpMessageHandler();
-
-            var server = "http://localhost";
-            var file = "test-file";
-            var user = "unit";
-            var pass = "test";
-            var layout = "layout";
 
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
