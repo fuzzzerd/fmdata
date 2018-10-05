@@ -13,14 +13,16 @@ namespace FMData.Rest.Tests
 {
     public class FindRequestTests
     {
+        private static readonly string server = "http://localhost";
+        private static readonly string file = "test-file";
+        private static readonly string user = "unit";
+        private static readonly string pass = "test";
+
         private static IFileMakerApiClient GetMockedFDC()
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            var server = "http://localhost";
-            var file = "test-file";
-            var user = "unit";
-            var pass = "test";
+            
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
@@ -154,11 +156,6 @@ namespace FMData.Rest.Tests
             // arrange
             var mockHttp = new MockHttpMessageHandler();
 
-            var server = "http://localhost";
-            var file = "test-file";
-            var user = "unit";
-            var pass = "test";
-
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
                            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
@@ -178,10 +175,6 @@ namespace FMData.Rest.Tests
             // arrange
             var mockHttp = new MockHttpMessageHandler();
 
-            var server = "http://localhost";
-            var file = "test-file";
-            var user = "unit";
-            var pass = "test";
             var layout = FileMakerRestClient.GetTableName(new User());
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
@@ -206,10 +199,6 @@ namespace FMData.Rest.Tests
             // arrange
             var mockHttp = new MockHttpMessageHandler();
 
-            var server = "http://localhost";
-            var file = "test-file";
-            var user = "unit";
-            var pass = "test";
             var layout = FileMakerRestClient.GetTableName(new User());
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
@@ -233,10 +222,6 @@ namespace FMData.Rest.Tests
             // arrange
             var mockHttp = new MockHttpMessageHandler();
 
-            var server = "http://localhost";
-            var file = "test-file";
-            var user = "unit";
-            var pass = "test";
             var layout = "the-layout";
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
