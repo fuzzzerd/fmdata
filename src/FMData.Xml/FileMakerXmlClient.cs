@@ -44,6 +44,8 @@ namespace FMData.Xml
         private readonly string _userName;
         private readonly string _password;
 
+        private List<string> _globalsToAdd = new List<string>();
+
         #region Constructors
         /// <summary>
         /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"/> instance to the class.
@@ -120,8 +122,13 @@ namespace FMData.Xml
             // get the actual request content
             var requestContent = req.SerializeRequest();
 
+            var globals = string.Join("", _globalsToAdd);
+            _globalsToAdd.Clear();
+
+            var sContent = requestContent + globals + $"&-db={_fileName}";
+
             // append fileName to request since thats not represented in the request itself
-            var httpRequestContent = new StringContent(requestContent + $"&-db={_fileName}");
+            var httpRequestContent = new StringContent(sContent);
             
             // execute the request by posting to fms
             var response = await _client.PostAsync(url, httpRequestContent);
@@ -150,8 +157,14 @@ namespace FMData.Xml
             // get the actual request content
             var requestContent = req.SerializeRequest();
 
+            var globals = string.Join("", _globalsToAdd);
+            _globalsToAdd.Clear();
+
             // append fileName to request since thats not represented in the request itself
-            var httpRequestContent = new StringContent(requestContent + $"&-db={_fileName}");
+            // append globals
+            var sContent = requestContent + globals + $"&-db={_fileName}";
+
+            var httpRequestContent = new StringContent(sContent);
 
             // execute the request by posting to fms
             var response = await _client.PostAsync(url, httpRequestContent);
@@ -179,7 +192,14 @@ namespace FMData.Xml
 
             var requestContent = req.SerializeRequest();
 
-            var httpRequestContent = new StringContent(requestContent + $"&-db={_fileName}");
+            var globals = string.Join("", _globalsToAdd);
+            _globalsToAdd.Clear();
+
+            // append fileName to request since thats not represented in the request itself
+            // append globals
+            var sContent = requestContent + globals + $"&-db={_fileName}";
+
+            var httpRequestContent = new StringContent(sContent);
 
             var response = await _client.PostAsync(url, httpRequestContent);
 
@@ -213,7 +233,14 @@ namespace FMData.Xml
 
             var requestContent = req.SerializeRequest();
 
-            var httpRequestContent = new StringContent(requestContent + $"&-db={_fileName}");
+            var globals = string.Join("", _globalsToAdd);
+            _globalsToAdd.Clear();
+
+            // append fileName to request since thats not represented in the request itself
+            // append globals
+            var sContent = requestContent + globals + $"&-db={_fileName}";
+
+            var httpRequestContent = new StringContent(sContent);
 
             var response = await _client.PostAsync(url, httpRequestContent);
 
@@ -315,16 +342,16 @@ namespace FMData.Xml
         #endregion
 
         /// <summary>
-        /// Sets a global field. Not directly supported by Xml API.
-        /// TODO: Work around this limitation somehow?
+        /// Adds a 'set global field' to a list that will be depleted on the next actual api call (find, edit, create, delete).
         /// </summary>
         /// <param name="baseTable"></param>
         /// <param name="fieldName"></param>
         /// <param name="targetValue"></param>
-        /// <returns></returns>
+        /// <returns>Always returns null, since we don't actually get a response at this point.</returns>
         public override Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue)
         {
-            throw new NotImplementedException();
+            _globalsToAdd.Add(Uri.EscapeDataString($"&{baseTable}::{fieldName}.global={targetValue}"));
+            return null;
         }
 
         /// <summary>
