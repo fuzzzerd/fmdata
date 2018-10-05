@@ -13,7 +13,6 @@ namespace FMData.Xml.Tests
         string file = "test-file";
         string user = "unit";
         string pass = "test";
-        string layout = "layout";
 
         [Fact]
         public async Task EditRecord_ShouldMatch_SentData()
