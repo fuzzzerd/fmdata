@@ -15,8 +15,7 @@ namespace FMData.Rest.Tests
         private static readonly string pass = "test";
         private static readonly string layout = "layout";
 
-        [Fact(DisplayName ="With ID Edit Should Succeed")]
-        public async Task EditShould_UpdateRecord_WithId()
+        private static FileMakerRestClient GenerateClient()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -28,6 +27,14 @@ namespace FMData.Rest.Tests
                 .Respond("application/json", DataApiResponses.SuccessfulEdit());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            return fdc;
+        }
+
+
+        [Fact(DisplayName ="With ID Edit Should Succeed")]
+        public async Task EditShould_UpdateRecord_WithId()
+        {
+            FileMakerRestClient fdc = GenerateClient();
 
             var req = new EditRequest<Dictionary<string, string>>()
             {
@@ -48,16 +55,7 @@ namespace FMData.Rest.Tests
         [Fact(DisplayName ="New ModId Should Be Generated")]
         public async Task Edit_ShouldReturn_NewModId()
         {
-            var mockHttp = new MockHttpMessageHandler();
-
-            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
-               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
-
-            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
-                .WithPartialContent("fieldData")
-                .Respond("application/json", DataApiResponses.SuccessfulEdit());
-
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            FileMakerRestClient fdc = GenerateClient();
 
             var req = new EditRequest<Dictionary<string, string>>()
             {
