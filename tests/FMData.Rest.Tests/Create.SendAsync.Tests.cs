@@ -52,6 +52,7 @@ namespace FMData.Rest.Tests
                     { "AnotherField", "Another Valuee" }
                 }
         };
+
         private readonly ICreateRequest<Dictionary<string, string>> reqWithLayout = new CreateRequest<Dictionary<string, string>>()
         {
             Layout = layout,
