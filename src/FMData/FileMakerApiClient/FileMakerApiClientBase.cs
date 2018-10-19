@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -52,6 +53,50 @@ namespace FMData
         /// Factory to get a new Delete Request of the correct type.
         /// </summary>
         protected abstract IDeleteRequest _deleteFactory();
+        #endregion
+
+        /// <summary>
+        /// HttpClient for connecting to FMS. Injected or newed up for each instance of the client.
+        /// </summary>
+        protected readonly HttpClient _client;
+        /// <summary>
+        /// Uri to FileMaker Server
+        /// </summary>
+        protected readonly string _fmsUri;
+        /// <summary>
+        /// Database/FileMaker File we're connected/ing to.
+        /// </summary>
+        protected readonly string _fileName;
+        /// <summary>
+        /// Username for connections.
+        /// </summary>
+        protected readonly string _userName;
+        /// <summary>
+        /// Password for connections.
+        /// </summary>
+        protected readonly string _password;
+
+        #region Constructors
+        /// <summary>
+        /// FM Data Constructor with HttpClient and ConnectionInfo. Useful for Dependency Injection situations
+        /// </summary>
+        /// <param name="client">The HttpClient instance to use.</param>
+        /// <param name="conn">The connection information for FMS.</param>
+        public FileMakerApiClientBase(HttpClient client, ConnectionInfo conn) 
+        {
+            _client = client;
+
+            _fmsUri = conn.FmsUri;
+            // trim out the trailing slash if they included it
+            if (_fmsUri.EndsWith("/", StringComparison.CurrentCultureIgnoreCase))
+            {
+                _fmsUri = conn.FmsUri.Substring(0, conn.FmsUri.Length - 1);
+            }
+            _fileName = Uri.EscapeDataString(conn.Database);
+
+            _userName = conn.Username;
+            _password = conn.Password;
+        }
         #endregion
 
         /// <summary>

@@ -36,31 +36,29 @@ namespace FMData.Rest
         /// <summary>
         /// Factory to get a new Delete Request of the correct type.
         /// </summary>
-        protected override IDeleteRequest _deleteFactory() => new DeleteRequest(); 
+        protected override IDeleteRequest _deleteFactory() => new DeleteRequest();
         #endregion
-
-        private readonly HttpClient _client;
-        private readonly string _fmsUri;
-        private readonly string _fileName;
-        private readonly string _userName;
-        private readonly string _password;
 
         /// <summary>
         /// Indicates that the client is authenticated and has a token within the refresh window.
         /// </summary>
         public bool IsAuthenticated => !String.IsNullOrEmpty(dataToken) && DateTime.UtcNow.Subtract(dataTokenLastUse).TotalMinutes <= tokenExpiration;
 
+        #region FM DATA SPECIFIC
+        internal readonly int tokenExpiration = 15;
+        private string dataToken;
+        private DateTime dataTokenLastUse = DateTime.MinValue;
+
         #region Constructors
         /// <summary>
-        /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"/> instance to the class.
+        /// Create a FileMakerRestClient with a new instance of HttpClient
         /// </summary>
         /// <param name="fmsUri">FileMaker Server HTTP Uri Endpoint.</param>
         /// <param name="file">Name of the FileMaker Database to connect to.</param>
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
-        /// <remarks>Pass through constructor with no real body used for injection.</remarks>
-        public FileMakerRestClient(string fmsUri, string file, string user, string pass)
-            : this(new HttpClient(), fmsUri, file, user, pass) { }
+        public FileMakerRestClient(string fmsUri, string file, string user, string pass) 
+            : this(new HttpClient(), new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }) { }
 
         /// <summary>
         /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"></see> instance to the class.
@@ -70,26 +68,17 @@ namespace FMData.Rest
         /// <param name="file">Name of the FileMaker Database to connect to.</param>
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
-        public FileMakerRestClient(HttpClient client, string fmsUri, string file, string user, string pass)
-        {
-            _client = client;
+        public FileMakerRestClient(HttpClient client, string fmsUri, string file, string user, string pass) 
+            : this(client, new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }) { }
 
-            _fmsUri = fmsUri;
-            // trim out the trailing slash if they included it
-            if (_fmsUri.EndsWith("/", StringComparison.CurrentCultureIgnoreCase))
-            {
-                _fmsUri = fmsUri.Substring(0, fmsUri.Length - 1);
-            }
-            _fileName = file;
-            _userName = user;
-            _password = pass;
-        }
+        /// <summary>
+        /// FM Data Constructor with HttpClient and ConnectionInfo. Useful for Dependency Injection situations
+        /// </summary>
+        /// <param name="client">The HttpClient instance to use.</param>
+        /// <param name="conn">The connection information for FMS.</param>
+        public FileMakerRestClient(HttpClient client, ConnectionInfo conn) 
+            : base(client, conn) { }
         #endregion
-
-        #region FM DATA SPECIFIC
-        internal readonly int tokenExpiration = 15;
-        private string dataToken;
-        private DateTime dataTokenLastUse = DateTime.MinValue;
         private async Task UpdateTokenDateAsync()
         {
             if (!IsAuthenticated) { await RefreshTokenAsync(_userName, _password); }
@@ -99,7 +88,7 @@ namespace FMData.Rest
         /// <summary>
         /// Note we assume _fmsUri has no trailing slash as its cut off in the constructor.
         /// </summary>
-        private string _baseEndPoint => $"{_fmsUri}/fmi/data/v1/databases/{Uri.EscapeDataString(_fileName)}";
+        private string _baseEndPoint => $"{_fmsUri}/fmi/data/v1/databases/{_fileName}";
         /// <summary>
         /// Generate the appropriate Authentication endpoint uri for this instance of the data client.
         /// </summary>
@@ -311,8 +300,8 @@ namespace FMData.Rest
         /// <param name="modId">The function to use to map the ModId to the return object.</param>
         /// <returns>A single record matching the FileMaker Record Id.</returns> 
         public override async Task<T> GetByFileMakerIdAsync<T>(
-            string layout, 
-            int fileMakerId, 
+            string layout,
+            int fileMakerId,
             Func<T, int, object> fmId = null,
             Func<T, int, object> modId = null)
         {
@@ -478,7 +467,7 @@ namespace FMData.Rest
         /// <param name="modId">Function to assign the FileMaker ModId to each instance of {T}.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         public override async Task<IEnumerable<T>> SendAsync<T>(
-            IFindRequest<T> req, 
+            IFindRequest<T> req,
             Func<T, int, object> fmId = null,
             Func<T, int, object> modId = null)
         {
@@ -620,7 +609,7 @@ namespace FMData.Rest
             };
 
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
-            
+
             // run the patch action
             var response = await _client.SendAsync(requestMessage);
 
@@ -652,7 +641,7 @@ namespace FMData.Rest
         /// <param name="repetition">Field repetition number.</param>
         /// <param name="content">The content to be inserted into the container field.</param>
         /// <returns>The FileMaker Server Response from this operation.</returns>
-        public override async Task<IEditResponse> UpdateContainerAsync (
+        public override async Task<IEditResponse> UpdateContainerAsync(
             string layout,
             int recordId,
             string fieldName,
@@ -773,12 +762,14 @@ namespace FMData.Rest
                     // https://blogs.msdn.microsoft.com/pfxteam/2012/04/13/should-i-expose-synchronous-wrappers-for-asynchronous-methods/
                     Task.Run(() => LogoutAsync()).Wait();
                 }
-                catch 
+                catch
                 {
-                    // wrapping in try...catch since if we are disposing due to other errors; we could get another one during this attempt to logout the token.
-                } 
-                // dispose our injected http client
-                _client.Dispose();
+                    // wrapping in try...catch since if we are disposing due to other errors; 
+                    // we could get another one during this attempt to logout the token.
+                }
+                // specifically don't dispose our httpclient
+                // this is actually bad practice for httpclient, even though it's IDisposable.
+                // _client.Dispose(); // leaving out specifically
             }
         }
         #endregion
