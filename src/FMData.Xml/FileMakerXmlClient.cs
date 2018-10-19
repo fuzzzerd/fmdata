@@ -38,12 +38,6 @@ namespace FMData.Xml
 
         private readonly XNamespace _ns = "http://www.filemaker.com/xml/fmresultset";
 
-        private readonly HttpClient _client;
-        private readonly string _fmsUri;
-        private readonly string _fileName;
-        private readonly string _userName;
-        private readonly string _password;
-
         private List<string> _globalsToAdd = new List<string>();
 
         #region Constructors
@@ -56,7 +50,11 @@ namespace FMData.Xml
         /// <param name="pass">Account to connect with.</param>
         /// <remarks>Pass through constructor with no real body used for injection.</remarks>
         public FileMakerXmlClient(string fmsUri, string file, string user, string pass)
-            : this(new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(user, pass) }), fmsUri, file, user, pass) { }
+            : this(new HttpClient(new HttpClientHandler
+            {
+                Credentials = new NetworkCredential(user, pass)
+            }),
+                    new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }) { }
 
         /// <summary>
         /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"/> instance to the class.
@@ -67,19 +65,14 @@ namespace FMData.Xml
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
         public FileMakerXmlClient(HttpClient client, string fmsUri, string file, string user, string pass)
-        {
-            _client = client;
+            : this(client, new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }) { }
 
-            _fmsUri = fmsUri;
-            // trim out the trailing slash if they included it
-            if (_fmsUri.EndsWith("/", StringComparison.CurrentCultureIgnoreCase))
-            {
-                _fmsUri = fmsUri.Substring(0, fmsUri.Length - 1);
-            }
-            _fileName = Uri.EscapeDataString(file);
-            _userName = Uri.EscapeDataString(user);
-            _password = Uri.EscapeDataString(pass);
-        }
+        /// <summary>
+        /// FM Data Constructor with HttpClient and ConnectionInfo. Useful for Dependency Injection situations
+        /// </summary>
+        /// <param name="client">The HttpClient instance to use.</param>
+        /// <param name="conn">The connection information for FMS.</param>
+        public FileMakerXmlClient(HttpClient client, ConnectionInfo conn) : base(client, conn) { }
         #endregion
 
         #region Special Implementations
@@ -353,7 +346,8 @@ namespace FMData.Xml
         {
             return enumerable.ToDictionary(
                 k => k.Attribute("name").Value,
-                v => {
+                v =>
+                {
                     switch (metadata[v.Attribute("name").Value])
                     {
                         case "number":
