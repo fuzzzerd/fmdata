@@ -1,4 +1,4 @@
-theme: jekyll-theme-hacker
-title: FMData is a simple C# client (built for .NET Standard) to access FileMaker Data via Data API or XML/CWP.
+theme: jekyll-theme-architect
+title: A FileMaker Data API Client
 url: https://fmdata.io
 author: Nate Bross
