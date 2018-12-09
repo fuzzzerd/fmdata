@@ -16,7 +16,7 @@ The project is organized as three packages.
 - `FMdata.Rest` is for the Data API and
 - `FMData.Xml` is for consuming the legacy Xml/CWP API.
 
-> Note: Xml support is experimental, if you need full cwp/xml coverage check out fmDotNet.
+> *Note: Xml support is experimental, if you need full cwp/xml coverage check out fmDotNet.*
 
 If you've found a bug, please submit a bug report. If you have a feature idea, open an issue and consider creating a pull request.
 
@@ -120,6 +120,20 @@ var results = await client.FindAsync(toFind);
 await client.ProcessContainers(results);
 // results = IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
 ```
+
+### Insert or Update Container Data
+```csharp
+// assume recordId = a FileMaker RecordId mapped using FMIdMapper
+// assume containerDataByteArray is a byte array with file contents of some sort
+var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
+_client.UpdateContainerAsync(
+    "layout", 
+    recordId, 
+    "containerFieldName", 
+    "filename.jpg/png/pdf/etc", 
+    containerDataByteArray);
+```
+> *Note: In order to create a record with container data two calls must be made. One that creates the actual record ( see above) and one that updates the container field contents.*
 
 -----
 
