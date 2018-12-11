@@ -33,6 +33,11 @@ namespace FMData.Rest.Requests
         public IEnumerable<ISort> Sort { get; set; }
 
         /// <summary>
+        /// Determines if container data attributes are processed and loaded.
+        /// </summary>
+        public bool LoadContainerData { get; set; }
+
+        /// <summary>
         /// Create a find request from Json
         /// </summary>
         /// <param name="json">The incomming Json data to deserialize.</param>
