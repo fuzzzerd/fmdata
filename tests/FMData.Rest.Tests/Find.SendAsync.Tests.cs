@@ -124,7 +124,7 @@ namespace FMData.Rest.Tests
             // arrange
             var mockHttp = new MockHttpMessageHandler();
 
-            var layout = FileMakerRestClient.GetTableName(new User());
+            var layout = FileMakerRestClient.GetLayoutName(new User());
 
             mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/sessions")
                            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
@@ -152,7 +152,7 @@ namespace FMData.Rest.Tests
             // arrange
             var mockHttp = new MockHttpMessageHandler();
 
-            var layout = FileMakerRestClient.GetTableName(new User());
+            var layout = FileMakerRestClient.GetLayoutName(new User());
 
             mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/sessions")
                            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
