@@ -42,7 +42,7 @@ namespace FMData.Rest.Tests
             var mx = new DCModel() { Name = "Name" };
 
             // act
-            var name = FileMakerApiClientBase.GetTableName(mx);
+            var name = FileMakerApiClientBase.GetLayoutName(mx);
 
             //assert
             Assert.Equal("SomeName", name);
