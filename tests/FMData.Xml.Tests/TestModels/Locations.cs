@@ -6,7 +6,7 @@ namespace FMData.Xml.Tests.TestModels
     [DataContract(Name = "locations")]
     public class Locations
     {
-        public string Location{ get; set; }
-        public DateTime Date { get; set; }
+        [DataMember] public string Location{ get; set; }
+        [DataMember]  public DateTime Date { get; set; }
     }
 }

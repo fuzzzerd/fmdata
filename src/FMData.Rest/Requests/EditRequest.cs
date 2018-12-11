@@ -18,12 +18,12 @@ namespace FMData.Rest.Requests
         /// The FileMaker RecordID of the record to be edited.
         /// </summary>
         [JsonIgnore]
-        public string RecordId { get; set; }
+        public int RecordId { get; set; }
 
         /// <summary>
         /// Optional -- FileMaker Modification ID to ensure no update was made from the time the data was read to updated.
         /// </summary>
         [JsonProperty("modId")]
-        public string ModId { get; set; }
+        public int ModId { get; set; }
     }
 }

@@ -405,7 +405,7 @@ namespace FMData.Rest
         public override async Task<IEditResponse> SendAsync<T>(IEditRequest<T> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
-            if (string.IsNullOrEmpty(req.RecordId)) throw new ArgumentException("RecordId is required on the request.");
+            if (req.RecordId <= 0) throw new ArgumentException("RecordId is required on the request and non negative.");
 
             HttpResponseMessage response = await ExecuteRequestAsync(req);
 

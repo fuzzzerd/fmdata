@@ -16,11 +16,11 @@ namespace FMData.Xml.Requests
         /// <summary>
         /// Modification Id
         /// </summary>
-        public string ModId { get; set; }
+        public int ModId { get; set; }
         /// <summary>
         /// RecordId
         /// </summary>
-        public string RecordId { get; set; }
+        public int RecordId { get; set; }
 
         /// <summary>
         /// Serialize the request to the format needed for filemaker to accept it.

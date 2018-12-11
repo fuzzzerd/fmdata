@@ -13,10 +13,10 @@
         /// <summary>
         /// FileMaker Modification Id to provide with the request.
         /// </summary>
-        string ModId { get; set; }
+        int ModId { get; set; }
         /// <summary>
         /// FileMaker record Id to be edited.
         /// </summary>
-        string RecordId { get; set; }
+        int RecordId { get; set; }
     }
 }

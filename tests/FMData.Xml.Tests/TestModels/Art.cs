@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 namespace FMData.Xml.Tests.TestModels
 {
-    [Table("layout")]
+    [DataContract(Name = "layout")]
     public class Art
     {
         public string Title { get; set; }
