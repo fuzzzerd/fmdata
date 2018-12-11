@@ -21,9 +21,15 @@ namespace FMData
         /// The object to use as query parameters.
         /// </summary>
         IEnumerable<TRequestType> Query { get; set; }
+        
         /// <summary>
         /// The sort options for this request.
         /// </summary>
         IEnumerable<ISort> Sort { get; set; }
+
+        /// <summary>
+        /// Determines if container data attributes are processed and loaded.
+        /// </summary>
+        bool LoadContainerData { get; set; }
     }
 }

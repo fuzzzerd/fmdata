@@ -61,6 +61,11 @@ namespace FMData.Xml.Requests
         public string PreSortScriptParameter { get; set; }
 
         /// <summary>
+        /// Determines if container data attributes are processed and loaded.
+        /// </summary>
+        public bool LoadContainerData { get; set; }
+
+        /// <summary>
         /// Serialize the request. 
         /// </summary>
         /// <returns>The string representation for this request to be sent along the wire to FMS.</returns>
