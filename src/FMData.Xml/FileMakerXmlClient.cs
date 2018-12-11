@@ -278,7 +278,6 @@ namespace FMData.Xml
                 }
 
                 return results;
-
             }
 
             return null;
