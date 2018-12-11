@@ -1,14 +1,15 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace FMData.Xml.Tests.TestModels
 {
-    [Table("Users")]
+    [DataContract(Name = "Users")]
     public class User
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime Modified { get; set; }
+        [DataMember] public int Id { get; set; }
+        [DataMember] public string Name { get; set; }
+        [DataMember] public DateTime Created { get; set; }
+        [DataMember] public DateTime Modified { get; set; }
     }
 }

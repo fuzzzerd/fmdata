@@ -35,7 +35,7 @@ namespace FMData
             }
 
             request.Layout = GetTableName(input);
-            request.RecordId = recordId.ToString();
+            request.RecordId = recordId;
             request.Data = input;
             return SendAsync(request);
         }
@@ -52,7 +52,7 @@ namespace FMData
         {
             var request = _editFactory<T>();
             request.Layout = layout;
-            request.RecordId = recordId.ToString();
+            request.RecordId = recordId;
             request.Data = input;
             return SendAsync(request);
         }
@@ -69,7 +69,7 @@ namespace FMData
             var req = _editFactory<Dictionary<string, string>>();
             req.Data = editValues;
             req.Layout = layout;
-            req.RecordId = recordId.ToString();
+            req.RecordId = recordId;
             return SendAsync(req);
         }
     }

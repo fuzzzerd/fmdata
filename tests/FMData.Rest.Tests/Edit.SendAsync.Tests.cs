@@ -38,7 +38,7 @@ namespace FMData.Rest.Tests
             var req = new EditRequest<Dictionary<string, string>>()
             {
                 Layout = "layout",
-                RecordId = "264",
+                RecordId = 264,
                 Data = new Dictionary<string, string>()
                     {
                         { "Name", "Fuzzerd-Updated" },
@@ -59,7 +59,7 @@ namespace FMData.Rest.Tests
             var req = new EditRequest<Dictionary<string, string>>()
             {
                 Layout = "layout",
-                RecordId = "264",
+                RecordId = 264,
                 Data = new Dictionary<string, string>()
                     {
                         { "Name", "Fuzzerd-Updated" },

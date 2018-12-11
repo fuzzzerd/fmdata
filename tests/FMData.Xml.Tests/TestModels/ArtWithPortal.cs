@@ -8,8 +8,11 @@ namespace FMData.Xml.Tests.TestModels
     {
         [DataMember(Name = "alt-Title")]
         public string Title { get; set; }
+        [DataMember] 
         public string Artist { get; set; }
+        [DataMember] 
         public string Style { get; set; }
+        [DataMember] 
         public int length { get; set; }
 
         [PortalData("artlocations", TablePrefixFieldNames = "artlocations")]

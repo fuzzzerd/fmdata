@@ -38,12 +38,18 @@ namespace FMData.Xml
 
             foreach (var item in source)
             {
+                // match member name or data member attribute name if supplied
+                Func<PropertyInfo, bool> picker = k => {
+                    var cadm = k.GetCustomAttribute<DataMemberAttribute>();
+                    return k.Name.Equals(item.Key, StringComparison.CurrentCultureIgnoreCase)
+                        || (cadm != null 
+                            && cadm.Name != null 
+                            && cadm.Name.Equals(item.Key, StringComparison.CurrentCultureIgnoreCase));
+                };
+
                 someObjectType
                     .DeclaredProperties
-                    .FirstOrDefault(k
-                        => k.Name.Equals(item.Key, StringComparison.CurrentCultureIgnoreCase)
-                        || (k.GetCustomAttribute<DataMemberAttribute>() != null && k.GetCustomAttribute<DataMemberAttribute>().Name.Equals(item.Key, StringComparison.CurrentCultureIgnoreCase))
-                        )
+                    .FirstOrDefault(picker)
                     ?.SetValue(someObject, item.Value, null);
             }
 
@@ -74,7 +80,7 @@ namespace FMData.Xml
 
             return props.ToDictionary
             (
-                propInfo => propInfo.GetCustomAttribute<DataMemberAttribute>() == null ? propInfo.Name : propInfo.GetCustomAttribute<DataMemberAttribute>().Name,
+                propInfo => propInfo.GetCustomAttribute<DataMemberAttribute>() == null ? propInfo.Name : propInfo.GetCustomAttribute<DataMemberAttribute>().Name ?? propInfo.Name,
                 propInfo => propInfo.GetValue(source, null)
             );
         }

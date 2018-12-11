@@ -1,16 +1,16 @@
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace FMData.Rest.Tests.TestModels
 {
-    [Table("Users")]
+    [DataContract(Name = "Users")]
     public class User
     {
-        public int FileMakerRecordId { get; set; }
-        public int FileMakerModId { get; set; }
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime Modified { get; set; }
+        [IgnoreDataMember]public int FileMakerRecordId { get; set; }
+        [IgnoreDataMember]public int FileMakerModId { get; set; }
+        [DataMember]public int Id { get; set; }
+        [DataMember]public string Name { get; set; }
+        [DataMember]public DateTime Created { get; set; }
+        [DataMember]public DateTime Modified { get; set; }
     }
 }
