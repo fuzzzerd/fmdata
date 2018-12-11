@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -60,7 +59,7 @@ namespace FMData.Xml
                 .GetType()
                 .GetTypeInfo()
                 .DeclaredProperties
-                .Where(p => p.GetCustomAttribute<NotMappedAttribute>() == null);
+                .Where(p => p.GetCustomAttribute<IgnoreDataMemberAttribute>() == null);
 
             if (!includeNulls)
             {

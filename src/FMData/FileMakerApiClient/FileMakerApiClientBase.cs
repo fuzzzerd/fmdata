@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -290,17 +289,7 @@ namespace FMData
             try
             {
                 var ti = typeof(T).GetTypeInfo();
-                var ta = ti.GetCustomAttribute<TableAttribute>();
-                // try to get the 'layout' name out of the 'table' attribute.
-                // not the best but tries to utilize a built in component that is fairly standard vs a custom component dirtying up consumers pocos
-                if (ta != null)
-                {
-                    lay = ta.Name;
-                }
-                else
-                {
-                    lay = ti.GetCustomAttribute<DataContractAttribute>().Name;
-                }
+                lay = ti.GetCustomAttribute<DataContractAttribute>().Name;
             }
             catch
             {
