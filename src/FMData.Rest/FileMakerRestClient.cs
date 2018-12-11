@@ -504,6 +504,12 @@ namespace FMData.Rest
                     searchResults.Add(searchResult);
                 }
 
+                // make container processing part of the request, IF specified in the original request.
+                if (req.LoadContainerData) 
+                {
+                    await ProcessContainers(searchResults);
+                }
+
                 return searchResults;
             }
 
