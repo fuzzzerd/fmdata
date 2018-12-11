@@ -11,7 +11,7 @@ namespace FMData
         /// <typeparam name="T">The type parameter to be created.</typeparam>
         /// <param name="input">Object containing the data to be on the newly created record.</param>
         /// <returns></returns>
-        public virtual Task<ICreateResponse> CreateAsync<T>(T input) where T : class, new() => CreateAsync(GetTableName(input), input);
+        public virtual Task<ICreateResponse> CreateAsync<T>(T input) where T : class, new() => CreateAsync(GetLayoutName(input), input);
         
         /// <summary>
         /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout and perform a script with parameter.
@@ -47,7 +47,7 @@ namespace FMData
             }
 
             var request = _createFactory<T>();
-            request.Layout = GetTableName(input);
+            request.Layout = GetLayoutName(input);
             request.Data = input;
 
             if (!string.IsNullOrEmpty(script))
