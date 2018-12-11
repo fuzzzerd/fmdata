@@ -21,7 +21,7 @@ namespace FMData
         /// The object to use as query parameters.
         /// </summary>
         IEnumerable<TRequestType> Query { get; set; }
-        
+
         /// <summary>
         /// The sort options for this request.
         /// </summary>

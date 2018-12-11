@@ -8,9 +8,9 @@ namespace FMData.Rest
     public class RequestBase : IFileMakerRequest
     {
         /// <summary>
-        /// Name of the layout to run the request on
+        /// Name of the layout FileMaker should be on when processing this request.
         /// </summary>
-        [JsonIgnore] // don't serialize to output, this is internal to for our use
+        [JsonIgnore] // don't serialize to output, this is internal to for our use as this is part of the route not the payload
         public string Layout { get; set; }
 
         /// <summary>
@@ -24,6 +24,7 @@ namespace FMData.Rest
         /// </summary>
         [JsonProperty("script")]
         public string Script { get; set; }
+
         /// <summary>
         /// Request Script Parameter.
         /// </summary>
@@ -35,6 +36,7 @@ namespace FMData.Rest
         /// </summary>
         [JsonProperty("script.prerequest")]
         public string PreRequestScript { get; set; }
+
         /// <summary>
         /// Pre-request script parameter.
         /// </summary>
@@ -46,6 +48,7 @@ namespace FMData.Rest
         /// </summary>
         [JsonProperty("script.presort")]
         public string PreSortScript { get; set; }
+
         /// <summary>
         /// Pre-sort script parameter.
         /// </summary>
