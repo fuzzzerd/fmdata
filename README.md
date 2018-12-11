@@ -49,12 +49,14 @@ A model should roughly match a table in your solution. Its accessed via layout.
 [DataContract(Name="NameOfYourLayout")]
 public class Model
 {
+    [DataMember]
     public string Name { get; set; }
 
     // if your model name does not match use DataMember
     [DataMember(Name="overrideFieldName")] // the filemaker field to use
     public string Address { get; set; }
 
+    [DataMember]
     public string SomeContainerField { get; set; }
 
     // use the ContainerDataFor attribute to map container data to a byte[]
