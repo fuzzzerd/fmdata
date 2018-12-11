@@ -269,7 +269,16 @@ namespace FMData.Xml
                     }
                 }
 
-                return records.Select(r => r.FieldData);
+                var results = records.Select(r => r.FieldData);
+
+                // make container processing part of the request, IF specified in the original request.
+                if (req.LoadContainerData) 
+                {
+                    await ProcessContainers(results);
+                }
+
+                return results;
+
             }
 
             return null;
