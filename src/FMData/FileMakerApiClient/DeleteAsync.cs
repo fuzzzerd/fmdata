@@ -11,7 +11,7 @@ namespace FMData
         /// <typeparam name="T">Class with the [Table] attribute specifying the layout to use.</typeparam>
         /// <param name="recId">The FileMaker RecordId of the record to delete.</param>
         /// <returns></returns>
-        public virtual Task<IResponse> DeleteAsync<T>(int recId) where T : class, new() => DeleteAsync(recId, GetTableName(new T()));
+        public virtual Task<IResponse> DeleteAsync<T>(int recId) where T : class, new() => DeleteAsync(recId, GetLayoutName(new T()));
         /// <summary>
         /// Delete a record by id and layout.
         /// </summary>

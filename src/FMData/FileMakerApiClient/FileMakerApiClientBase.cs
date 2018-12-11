@@ -135,7 +135,7 @@ namespace FMData
         /// <returns>A single record matching the FileMaker Record Id.</returns>
         public virtual Task<T> GetByFileMakerIdAsync<T>(int fileMakerId, Func<T, int, object> fmId = null) where T : class, new()
         {
-            var layout = GetTableName(new T()); // probably a better way
+            var layout = GetLayoutName(new T()); // probably a better way
             return GetByFileMakerIdAsync(layout, fileMakerId, fmId);
         }
 
@@ -149,7 +149,7 @@ namespace FMData
         /// <returns>A single record matching the FileMaker Record Id.</returns>
         public virtual Task<T> GetByFileMakerIdAsync<T>(int fileMakerId, Func<T, int, object> fmId = null, Func<T, int, object> fmMod = null) where T : class, new()
         {
-            var layout = GetTableName(new T()); // probably a beter way
+            var layout = GetLayoutName(new T()); // probably a beter way
             return GetByFileMakerIdAsync(layout, fileMakerId, fmId, fmMod);
         }
 
@@ -283,7 +283,7 @@ namespace FMData
         /// </summary>
         /// <param name="instance"></param>
         /// <returns>The specified in the Table Attribute</returns>
-        public static string GetTableName<T>(T instance)
+        public static string GetLayoutName<T>(T instance)
         {
             string lay;
             try

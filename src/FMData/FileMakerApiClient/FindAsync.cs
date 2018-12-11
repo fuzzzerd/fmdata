@@ -12,7 +12,7 @@ namespace FMData
         /// <typeparam name="T">The type of response objects to return.</typeparam>
         /// <param name="request">The object with properties to map to the find request.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public virtual Task<IEnumerable<T>> FindAsync<T>(T request) where T : class, new() => FindAsync(GetTableName(request), request);
+        public virtual Task<IEnumerable<T>> FindAsync<T>(T request) where T : class, new() => FindAsync(GetLayoutName(request), request);
 
         /// <summary>
         /// Finds a record or records matching the properties of the input request object.
@@ -91,7 +91,7 @@ namespace FMData
             req.Offset = skip;
             req.Limit = take;
 
-            req.Layout = GetTableName(request);
+            req.Layout = GetLayoutName(request);
             req.Query = new List<T>() { request };
 
             return SendAsync(req, fmid, modid);

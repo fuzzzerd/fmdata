@@ -13,7 +13,7 @@ namespace FMData
         /// <param name="recordId">The FileMaker RecordId of the record to be edited.</param>
         /// <param name="input">Object containing the values the record should reflect after the edit.</param>
         /// <returns></returns>
-        public virtual Task<IEditResponse> EditAsync<T>(int recordId, T input) where T : class, new() => EditAsync(GetTableName(input), recordId, input);
+        public virtual Task<IEditResponse> EditAsync<T>(int recordId, T input) where T : class, new() => EditAsync(GetLayoutName(input), recordId, input);
 
         /// <summary>
         /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
@@ -34,7 +34,7 @@ namespace FMData
                 request.ScriptParameter = scriptParameter;
             }
 
-            request.Layout = GetTableName(input);
+            request.Layout = GetLayoutName(input);
             request.RecordId = recordId;
             request.Data = input;
             return SendAsync(request);
