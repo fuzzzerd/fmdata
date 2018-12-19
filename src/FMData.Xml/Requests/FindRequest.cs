@@ -17,7 +17,9 @@ namespace FMData.Xml.Requests
         /// <summary>
         /// The query values to provide to FMS.
         /// </summary>
-        public IEnumerable<T> Query { get; set; }
+        public IEnumerable<RequestQueryInstance<T>> Query { get {return _query;} }
+        private List<RequestQueryInstance<T>> _query = new List<RequestQueryInstance<T>>();
+
         /// <summary>
         /// Offset amount (skip)
         /// </summary>
@@ -71,10 +73,17 @@ namespace FMData.Xml.Requests
         /// <returns>The string representation for this request to be sent along the wire to FMS.</returns>
         public string SerializeRequest()
         {
-            var dictionary = Query.First().AsDictionary(false);
+            var dictionary = Query.First().QueryInstance.AsDictionary(false);
             var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeDataString(i.Key)}={Uri.EscapeDataString(i.Value.ToString())}"));
             var requestContent = $"-find&-lay={Layout}{stringContent}";
             return requestContent;
         }
+
+        /// <summary>
+        /// Add an instance to the query collection.
+        /// </summary>
+        /// <param name="query">The object to add to the query.</param>
+        /// <param name="omit">Flag indicating if this instance represents a find or an omit.</param>
+        public void AddQuery(T query, bool omit = false) => _query.Add(new RequestQueryInstance<T>(query, omit));
     }
 }

@@ -233,7 +233,10 @@ namespace FMData.Rest
         {
             if (string.IsNullOrEmpty(layout)) throw new ArgumentException("Layout is required on the request.");
 
-            var fmdataRequest = new FindRequest<Dictionary<string, string>> { Layout = layout, Query = new List<Dictionary<string, string>> { req } };
+            var fmdataRequest = new FindRequest<Dictionary<string, string>> { Layout = layout };
+
+            fmdataRequest.AddQuery(req, false);
+
             var response = await ExecuteRequestAsync(HttpMethod.Post, FindEndpoint(layout), fmdataRequest);
 
             if (response.StatusCode == HttpStatusCode.NotFound)

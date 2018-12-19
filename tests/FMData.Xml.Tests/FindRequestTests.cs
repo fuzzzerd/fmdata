@@ -29,12 +29,12 @@ namespace FMData.Xml.Tests
 
             var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), server, file, user, pass);
 
-            var findRequest = new Art()
+            var toFind = new Art()
             {
                 Title = "Spring in Giverny 3"
             };
 
-            var response = await fdc.FindAsync(findRequest);
+            var response = await fdc.FindAsync(toFind);
 
             Assert.NotEmpty(response);
             var first = response.First();

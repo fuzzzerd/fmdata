@@ -18,7 +18,7 @@ namespace FMData.Rest.Tests
         {
             var fdc = FindTestsHelpers.GetMockedFDC();
 
-            var response = await fdc.SendAsync(FindTestsHelpers.FindReq);
+            var response = await fdc.SendAsync(FindTestsHelpers.FindReq());
 
             var responseDataContainsResult = response.Response.Data.Any(r => r.FieldData.Any(v => v.Value.Contains("Buzz")));
 
@@ -60,7 +60,7 @@ namespace FMData.Rest.Tests
             var fdc = FindTestsHelpers.GetMockedFDC();
 
             // act
-            var response = await fdc.SendAsync(FindTestsHelpers.FindUserReqWithLayoutOverride);
+            var response = await fdc.SendAsync(FindTestsHelpers.FindUserReqWithLayoutOverride());
 
             // assert
             var responseDataContainsResult = response.Any(r => r.Name.Contains("Buzz"));
@@ -74,7 +74,7 @@ namespace FMData.Rest.Tests
             var fdc = FindTestsHelpers.GetMockedFDC();
 
             // act
-            var response = await fdc.SendAsync(FindTestsHelpers.FindUserReqWithLayoutOverride, (u, i) => u.FileMakerRecordId = i);
+            var response = await fdc.SendAsync(FindTestsHelpers.FindUserReqWithLayoutOverride(), (u, i) => u.FileMakerRecordId = i);
 
             // assert
             var responseDataContainsResult = response.All(r => r.FileMakerRecordId != 0);
@@ -88,7 +88,7 @@ namespace FMData.Rest.Tests
             var fdc = FindTestsHelpers.GetMockedFDC();
 
             // act
-            var response = await fdc.SendAsync(FindTestsHelpers.FindUserReqWithLayoutOverride, null, (u, i) => u.FileMakerModId = i);
+            var response = await fdc.SendAsync(FindTestsHelpers.FindUserReqWithLayoutOverride(), null, (u, i) => u.FileMakerModId = i);
 
             // assert (any becuase our data is mixed and has both)
             var responseDataContainsResult = response.Any(r => r.FileMakerModId != 0);
@@ -115,7 +115,7 @@ namespace FMData.Rest.Tests
 
             // act
             // assert
-            await Assert.ThrowsAsync<Exception>(async () => await fdc.SendAsync(FindTestsHelpers.FindUserReqWithLayoutOverride));
+            await Assert.ThrowsAsync<Exception>(async () => await fdc.SendAsync(FindTestsHelpers.FindUserReqWithLayoutOverride()));
         }
 
         [Fact]
@@ -140,7 +140,9 @@ namespace FMData.Rest.Tests
 
             // act
             var toFind = new User() { Id = 35 };
-            var response = await fdc.SendAsync(new FindRequest<User>() { Query = new List<User> { toFind }, Layout = layout });
+            var req = new FindRequest<User>() { Layout = layout };
+            req.AddQuery(toFind, false);
+            var response = await fdc.SendAsync(req);
 
             // assert
             Assert.Empty(response);
@@ -170,7 +172,9 @@ namespace FMData.Rest.Tests
             var toFind = new User() { Id = 35 };
 
             // assert
-            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.SendAsync(new FindRequest<User>() { Query = new List<User> { toFind } }));
+            var req = new FindRequest<User>() { };
+            req.AddQuery(toFind, false);
+            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.SendAsync(req));
         }
 
         [Fact]
@@ -195,12 +199,9 @@ namespace FMData.Rest.Tests
 
             var fr = new FindRequest<Dictionary<string, string>>
             {
-                Layout = layout,
-                Query = new List<Dictionary<string, string>>
-                {
-                    new Dictionary<string, string> { { "one", "one" } }
-                }
+                Layout = layout
             };
+            fr.AddQuery(new Dictionary<string, string> { { "one", "one" } }, false);
 
             // act
             var response = await fdc.SendAsync(fr);
