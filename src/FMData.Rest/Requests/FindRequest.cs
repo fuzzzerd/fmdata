@@ -44,7 +44,24 @@ namespace FMData.Rest.Requests
         /// </summary>
         /// <param name="json">The incomming Json data to deserialize.</param>
         /// <returns>An instance of the FindRequest object from the provided Json string.</returns>
-        public static FindRequest<T> FromJson<T>(string json) => JsonConvert.DeserializeObject<FindRequest<T>>(json, new RequestQueryInstanceConverter<T>());
+        public static FindRequest<T> FromJson<T>(string json) => JsonConvert.DeserializeObject<FindRequest<T>>(json);
+
+        /// <summary>
+        /// JSON Convert the current object to a string for passing out to the API.
+        /// </summary>
+        /// <returns></returns>
+        public override string SerializeRequest() => JsonConvert.SerializeObject(this,
+            Formatting.None,
+            new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.Ignore,
+                Converters = 
+                { 
+                    new FormatNumbersAsTextConverter(), 
+                    new RequestQueryInstanceConverter<TRequestType>() 
+                }
+            });
 
         /// <summary>
         /// Add an instance to the query collection.

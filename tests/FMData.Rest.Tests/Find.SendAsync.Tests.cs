@@ -209,5 +209,37 @@ namespace FMData.Rest.Tests
             // assert
             Assert.NotEmpty(response.Response.Data);
         }
+
+        [Fact]
+        public async Task SendAsyncFind_WithOmit_Omits()
+        {
+            // arrange
+            var mockHttp = new MockHttpMessageHandler();
+            var layout = "the-layout";
+
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/layouts/*")
+                .WithPartialContent("omit")
+                .Respond(HttpStatusCode.OK, "application/json", DataApiResponses.SuccessfulFind());
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(),
+                FindTestsHelpers.server,
+                FindTestsHelpers.file,
+                FindTestsHelpers.user,
+                FindTestsHelpers.pass);
+
+            var toFind = new User() { Id = 35 };
+            var req = new FindRequest<User>() { Layout = layout };
+            req.AddQuery(toFind, true);
+            var response = await fdc.SendAsync(req);
+
+            // assert
+            // since we're not really talking to fms, we know our 
+            // response data has 4, so we know if we had an 'omit'
+            // in our request and a 4 in our resposne things worked as expected.
+            Assert.Contains(response, c => c.Id == 4);
+        }
     }
 }
