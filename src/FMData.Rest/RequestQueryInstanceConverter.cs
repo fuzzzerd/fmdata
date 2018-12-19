@@ -5,12 +5,16 @@ using Newtonsoft.Json.Linq;
 
 namespace FMData.Rest
 {
-    public class RequestQueryInstanceConverter<T> : JsonConverter<RequestQueryInstance<T>>
+    /// <summary>
+    /// JSON Convert Class that is used to combine the query object with the omit attribute that FileMaker Server expects to see.
+    /// </summary>
+    /// <typeparam name="T">Generic Type Instance of the Request to be converted.</typeparam>
+    class RequestQueryInstanceConverter<T> : JsonConverter<RequestQueryInstance<T>>
     {
-         public override void WriteJson(JsonWriter writer, RequestQueryInstance<T> value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, RequestQueryInstance<T> value, JsonSerializer serializer)
         {
             JObject jo = JObject.FromObject(value.QueryInstance);
-            if(value.Omit)
+            if (value.Omit)
             {
                 jo.Add("omit", value.Omit);
             }
