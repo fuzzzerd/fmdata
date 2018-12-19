@@ -16,7 +16,11 @@ namespace FMData.Rest
             var jcnvt = JsonConvert.SerializeObject(value.QueryInstance, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
-                DefaultValueHandling = DefaultValueHandling.Ignore
+                DefaultValueHandling = DefaultValueHandling.Ignore,
+                Converters = 
+                {
+                    new FormatNumbersAsTextConverter()
+                }
             });
             var jo = JObject.Parse(jcnvt);
 
