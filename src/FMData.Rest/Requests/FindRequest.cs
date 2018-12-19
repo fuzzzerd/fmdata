@@ -12,7 +12,9 @@ namespace FMData.Rest.Requests
         /// The find request dictionary.
         /// </summary>
         [JsonProperty("query")]
-        public IEnumerable<TRequestType> Query { get; set; }
+        public IEnumerable<RequestQueryInstance<TRequestType>> Query { get { return _query; } }
+
+        private List<RequestQueryInstance<TRequestType>> _query = new List<RequestQueryInstance<TRequestType>>();
 
         /// <summary>
         /// Maximum number of records to return for this request.
@@ -42,6 +44,13 @@ namespace FMData.Rest.Requests
         /// </summary>
         /// <param name="json">The incomming Json data to deserialize.</param>
         /// <returns>An instance of the FindRequest object from the provided Json string.</returns>
-        public static FindRequest<T> FromJson<T>(string json) => JsonConvert.DeserializeObject<FindRequest<T>>(json);
+        public static FindRequest<T> FromJson<T>(string json) => JsonConvert.DeserializeObject<FindRequest<T>>(json, new RequestQueryInstanceConverter<T>());
+
+        /// <summary>
+        /// Add an instance to the query collection.
+        /// </summary>
+        /// <param name="query">The object to add to the query.</param>
+        /// <param name="omit">Flag indicating if this instance represents a find or an omit.</param>
+        public void AddQuery(TRequestType query, bool omit = false) => _query.Add(new RequestQueryInstance<TRequestType>(query, omit));
     }
 }

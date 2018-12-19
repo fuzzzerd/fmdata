@@ -92,7 +92,7 @@ namespace FMData
             req.Limit = take;
 
             req.Layout = GetLayoutName(request);
-            req.Query = new List<T>() { request };
+            req.AddQuery(request, false);
 
             return SendAsync(req, fmid, modid);
         }
@@ -108,7 +108,7 @@ namespace FMData
         {
             var req = _findFactory<T>();
             req.Layout = layout;
-            req.Query = new List<T>() { request };
+            req.AddQuery(request, false);
             return SendAsync(req);
         }
 

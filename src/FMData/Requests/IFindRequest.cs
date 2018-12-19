@@ -20,7 +20,7 @@ namespace FMData
         /// <summary>
         /// The object to use as query parameters.
         /// </summary>
-        IEnumerable<TRequestType> Query { get; set; }
+        IEnumerable<RequestQueryInstance<TRequestType>> Query { get; }
 
         /// <summary>
         /// The sort options for this request.
@@ -31,5 +31,10 @@ namespace FMData
         /// Determines if container data attributes are processed and loaded.
         /// </summary>
         bool LoadContainerData { get; set; }
+
+        /// <summary>
+        /// Add query data to the find request.
+        /// </summary>
+        void AddQuery(TRequestType query, bool omit = false);
     }
 }

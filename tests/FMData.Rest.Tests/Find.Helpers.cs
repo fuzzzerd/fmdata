@@ -33,32 +33,29 @@ namespace FMData.Rest.Tests
             return fdc;
         }
 
-        public static IFindRequest<Dictionary<string, string>> FindReq => new FindRequest<Dictionary<string, string>>()
+        public static IFindRequest<Dictionary<string, string>> FindReq ()
         {
-            Query = new List<Dictionary<string, string>>()
-            {
-                new Dictionary<string,string>()
-                {
-                    {"Name","fuzzzerd"}
-                },
-                new Dictionary<string,string>()
-                {
-                    {"Name","Admin"}, {"omit","true"},
-                }
-            },
-            Layout = "layout"
-        };
+            var r = new FindRequest<Dictionary<string, string>>() {Layout = "layout"};
 
-        public static IFindRequest<User> FindUserReqWithLayoutOverride => new FindRequest<User>()
-        {
-            Query = new List<User>()
+            r.AddQuery(new Dictionary<string,string>()
             {
-                new User()
-                {
-                    Id =1
-                }
-            },
-            Layout = "layout"
-        };
+                {"Name","fuzzzerd"}
+            }, false);
+
+            r.AddQuery(
+            new Dictionary<string,string>()
+            {
+                {"Name","Admin"}, {"omit","true"},
+            }, false);
+
+            return r;
+        }
+
+        public static IFindRequest<User> FindUserReqWithLayoutOverride() 
+        {
+            var r = new FindRequest<User>() { Layout = "layout" };
+            r.AddQuery(new User() { Id =1 }, false);
+            return r;
+        }
     }
 }

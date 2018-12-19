@@ -13,17 +13,12 @@ namespace FMData.Rest.Tests
 {
     public class GeneralTests
     {
-        private FindRequest<User> FindReq => new FindRequest<User>()
+        private FindRequest<User> FindReq ()
         {
-            Query = new List<User>()
-            {
-                new User()
-                {
-                    Id =1
-                }
-            },
-            Layout = "layout"
-        };
+            var r = new FindRequest<User>() { Layout = "layout" };
+            r.AddQuery(new User() { Id =1 }, false);
+            return r;
+        }
 
         [DataContract(Name = "SomeName")]
         private class DCModel
@@ -52,7 +47,7 @@ namespace FMData.Rest.Tests
         public void FindRequest_Numbers_ShouldSerialize_ToStrings_ForFileMaker()
         {
             //arrange 
-            var r = FindReq;
+            var r = FindReq();
 
             // act
             var json = r.SerializeRequest();
@@ -65,7 +60,7 @@ namespace FMData.Rest.Tests
         public void FindRequest_Numbers_ShouldNotSerialize_ToNumbers()
         {
             //arrange 
-            var r = FindReq;
+            var r = FindReq();
 
             // act
             var json = r.SerializeRequest();
