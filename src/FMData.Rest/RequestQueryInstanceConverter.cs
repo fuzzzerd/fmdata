@@ -13,7 +13,14 @@ namespace FMData.Rest
     {
         public override void WriteJson(JsonWriter writer, RequestQueryInstance<T> value, JsonSerializer serializer)
         {
-            JObject jo = JObject.FromObject(value.QueryInstance);
+            var jcnvt = JsonConvert.SerializeObject(value.QueryInstance, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.Ignore
+            });
+            var jo = JObject.Parse(jcnvt);
+
+            //JObject jo = JObject.ReadFrom(value.QueryInstance);
             if (value.Omit)
             {
                 jo.Add("omit", value.Omit);
