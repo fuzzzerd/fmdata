@@ -53,7 +53,7 @@ namespace FMData.Rest.Tests
             var json = r.SerializeRequest();
 
             //assert
-            Assert.Contains("\"Id\":\"1\"", json);
+            Assert.Contains("\"Id\": \"1\"", json);
         }
 
         [Fact]
