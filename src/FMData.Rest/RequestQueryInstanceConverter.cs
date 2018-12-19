@@ -24,10 +24,10 @@ namespace FMData.Rest
             });
             var jo = JObject.Parse(jcnvt);
 
-            //JObject jo = JObject.ReadFrom(value.QueryInstance);
             if (value.Omit)
             {
-                jo.Add("omit", value.Omit);
+                // as always, filemaker is stringly typed...
+                jo.Add("omit", "true");
             }
             string json = jo.ToString();
             writer.WriteRawValue(json);
