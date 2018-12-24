@@ -22,15 +22,18 @@ namespace FMData.Rest
                     new FormatNumbersAsTextConverter()
                 }
             });
-            var jo = JObject.Parse(jcnvt);
 
+            // only parse a second time if we have an omit to insert.
             if (value.Omit)
             {
+                var jo = JObject.Parse(jcnvt);
                 // as always, filemaker is stringly typed...
                 jo.Add("omit", "true");
+                // overwrite original since we have an omit situation
+                jcnvt =jo.ToString();
             }
-            string json = jo.ToString();
-            writer.WriteRawValue(json);
+
+            writer.WriteRawValue(jcnvt);
         }
 
         public override RequestQueryInstance<T> ReadJson(JsonReader reader, Type objectType, RequestQueryInstance<T> existingValue, bool hasExistingValue, JsonSerializer serializer)
