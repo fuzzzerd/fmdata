@@ -33,7 +33,7 @@ namespace FMData
         /// Factory to get a new Edit Request of the correct type.
         /// </summary>
         protected abstract IEditRequest<T> _editFactory<T>();
-        
+
         /// <summary>
         /// Make a new instance of the Find Request for Type T.
         /// </summary>
