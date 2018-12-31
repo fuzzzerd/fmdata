@@ -20,11 +20,11 @@ namespace FMData
         /// <summary>
         /// The query object containing the query parameters.
         /// </summary>
-        public TRequestType QueryInstance {get; set;}
+        public TRequestType QueryInstance { get; set; }
 
         /// <summary>
         /// Boolean flag indicating if this instance should be entered as a find request FIND or OMIT.
         /// </summary>
-        public bool Omit {get; set;} = false;
+        public bool Omit { get; set; } = false;
     }
 }
