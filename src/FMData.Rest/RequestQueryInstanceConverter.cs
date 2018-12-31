@@ -17,7 +17,7 @@ namespace FMData.Rest
             {
                 NullValueHandling = NullValueHandling.Ignore,
                 DefaultValueHandling = DefaultValueHandling.Ignore,
-                Converters = 
+                Converters =
                 {
                     new FormatNumbersAsTextConverter()
                 }
@@ -30,7 +30,7 @@ namespace FMData.Rest
                 // as always, filemaker is stringly typed...
                 jo.Add("omit", "true");
                 // overwrite original since we have an omit situation
-                jcnvt =jo.ToString();
+                jcnvt = jo.ToString();
             }
 
             writer.WriteRawValue(jcnvt);
