@@ -708,42 +708,58 @@ namespace FMData.Rest
         /// Converts a JToken instance and maps it to the generic type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="fmId"></param>
-        /// <param name="modId"></param>
-        /// <param name="input"></param>
+        /// <param name="fmId">FileMaker Record Id map function.</param>
+        /// <param name="modId">Modifcation Id map function.</param>
+        /// <param name="input">JSON.NET JToken instance from Data Api Response.</param>
         /// <returns></returns>
         private static T ConvertJTokenToInstance<T>(Func<T, int, object> fmId, Func<T, int, object> modId, JToken input) where T : class, new()
         {
             // JToken.ToObject is a helper method that uses JsonSerializer internally
-            T searchResult = input["fieldData"].ToObject<T>();
-
-            var portals = typeof(T).GetTypeInfo().DeclaredProperties.Where(p => p.GetCustomAttribute<PortalDataAttribute>() != null);
-            foreach (var portal in portals)
+            T searchResult = null;
+            try
             {
-                var portalDataAttr = portal.GetCustomAttribute<PortalDataAttribute>();
-                var namedPortal = portalDataAttr.NamedPortalInstance;
-                var portalInstanceType = portal.PropertyType.GetTypeInfo().GenericTypeArguments[0];
-                var pt = portal.PropertyType;
-                JToken portalJ = input["portalData"][namedPortal];
+                searchResult= input["fieldData"].ToObject<T>();
+            }
+            catch (System.Exception ex)
+            {
+                // something went wrong converting the base model, so we wrap that exception and push it along
+                throw new InvalidDataException($"Error converting Data API response to instance of {typeof(T).Name}", ex);
+            }
 
-                // .ToList() here so we iterate on a different copy of the collection
-                // which allows for calling add/remove on the list ;) clever
-                // https://stackoverflow.com/a/26864676/86860 - explination 
-                // https://stackoverflow.com/a/604843/86860 - solution
-                foreach (JObject jo in portalJ.ToList())
+            try
+            {
+                var portals = typeof(T).GetTypeInfo().DeclaredProperties.Where(p => p.GetCustomAttribute<PortalDataAttribute>() != null);
+                foreach (var portal in portals)
                 {
-                    foreach (JProperty jp in jo.Properties().ToList())
+                    var portalDataAttr = portal.GetCustomAttribute<PortalDataAttribute>();
+                    var namedPortal = portalDataAttr.NamedPortalInstance;
+                    var portalInstanceType = portal.PropertyType.GetTypeInfo().GenericTypeArguments[0];
+                    var pt = portal.PropertyType;
+                    JToken portalJ = input["portalData"][namedPortal];
+
+                    // .ToList() here so we iterate on a different copy of the collection
+                    // which allows for calling add/remove on the list ;) clever
+                    // https://stackoverflow.com/a/26864676/86860 - explination 
+                    // https://stackoverflow.com/a/604843/86860 - solution
+                    foreach (JObject jo in portalJ.ToList())
                     {
-                        if (jp.Name.Contains(portalDataAttr.TablePrefixFieldNames + "::"))
+                        foreach (JProperty jp in jo.Properties().ToList())
                         {
-                            jo.Add(jp.Name.Replace(portalDataAttr.TablePrefixFieldNames + "::", ""), jp.Value);
-                            jo.Remove(jp.Name);
+                            if (jp.Name.Contains(portalDataAttr.TablePrefixFieldNames + "::"))
+                            {
+                                jo.Add(jp.Name.Replace(portalDataAttr.TablePrefixFieldNames + "::", ""), jp.Value);
+                                jo.Remove(jp.Name);
+                            }
                         }
                     }
-                }
 
-                var x = portalJ.ToObject(pt);
-                portal.SetValue(searchResult, x);
+                    var x = portalJ.ToObject(pt);
+                    portal.SetValue(searchResult, x);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                throw new InvalidDataException("Error converting Portal Data", ex);
             }
 
             // recordId
@@ -753,6 +769,7 @@ namespace FMData.Rest
             // modid
             int fmmodId = input["modId"].ToObject<int>();
             modId?.Invoke(searchResult, fmmodId);
+
             return searchResult;
         }
         #endregion
