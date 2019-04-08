@@ -28,35 +28,6 @@ namespace FMData
         IDeleteRequest GenerateDeleteRequest();
         #endregion
 
-        #region Create
-        /// <summary>
-        /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout.
-        /// </summary>
-        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
-        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
-        /// <returns>The newly created RecordId and/or an error response code.</returns>
-        Task<ICreateResponse> CreateAsync<T>(T input) where T : class, new();
-
-        /// <summary>
-        /// <see cref="FileMakerApiClientBase.CreateAsync{T}(T, string, string)"/>
-        /// </summary>
-        Task<ICreateResponse> CreateAsync<T>(T input, string script, string scriptParameter) where T : class, new();
-
-        /// <summary>
-        /// <see cref="FileMakerApiClientBase.CreateAsync{T}(T, string, string, string, string, string, string)"/>
-        /// </summary>
-        Task<ICreateResponse> CreateAsync<T>(T input, string script, string scriptParameter, string preRequestScript, string preRequestScriptParam, string preSortScript, string preSortScriptParameter) where T : class, new();
-
-        /// <summary>
-        /// Create a record in the file via explicit layout.
-        /// </summary>
-        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
-        /// <param name="layout">The layout to use for the context of the request.</param>
-        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
-        /// <returns>The newly created RecordId and/or an error response code.</returns>
-        Task<ICreateResponse> CreateAsync<T>(string layout, T input) where T : class, new();
-        #endregion
-
         #region Get
         /// <summary>
         /// Get a single record by FileMaker RecordId
