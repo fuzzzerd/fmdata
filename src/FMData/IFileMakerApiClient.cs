@@ -199,25 +199,6 @@ namespace FMData
         Task<IEditResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues);
         #endregion
 
-        #region Delete
-        /// <summary>
-        /// Delete a record by FileMaker RecordId. 
-        /// </summary>
-        /// <param name="recId">The filemaker RecordId to delete.</param>
-        /// <typeparam name="T">Used to pull the [TableAttribute] value to determine the layout to use.</typeparam>
-        /// <returns></returns>
-        /// <remarks>Use the other delete overload if the class does not use the [Table] attribute.</remarks>
-        Task<IResponse> DeleteAsync<T>(int recId) where T : class, new();
-
-        /// <summary>
-        /// Delete a record.
-        /// </summary>
-        /// <param name="recId">The FileMaker RecordId to delete.</param>
-        /// <param name="layout">The layout to use for the delete.</param>
-        /// <returns></returns>
-        Task<IResponse> DeleteAsync(int recId, string layout);
-        #endregion
-
         #region Set Globals
         /// <summary>
         /// Set the value of global fields.
