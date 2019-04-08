@@ -81,47 +81,6 @@ namespace FMData
         Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
         #endregion
 
-        #region Edit
-        /// <summary>
-        /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
-        /// </summary>
-        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
-        /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
-        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
-        /// <returns></returns>
-        Task<IEditResponse> EditAsync<T>(int recordId, T input) where T : class, new();
-
-        /// <summary>
-        /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
-        /// </summary>
-        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
-        /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
-        /// <param name="script">script to run after the request.</param>
-        /// <param name="scriptParameter">Script parameter.</param>
-        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
-        /// <returns></returns>
-        Task<IEditResponse> EditAsync<T>(int recordId, string script, string scriptParameter, T input) where T : class, new();
-
-        /// <summary>
-        /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
-        /// </summary>
-        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
-        /// <param name="layout"></param>
-        /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
-        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
-        /// <returns></returns>
-        Task<IEditResponse> EditAsync<T>(string layout, int recordId, T input) where T : class, new();
-
-        /// <summary>
-        /// Edit a record based on RecordId, layout, and a collection of key/value pairs for the fields to be updated.
-        /// </summary>
-        /// <param name="recordId">FileMaker RecordId</param>
-        /// <param name="layout">The layout to use for context.</param>
-        /// <param name="editValues">The field and value pairs to send for edit.</param>
-        /// <returns></returns>
-        Task<IEditResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues);
-        #endregion
-
         #region Set Globals
         /// <summary>
         /// Set the value of global fields.
