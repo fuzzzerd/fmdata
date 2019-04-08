@@ -293,7 +293,7 @@ namespace FMData
             }
             catch
             {
-                throw new ArgumentException($"Could not load Layout name from TableAttribute on {typeof(T).Name}.");
+                throw new ArgumentException($"Could not load Layout name from DataContractAttribute on {typeof(T).Name}.");
             }
             return lay;
         }
