@@ -127,6 +127,15 @@ namespace FMData
             Func<T, int, object> modId = null) where T : class, new();
 
         /// <summary>
+        /// Find a record with utilizing a class instance to define the find request field values.
+        /// </summary>
+        /// <typeparam name="T">The response type to extract and return.</typeparam>
+        /// <param name="layout">The layout to perform the request on.</param>
+        /// <param name="req">The dictionary of key/value pairs to find against.</param>
+        /// <returns></returns>
+        public abstract Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
+
+        /// <summary>
         /// Get a single record by FileMaker RecordId
         /// </summary>
         /// <typeparam name="T">The type to load the data into.</typeparam>
