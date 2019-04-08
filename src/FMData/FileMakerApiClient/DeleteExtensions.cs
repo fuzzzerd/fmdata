@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 
 namespace FMData
 {
+    /// <summary>
+    /// Delete Helper Extensions
+    /// </summary>
     public static class DeleteExtensions
     {
         /// <summary>
