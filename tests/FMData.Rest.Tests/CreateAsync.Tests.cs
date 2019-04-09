@@ -36,7 +36,7 @@ namespace FMData.Rest.Tests
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
             return fdc;
         }
 
