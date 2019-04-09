@@ -57,19 +57,9 @@ namespace FMData.Rest
         /// <param name="file">Name of the FileMaker Database to connect to.</param>
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
+        [Obsolete("Creates a new HttpClient for this instance, and is generally not good. Inject a managed client.")]
         public FileMakerRestClient(string fmsUri, string file, string user, string pass) 
             : this(new HttpClient(), new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }) { }
-
-        /// <summary>
-        /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"></see> instance to the class.
-        /// </summary>
-        /// <param name="client">An <see ref="HttpClient"/> instance to utilize for the liftime of this Data Client.</param>
-        /// <param name="fmsUri">FileMaker Server HTTP Uri Endpoint.</param>
-        /// <param name="file">Name of the FileMaker Database to connect to.</param>
-        /// <param name="user">Account to connect with.</param>
-        /// <param name="pass">Account to connect with.</param>
-        public FileMakerRestClient(HttpClient client, string fmsUri, string file, string user, string pass) 
-            : this(client, new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }) { }
 
         /// <summary>
         /// FM Data Constructor with HttpClient and ConnectionInfo. Useful for Dependency Injection situations

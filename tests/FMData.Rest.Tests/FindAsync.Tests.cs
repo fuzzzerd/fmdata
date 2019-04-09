@@ -29,11 +29,7 @@ namespace FMData.Rest.Tests
                 .WithPartialContent("offset") // ensure the request contains the expected content
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(),
-                FindTestsHelpers.server,
-                FindTestsHelpers.file,
-                FindTestsHelpers.user,
-                FindTestsHelpers.pass);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
 
             // act
             var response = await fdc.FindAsync(new User()
@@ -61,11 +57,7 @@ namespace FMData.Rest.Tests
                 .WithPartialContent("script").WithPartialContent("nos_ran")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(),
-                FindTestsHelpers.server,
-                FindTestsHelpers.file,
-                FindTestsHelpers.user,
-                FindTestsHelpers.pass);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
 
             // act
             var response = await fdc.FindAsync(new User()
@@ -92,11 +84,7 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/layouts/{layout}/_find")
                 .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.FindNotFound());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(),
-                FindTestsHelpers.server,
-                FindTestsHelpers.file,
-                FindTestsHelpers.user,
-                FindTestsHelpers.pass);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
 
             // act
             var toFind = new User() { Id = 35 };
@@ -120,11 +108,7 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/layouts/{layout}/_find")
                 .Respond(HttpStatusCode.OK, "application/json", DataApiResponses.SuccessfulFindWithPortal());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(),
-                FindTestsHelpers.server,
-                FindTestsHelpers.file,
-                FindTestsHelpers.user,
-                FindTestsHelpers.pass);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
 
             var toFind = new PortalModel() { ES_ONE = "" };
 

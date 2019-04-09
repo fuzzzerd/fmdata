@@ -8,6 +8,7 @@ namespace FMData.Rest.Tests
 {
     public class FindTestsHelpers
     {
+        public static ConnectionInfo Connection => new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass };
         public static readonly string server = "http://localhost";
         public static readonly string file = "test-file";
         public static readonly string user = "unit";
@@ -29,7 +30,7 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/Users/_find")
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
             return fdc;
         }
 
