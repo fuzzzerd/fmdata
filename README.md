@@ -71,6 +71,21 @@ public class Model
 }
 ```
 
+### Using IHttpClientFactory
+
+Constructors take an `HttpClient` and you can setup the DI pipeline in Startup.cs like so.
+
+```csharp
+services.AddSingleton<FMData.ConnectionInfo>(ci => new FMData.ConnectionInfo
+{
+    FmsUri = "https://example.com",
+    Username = "user",
+    Password = "password",
+    Database = "FILEMAKERFILE"
+});
+services.AddHttpClient<IFileMakerApiClient, FileMakerRestClient>();
+```
+
 ### Performing a Find
 
 ```csharp
@@ -126,17 +141,19 @@ await client.ProcessContainers(results);
 ```
 
 ### Insert or Update Container Data
+
 ```csharp
 // assume recordId = a FileMaker RecordId mapped using FMIdMapper
 // assume containerDataByteArray is a byte array with file contents of some sort
 var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
 _client.UpdateContainerAsync(
-    "layout", 
-    recordId, 
-    "containerFieldName", 
-    "filename.jpg/png/pdf/etc", 
+    "layout",
+    recordId,
+    "containerFieldName",
+    "filename.jpg/png/pdf/etc",
     containerDataByteArray);
 ```
+
 > *Note: In order to create a record with container data two calls must be made. One that creates the actual record ( see above) and one that updates the container field contents.*
 
 -----
