@@ -146,8 +146,11 @@ namespace FMData.Rest
         #region FM Data Token Management
 
         /// <summary>
-        /// <see cref="IFileMakerRestClient.RefreshTokenAsync(string, string)"/>
+        /// Refreshes the internally stored authentication token from filemaker server.
         /// </summary>
+        /// <param name="username">Username of the account to authenticate.</param>
+        /// <param name="password">Password of the account to authenticate.</param>
+        /// <returns>An AuthResponse from deserialized from FileMaker Server json response.</returns>
         public async Task<AuthResponse> RefreshTokenAsync(string username, string password)
         {
             // parameter checks
@@ -189,8 +192,9 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// <see cref="IFileMakerRestClient.LogoutAsync"/>
+        /// Logs the user out and nullifies the token.
         /// </summary>
+        /// <returns>FileMaker Response</returns>
         public async Task<IResponse> LogoutAsync()
         {
             // add a default request header of our data token to nuke
