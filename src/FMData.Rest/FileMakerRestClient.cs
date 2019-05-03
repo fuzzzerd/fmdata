@@ -18,7 +18,7 @@ namespace FMData.Rest
     /// <summary>
     /// FileMaker Data API Client Implementation.
     /// </summary>
-    public class FileMakerRestClient : FileMakerApiClientBase, IFileMakerRestClient
+    public class FileMakerRestClient : FileMakerApiClientBase, IFileMakerApiClient
     {
         #region Request Factories
         /// <summary>
