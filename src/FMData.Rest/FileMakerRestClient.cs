@@ -308,64 +308,54 @@ namespace FMData.Rest
             var uriEndpoint = GetRecordEndpoint(layout, fileMakerId);
             var response = await ExecuteRequestAsync(HttpMethod.Get, uriEndpoint, new FindRequest<T>());
 
-            if (response.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.OK)
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
-
-                JObject joResponse = JObject.Parse(responseJson);
-
-                // get JSON result objects into a list
-                IList<JToken> results = joResponse["response"]["data"].Children().ToList();
-
-                // serialize JSON results into .NET objects
-                IList<T> searchResults = new List<T>();
-                foreach (JToken result in results)
+                switch (response.StatusCode)
                 {
-                    // JToken.ToObject is a helper method that uses JsonSerializer internally
-                    T searchResult = ConvertJTokenToInstance(fmId, modId, result);
-
-                    // container handling
-                    await ProcessContainer(searchResult);
-
-                    // add to response list
-                    searchResults.Add(searchResult);
-                }
-
-                return searchResults.FirstOrDefault();
-            }
-
-            if (response.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                try
-                {
-                    // attempt to read response content
-                    if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
-
-                    var responseJson = await response.Content.ReadAsStringAsync();
-                    var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
-                    if (responseObject.Messages.Any(m => m.Code == "401"))
-                    {
+                    case HttpStatusCode.NotFound:
                         return null;
-                    }
-
-                    throw new Exception(responseObject.Messages.First().Message);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Could not read response from Data API.", ex);
+                    case HttpStatusCode.InternalServerError:
+                        // attempt to read response content
+                        if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
+                        var responseJsonEx = await response.Content.ReadAsStringAsync();
+                        var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJsonEx);
+                        if (responseObject.Messages.Any(m => m.Code == "401"))
+                        {
+                            return null;
+                        }
+                        throw new Exception(responseObject.Messages.First().Message);
+                    default:
+                        // other error TODO: Improve handling
+                        throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responed with {response.StatusCode}");
                 }
             }
 
-            // not found, so return empty list
-            if (response.StatusCode == HttpStatusCode.NotFound)
+            var responseJson = await response.Content.ReadAsStringAsync();
+
+            JObject joResponse = JObject.Parse(responseJson);
+
+            // get JSON result objects into a list
+            IList<JToken> results = joResponse["response"]["data"].Children().ToList();
+
+            // serialize JSON results into .NET objects
+            IList<T> searchResults = new List<T>();
+            foreach (JToken result in results)
             {
-                return null;
+                // JToken.ToObject is a helper method that uses JsonSerializer internally
+                T searchResult = ConvertJTokenToInstance(fmId, modId, result);
+
+                // container handling
+                await ProcessContainer(searchResult);
+
+                // add to response list
+                searchResults.Add(searchResult);
             }
 
-            // other error TODO: Improve handling
-            throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responed with {response.StatusCode}");
+            return searchResults.FirstOrDefault();
         }
         #endregion
+
+
 
         #region SendAsync Implementations
 
