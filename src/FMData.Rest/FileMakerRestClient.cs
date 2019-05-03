@@ -51,22 +51,22 @@ namespace FMData.Rest
 
         #region Constructors
         /// <summary>
-        /// Create a FileMakerRestClient with a new instance of HttpClient
+        /// Create a FileMakerRestClient with a new instance of HttpClient.
         /// </summary>
         /// <param name="fmsUri">FileMaker Server HTTP Uri Endpoint.</param>
         /// <param name="file">Name of the FileMaker Database to connect to.</param>
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
         [Obsolete("Creates a new HttpClient for this instance, and is generally not good. Inject a managed client.")]
-        public FileMakerRestClient(string fmsUri, string file, string user, string pass) 
+        public FileMakerRestClient(string fmsUri, string file, string user, string pass)
             : this(new HttpClient(), new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }) { }
 
         /// <summary>
-        /// FM Data Constructor with HttpClient and ConnectionInfo. Useful for Dependency Injection situations
+        /// FM Data Constructor with HttpClient and ConnectionInfo. Useful for Dependency Injection situations.
         /// </summary>
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="conn">The connection information for FMS.</param>
-        public FileMakerRestClient(HttpClient client, ConnectionInfo conn) 
+        public FileMakerRestClient(HttpClient client, ConnectionInfo conn)
             : base(client, conn) { }
         #endregion
         private async Task UpdateTokenDateAsync()
@@ -502,7 +502,7 @@ namespace FMData.Rest
                 }
 
                 // make container processing part of the request, IF specified in the original request.
-                if (req.LoadContainerData) 
+                if (req.LoadContainerData)
                 {
                     await ProcessContainers(searchResults);
                 }
@@ -712,7 +712,7 @@ namespace FMData.Rest
             T searchResult = null;
             try
             {
-                searchResult= input["fieldData"].ToObject<T>();
+                searchResult = input["fieldData"].ToObject<T>();
             }
             catch (System.Exception ex)
             {
