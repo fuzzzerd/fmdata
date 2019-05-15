@@ -27,7 +27,7 @@ namespace FMData.Rest.Tests
                 .WithPartialContent("script").WithPartialContent("myscr_name")
                 .Respond("application/json", DataApiResponses.SuccessfulEdit());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 
             var response = await fdc.EditAsync(rid, "myscr_name", null, new User() { Name = "test user" });
 

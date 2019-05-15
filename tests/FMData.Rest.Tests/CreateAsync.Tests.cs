@@ -1,3 +1,4 @@
+using FMData.Rest.Requests;
 using FMData.Rest.Tests.TestModels;
 using RichardSzalay.MockHttp;
 using System;
@@ -35,7 +36,7 @@ namespace FMData.Rest.Tests
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
             return fdc;
         }
 
@@ -74,28 +75,10 @@ namespace FMData.Rest.Tests
                 AnotherField = "Different Value"
             };
 
-            var response = await fdc.CreateAsync(layout, newModel);
-
-            Assert.NotNull(response);
-            Assert.Contains(response.Messages, r => r.Message == "OK");
-        }
-
-        /// <summary>
-        /// this would be 'Somelayout' but we don't provide a response on that uri for 
-        /// this test, so a valid response means the layout paramater was used.
-        /// </summary>
-        [Fact(DisplayName = "Layout Parameter Should Override Model Attribute")]
-        public async Task Layout_Parameter_Should_Override_Model_Attribute()
-        {
-            var fdc = GetDataClientWithMockedHandler();
-
-            var newModel = new ModelWithLayout()
-            {
-                Name = "Fuzzzerd",
-                AnotherField = "Different Value"
-            };
-
-            var response = await fdc.CreateAsync(layout, newModel);
+            var request = new CreateRequest<ModelWithoutLayout>();
+            request.Data = newModel;
+            request.Layout = layout;
+            var response = await fdc.SendAsync(request);
 
             Assert.NotNull(response);
             Assert.Contains(response.Messages, r => r.Message == "OK");
