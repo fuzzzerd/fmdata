@@ -32,14 +32,14 @@ namespace FMData.Rest.Tests
                 mockHttp.When(HttpMethod.Delete, $"{server}fmi/data/v1/databases/{file}/sessions*")
                 .Respond(HttpStatusCode.OK, "application/json", "");
 
-                using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass))
+                using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass }))
                 {
                     Assert.False(fdc.IsAuthenticated);
                 }
             }
         }
 
-        [Fact(DisplayName ="FMS 401 Should Result In Unauthorized Client")]
+        [Fact(DisplayName = "FMS 401 Should Result In Unauthorized Client")]
         public void DataCliet_ShouldHandle_401_From_Sessions()
         {
             var mockHttp = new MockHttpMessageHandler();
@@ -55,13 +55,13 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/sessions*")
                 .Respond(HttpStatusCode.OK, "application/json", "");
 
-            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass))
+            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass }))
             {
                 Assert.False(fdc.IsAuthenticated);
             }
         }
 
-        [Fact(DisplayName ="Refresh Token Should Generate New Token")]
+        [Fact(DisplayName = "Refresh Token Should Generate New Token")]
         public async Task RefreshToken_ShouldGet_NewToken()
         {
             var mockHttp = new MockHttpMessageHandler();
@@ -77,7 +77,7 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/sessions*")
                 .Respond(HttpStatusCode.OK, "application/json", "");
 
-            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass))
+            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass }))
             {
                 var response = await fdc.RefreshTokenAsync("integration", "test");
                 Assert.Equal("someOtherToken", response.Response.Token);
@@ -101,7 +101,7 @@ namespace FMData.Rest.Tests
                 .Respond(HttpStatusCode.OK, "application/json", "");
 
             // pass in actual values here since we DON'T want this to blow up on constructor 
-            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, "user", "pass"))
+            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass }))
             {
                 await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.RefreshTokenAsync(user, pass));
             }

@@ -26,7 +26,7 @@ namespace FMData.Rest.Tests
                 .WithPartialContent("fieldData")
                 .Respond("application/json", DataApiResponses.SuccessfulEdit());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
             return fdc;
         }
 

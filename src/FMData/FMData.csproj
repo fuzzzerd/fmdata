@@ -21,6 +21,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <MinVerMinimumMajorMinor>4.0</MinVerMinimumMajorMinor>
     <MinVerTagPrefix>v</MinVerTagPrefix>
   </PropertyGroup>
 

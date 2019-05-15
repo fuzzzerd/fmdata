@@ -18,7 +18,7 @@ namespace FMData.Rest
     /// <summary>
     /// FileMaker Data API Client Implementation.
     /// </summary>
-    public class FileMakerRestClient : FileMakerApiClientBase, IFileMakerRestClient
+    public class FileMakerRestClient : FileMakerApiClientBase, IFileMakerApiClient
     {
         #region Request Factories
         /// <summary>
@@ -51,32 +51,22 @@ namespace FMData.Rest
 
         #region Constructors
         /// <summary>
-        /// Create a FileMakerRestClient with a new instance of HttpClient
+        /// Create a FileMakerRestClient with a new instance of HttpClient.
         /// </summary>
         /// <param name="fmsUri">FileMaker Server HTTP Uri Endpoint.</param>
         /// <param name="file">Name of the FileMaker Database to connect to.</param>
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
-        public FileMakerRestClient(string fmsUri, string file, string user, string pass) 
+        [Obsolete("Creates a new HttpClient for this instance, and is generally not good. Inject a managed client.")]
+        public FileMakerRestClient(string fmsUri, string file, string user, string pass)
             : this(new HttpClient(), new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }) { }
 
         /// <summary>
-        /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"></see> instance to the class.
-        /// </summary>
-        /// <param name="client">An <see ref="HttpClient"/> instance to utilize for the liftime of this Data Client.</param>
-        /// <param name="fmsUri">FileMaker Server HTTP Uri Endpoint.</param>
-        /// <param name="file">Name of the FileMaker Database to connect to.</param>
-        /// <param name="user">Account to connect with.</param>
-        /// <param name="pass">Account to connect with.</param>
-        public FileMakerRestClient(HttpClient client, string fmsUri, string file, string user, string pass) 
-            : this(client, new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }) { }
-
-        /// <summary>
-        /// FM Data Constructor with HttpClient and ConnectionInfo. Useful for Dependency Injection situations
+        /// FM Data Constructor with HttpClient and ConnectionInfo. Useful for Dependency Injection situations.
         /// </summary>
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="conn">The connection information for FMS.</param>
-        public FileMakerRestClient(HttpClient client, ConnectionInfo conn) 
+        public FileMakerRestClient(HttpClient client, ConnectionInfo conn)
             : base(client, conn) { }
         #endregion
         private async Task UpdateTokenDateAsync()
@@ -156,8 +146,11 @@ namespace FMData.Rest
         #region FM Data Token Management
 
         /// <summary>
-        /// <see cref="IFileMakerRestClient.RefreshTokenAsync(string, string)"/>
+        /// Refreshes the internally stored authentication token from filemaker server.
         /// </summary>
+        /// <param name="username">Username of the account to authenticate.</param>
+        /// <param name="password">Password of the account to authenticate.</param>
+        /// <returns>An AuthResponse from deserialized from FileMaker Server json response.</returns>
         public async Task<AuthResponse> RefreshTokenAsync(string username, string password)
         {
             // parameter checks
@@ -199,8 +192,9 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// <see cref="IFileMakerRestClient.LogoutAsync"/>
+        /// Logs the user out and nullifies the token.
         /// </summary>
+        /// <returns>FileMaker Response</returns>
         public async Task<IResponse> LogoutAsync()
         {
             // add a default request header of our data token to nuke
@@ -314,62 +308,50 @@ namespace FMData.Rest
             var uriEndpoint = GetRecordEndpoint(layout, fileMakerId);
             var response = await ExecuteRequestAsync(HttpMethod.Get, uriEndpoint, new FindRequest<T>());
 
-            if (response.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.OK)
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
-
-                JObject joResponse = JObject.Parse(responseJson);
-
-                // get JSON result objects into a list
-                IList<JToken> results = joResponse["response"]["data"].Children().ToList();
-
-                // serialize JSON results into .NET objects
-                IList<T> searchResults = new List<T>();
-                foreach (JToken result in results)
+                switch (response.StatusCode)
                 {
-                    // JToken.ToObject is a helper method that uses JsonSerializer internally
-                    T searchResult = ConvertJTokenToInstance(fmId, modId, result);
-
-                    // container handling
-                    await ProcessContainer(searchResult);
-
-                    // add to response list
-                    searchResults.Add(searchResult);
-                }
-
-                return searchResults.FirstOrDefault();
-            }
-
-            if (response.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                try
-                {
-                    // attempt to read response content
-                    if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
-
-                    var responseJson = await response.Content.ReadAsStringAsync();
-                    var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
-                    if (responseObject.Messages.Any(m => m.Code == "401"))
-                    {
+                    case HttpStatusCode.NotFound:
                         return null;
-                    }
-
-                    throw new Exception(responseObject.Messages.First().Message);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Could not read response from Data API.", ex);
+                    case HttpStatusCode.InternalServerError:
+                        // attempt to read response content
+                        if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
+                        var responseJsonEx = await response.Content.ReadAsStringAsync();
+                        var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJsonEx);
+                        if (responseObject.Messages.Any(m => m.Code == "401"))
+                        {
+                            return null;
+                        }
+                        throw new Exception(responseObject.Messages.First().Message);
+                    default:
+                        // other error TODO: Improve handling
+                        throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responed with {response.StatusCode}");
                 }
             }
 
-            // not found, so return empty list
-            if (response.StatusCode == HttpStatusCode.NotFound)
+            var responseJson = await response.Content.ReadAsStringAsync();
+
+            JObject joResponse = JObject.Parse(responseJson);
+
+            // get JSON result objects into a list
+            IList<JToken> results = joResponse["response"]["data"].Children().ToList();
+
+            // serialize JSON results into .NET objects
+            IList<T> searchResults = new List<T>();
+            foreach (JToken result in results)
             {
-                return null;
+                // JToken.ToObject is a helper method that uses JsonSerializer internally
+                T searchResult = ConvertJTokenToInstance(fmId, modId, result);
+
+                // container handling
+                await ProcessContainer(searchResult);
+
+                // add to response list
+                searchResults.Add(searchResult);
             }
 
-            // other error TODO: Improve handling
-            throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responed with {response.StatusCode}");
+            return searchResults.FirstOrDefault();
         }
         #endregion
 
@@ -508,7 +490,7 @@ namespace FMData.Rest
                 }
 
                 // make container processing part of the request, IF specified in the original request.
-                if (req.LoadContainerData) 
+                if (req.LoadContainerData)
                 {
                     await ProcessContainers(searchResults);
                 }
@@ -718,7 +700,7 @@ namespace FMData.Rest
             T searchResult = null;
             try
             {
-                searchResult= input["fieldData"].ToObject<T>();
+                searchResult = input["fieldData"].ToObject<T>();
             }
             catch (System.Exception ex)
             {

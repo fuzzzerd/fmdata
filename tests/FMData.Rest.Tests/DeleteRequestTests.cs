@@ -26,7 +26,7 @@ namespace FMData.Rest.Tests
 
             var mockedClient = mockHttp.ToHttpClient();
 
-            var fdc = new FileMakerRestClient(mockedClient, server, file, user, pass);
+            var fdc = new FileMakerRestClient(mockedClient, new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
             return fdc;
         }
 
@@ -51,7 +51,7 @@ namespace FMData.Rest.Tests
 
             var mockedClient = mockHttp.ToHttpClient();
 
-            var fdc = new FileMakerRestClient(mockedClient, server, file, user, pass);
+            var fdc = new FileMakerRestClient(mockedClient, new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 
             // act
             var response = await fdc.DeleteAsync<TestModels.User>(2);

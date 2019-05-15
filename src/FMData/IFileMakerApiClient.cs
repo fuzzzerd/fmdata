@@ -28,35 +28,6 @@ namespace FMData
         IDeleteRequest GenerateDeleteRequest();
         #endregion
 
-        #region Create
-        /// <summary>
-        /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout.
-        /// </summary>
-        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
-        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
-        /// <returns>The newly created RecordId and/or an error response code.</returns>
-        Task<ICreateResponse> CreateAsync<T>(T input) where T : class, new();
-
-        /// <summary>
-        /// <see cref="FileMakerApiClientBase.CreateAsync{T}(T, string, string)"/>
-        /// </summary>
-        Task<ICreateResponse> CreateAsync<T>(T input, string script, string scriptParameter) where T : class, new();
-
-        /// <summary>
-        /// <see cref="FileMakerApiClientBase.CreateAsync{T}(T, string, string, string, string, string, string)"/>
-        /// </summary>
-        Task<ICreateResponse> CreateAsync<T>(T input, string script, string scriptParameter, string preRequestScript, string preRequestScriptParam, string preSortScript, string preSortScriptParameter) where T : class, new();
-
-        /// <summary>
-        /// Create a record in the file via explicit layout.
-        /// </summary>
-        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
-        /// <param name="layout">The layout to use for the context of the request.</param>
-        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
-        /// <returns>The newly created RecordId and/or an error response code.</returns>
-        Task<ICreateResponse> CreateAsync<T>(string layout, T input) where T : class, new();
-        #endregion
-
         #region Get
         /// <summary>
         /// Get a single record by FileMaker RecordId
@@ -101,83 +72,6 @@ namespace FMData
 
         #region Find
         /// <summary>
-        /// Finds a record or records matching the properties of the input request object.
-        /// </summary>
-        /// <param name="request">The object to utilize for the find request parameters.</param>
-        /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(T request) where T : class, new();
-
-        /// <summary>
-        /// Finds a record or records matching the properties of the input request object.
-        /// </summary>
-        /// <param name="request">The object to utilize for the find request parameters.</param>
-        /// <param name="skip">Number of records to skip.</param>
-        /// <param name="take">Number of records to return.</param>
-        /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(T request, int skip, int take) where T : class, new();
-
-        /// <summary>
-        /// Finds a record or records matching the properties of the input request object.
-        /// </summary>
-        /// <param name="request">The object to utilize for the find request parameters.</param>
-        /// <param name="fmid">Function to map the FileMaker RecordId to each instance T.</param>
-        /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(T request, Func<T, int, object> fmid) where T : class, new();
-
-        /// <summary>
-        /// Finds a record or records matching the properties of the input request object.
-        /// </summary>
-        /// <param name="request">The object to utilize for the find request parameters.</param>
-        /// <param name="fmid">Function to map the FileMaker RecordId to each instance T.</param>
-        /// <param name="skip">Number of records to skip.</param>
-        /// <param name="take">Number of records to return.</param>
-        /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(T request, int skip, int take, Func<T, int, object> fmid) where T : class, new();
-
-        /// <summary>
-        /// Finds a record or records matching the properties of the input request object.
-        /// </summary>
-        /// <param name="request">The object to utilize for the find request parameters.</param>
-        /// <param name="script">Script to run after the request is completed.</param>
-        /// <param name="scriptParameter">Script parameter.</param>
-        /// <param name="fmid">Function to map the FileMaker RecordId to each instance T.</param>
-        /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(T request, string script, string scriptParameter, Func<T, int, object> fmid) where T : class, new();
-
-        /// <summary>
-        /// Finds a record or records matching the properties of the input request object.
-        /// </summary>
-        /// <param name="request">The object to utilize for the find request parameters.</param>
-        /// <param name="skip">Number of records to skip.</param>
-        /// <param name="take">Number of records to return.</param>
-        /// <param name="script">Script to run after the request is completed.</param>
-        /// <param name="scriptParameter">Script parameter.</param>
-        /// <param name="fmid">Function to map the FileMaker RecordId to each instance T.</param>
-        /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(T request, int skip, int take, string script, string scriptParameter, Func<T, int, object> fmid) where T : class, new();
-
-        /// <summary>
-        /// Finds a record or records matching the properties of the input request object.
-        /// </summary>
-        /// <param name="request">The object to utilize for the find request parameters.</param>
-        /// <param name="skip">Number of records to skip.</param>
-        /// <param name="take">Number of records to return.</param>
-        /// <param name="script">Script to run after the request is completed.</param>
-        /// <param name="scriptParameter">Script parameter.</param>
-        /// <param name="fmid">Function to map the FileMaker RecordId to each instance T.</param>
-        /// <param name="modid">Function to map hte FileMaker ModId to each instance of T.</param>
-        /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(T request, int skip, int take, string script, string scriptParameter, Func<T, int, object> fmid, Func<T, int, object> modid) where T : class, new();
-
-        /// <summary>
-        /// Finds a record or records matching the properties of the input request object.
-        /// </summary>
-        /// <param name="layout">Overrides the TableAttribute for the name of the layout to run this request on.</param>
-        /// <param name="request">The object to utilize for the find request parameters.</param>
-        /// <returns></returns>
-        Task<IEnumerable<T>> FindAsync<T>(string layout, T request) where T : class, new();
-
-        /// <summary>
         /// Finds a record or records matching the properties of the input request.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -185,66 +79,6 @@ namespace FMData
         /// <param name="req"></param>
         /// <returns></returns>
         Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
-        #endregion
-
-        #region Edit
-        /// <summary>
-        /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
-        /// </summary>
-        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
-        /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
-        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
-        /// <returns></returns>
-        Task<IEditResponse> EditAsync<T>(int recordId, T input) where T : class, new();
-
-        /// <summary>
-        /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
-        /// </summary>
-        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
-        /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
-        /// <param name="script">script to run after the request.</param>
-        /// <param name="scriptParameter">Script parameter.</param>
-        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
-        /// <returns></returns>
-        Task<IEditResponse> EditAsync<T>(int recordId, string script, string scriptParameter, T input) where T : class, new();
-
-        /// <summary>
-        /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
-        /// </summary>
-        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
-        /// <param name="layout"></param>
-        /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
-        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
-        /// <returns></returns>
-        Task<IEditResponse> EditAsync<T>(string layout, int recordId, T input) where T : class, new();
-
-        /// <summary>
-        /// Edit a record based on RecordId, layout, and a collection of key/value pairs for the fields to be updated.
-        /// </summary>
-        /// <param name="recordId">FileMaker RecordId</param>
-        /// <param name="layout">The layout to use for context.</param>
-        /// <param name="editValues">The field and value pairs to send for edit.</param>
-        /// <returns></returns>
-        Task<IEditResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues);
-        #endregion
-
-        #region Delete
-        /// <summary>
-        /// Delete a record by FileMaker RecordId. 
-        /// </summary>
-        /// <param name="recId">The filemaker RecordId to delete.</param>
-        /// <typeparam name="T">Used to pull the [TableAttribute] value to determine the layout to use.</typeparam>
-        /// <returns></returns>
-        /// <remarks>Use the other delete overload if the class does not use the [Table] attribute.</remarks>
-        Task<IResponse> DeleteAsync<T>(int recId) where T : class, new();
-
-        /// <summary>
-        /// Delete a record.
-        /// </summary>
-        /// <param name="recId">The FileMaker RecordId to delete.</param>
-        /// <param name="layout">The layout to use for the delete.</param>
-        /// <returns></returns>
-        Task<IResponse> DeleteAsync(int recId, string layout);
         #endregion
 
         #region Set Globals
