@@ -1,6 +1,6 @@
 # FMData: a C# client for FileMaker
 
-FMData is a C# wrapper for accessing data from FileMaker databases.
+FMData is a C# client for accessing data from FileMaker databases.
 
 | Package | Build Status |  MyGet Version | Nuget Version | Nuget Downloads |
 |---|---|---|---|---|
