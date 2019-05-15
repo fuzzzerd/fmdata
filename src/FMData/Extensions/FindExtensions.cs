@@ -79,7 +79,6 @@ namespace FMData
             return client.SendAsync(req, fmid);
         }
 
-
         /// <summary>
         /// Finds a record or records matching the properties of the input request object.
         /// </summary>
