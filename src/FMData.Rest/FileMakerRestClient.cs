@@ -355,8 +355,6 @@ namespace FMData.Rest
         }
         #endregion
 
-
-
         #region SendAsync Implementations
 
         /// <summary>
