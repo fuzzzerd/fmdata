@@ -121,10 +121,23 @@ namespace FMData
         /// <summary>
         /// Send a Find Record request to the FileMaker API.
         /// </summary>
+        public virtual Task<IEnumerable<T>> SendAsync<T>(
+            IFindRequest<T> req) where T : class, new() => SendAsync(req, null, null);
+
+        /// <summary>
+        /// Send a Find Record request to the FileMaker API.
+        /// </summary>
+        public virtual Task<IEnumerable<T>> SendAsync<T>(
+            IFindRequest<T> req,
+            Func<T, int, object> fmId) where T : class, new() => SendAsync(req, fmId, null);
+
+        /// <summary>
+        /// Send a Find Record request to the FileMaker API.
+        /// </summary>
         public abstract Task<IEnumerable<T>> SendAsync<T>(
             IFindRequest<T> req,
-            Func<T, int, object> fmId = null,
-            Func<T, int, object> modId = null) where T : class, new();
+            Func<T, int, object> fmId,
+            Func<T, int, object> modId) where T : class, new();
 
         /// <summary>
         /// Find a record with utilizing a class instance to define the find request field values.

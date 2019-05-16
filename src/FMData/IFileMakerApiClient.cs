@@ -160,13 +160,28 @@ namespace FMData
         /// Find a record or records matching the request.
         /// </summary>
         /// <param name="req">Find request.</param>
+        Task<IEnumerable<T>> SendAsync<T>(
+            IFindRequest<T> req) where T : class, new();
+
+        /// <summary>
+        /// Find a record or records matching the request.
+        /// </summary>
+        /// <param name="req">Find request.</param>
         /// <param name="fmId">Function to map the FileMaker Id to the model.</param>
-        /// <param name="modId">Function to map the FileMaker Mod Id to the modle.</param>
-        /// <returns></returns>
         Task<IEnumerable<T>> SendAsync<T>(
             IFindRequest<T> req, 
-            Func<T, int, object> fmId = null, 
-            Func<T, int, object> modId = null) where T : class, new();
+            Func<T, int, object> fmId) where T : class, new();
+
+        /// <summary>
+        /// Find a record or records matching the request.
+        /// </summary>
+        /// <param name="req">Find request.</param>
+        /// <param name="fmId">Function to map the FileMaker Id to the model.</param>
+        /// <param name="modId">Function to map the FileMaker Mod Id to the modle.</param>
+        Task<IEnumerable<T>> SendAsync<T>(
+            IFindRequest<T> req, 
+            Func<T, int, object> fmId, 
+            Func<T, int, object> modId) where T : class, new();
 
         /// <summary>
         /// Edit record.

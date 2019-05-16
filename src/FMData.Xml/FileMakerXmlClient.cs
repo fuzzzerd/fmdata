@@ -174,8 +174,8 @@ namespace FMData.Xml
         /// <returns>The projected results matching the find request.</returns>
         public override async Task<IEnumerable<T>> SendAsync<T>(
             IFindRequest<T> req,
-            Func<T, int, object> fmId = null,
-            Func<T, int, object> modId = null)
+            Func<T, int, object> fmId,
+            Func<T, int, object> modId)
         {
             HttpResponseMessage response = await ExecuteRequestAsync(req);
 
