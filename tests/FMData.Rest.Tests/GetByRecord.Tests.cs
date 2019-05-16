@@ -33,7 +33,7 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Get, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/{recordId}")
                 .Respond("application/json", DataApiResponses.SuccessfulGetById(recordId));
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 
             // act
             var response = await fdc.GetByFileMakerIdAsync<User>(layout, recordId, FMrecordIdMapper);
@@ -69,7 +69,7 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Get, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/{recordId}")
                 .Respond("application/json", DataApiResponses.SuccessfulGetByIdWithContainer(recordId, $"{server}/some-data-path"));
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 
             // act
             var response = await fdc.GetByFileMakerIdAsync<ContainerFieldTestModel>(recordId, FMrecordIdMapper);

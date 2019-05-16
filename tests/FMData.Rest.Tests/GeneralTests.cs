@@ -13,10 +13,10 @@ namespace FMData.Rest.Tests
 {
     public class GeneralTests
     {
-        private FindRequest<User> FindReq ()
+        private FindRequest<User> FindReq()
         {
             var r = new FindRequest<User>() { Layout = "layout" };
-            r.AddQuery(new User() { Id =1 }, false);
+            r.AddQuery(new User() { Id = 1 }, false);
             return r;
         }
 
@@ -74,7 +74,7 @@ namespace FMData.Rest.Tests
         public void GenCreate_ShouldBeCreateRequest()
         {
             //arrange 
-            var fmc = new FileMakerRestClient("", "", "", "");
+            var fmc = new FileMakerRestClient(new HttpClient(), new ConnectionInfo { FmsUri = "", Database = "", Username = "", Password = "" });
 
             // act
             var req = fmc.GenerateCreateRequest<TestModels.User>();
@@ -87,7 +87,7 @@ namespace FMData.Rest.Tests
         public void GenFind_ShouldBeFindRequest()
         {
             //arrange 
-            var fmc = new FileMakerRestClient("", "", "", "");
+            var fmc = new FileMakerRestClient(new HttpClient(), new ConnectionInfo { FmsUri = "", Database = "", Username = "", Password = "" });
 
             // act
             var req = fmc.GenerateFindRequest<TestModels.User>();
@@ -100,7 +100,7 @@ namespace FMData.Rest.Tests
         public void GenEdit_ShouldBeEditRequest()
         {
             //arrange 
-            var fmc = new FileMakerRestClient("", "", "", "");
+            var fmc = new FileMakerRestClient(new HttpClient(), new ConnectionInfo { FmsUri = "", Database = "", Username = "", Password = "" });
 
             // act
             var req = fmc.GenerateEditRequest<TestModels.User>();
@@ -113,7 +113,7 @@ namespace FMData.Rest.Tests
         public void GenDelete_ShouldBeDeleteRequest()
         {
             //arrange 
-            var fmc = new FileMakerRestClient("", "", "", "");
+            var fmc = new FileMakerRestClient(new HttpClient(), new ConnectionInfo { FmsUri = "", Database = "", Username = "", Password = "" });
 
             // act
             var req = fmc.GenerateDeleteRequest();
@@ -141,7 +141,7 @@ namespace FMData.Rest.Tests
                 .WithPartialContent("fuzzzerd") // ensure the request contains the expected content
                 .Respond("application/json", DataApiResponses.SuccessfulFind());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 
             // act
             var response = await fdc.FindAsync(new User()

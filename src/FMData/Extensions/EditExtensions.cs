@@ -4,29 +4,48 @@ using System.Threading.Tasks;
 
 namespace FMData
 {
-    public abstract partial class FileMakerApiClientBase
+    /// <summary>
+    /// Edit Helper Extensions
+    /// </summary>
+    public static class EditExtensions
     {
         /// <summary>
         /// Edit a record by FileMaker RecordId.
         /// </summary>
         /// <typeparam name="T">The type to pull the [Table] attribute from for context layout.</typeparam>
+        /// <param name="client">FileMaker API client instance.</param>
         /// <param name="recordId">The FileMaker RecordId of the record to be edited.</param>
         /// <param name="input">Object containing the values the record should reflect after the edit.</param>
         /// <returns></returns>
-        public virtual Task<IEditResponse> EditAsync<T>(int recordId, T input) where T : class, new() => EditAsync(GetLayoutName(input), recordId, input);
+        public static Task<IEditResponse> EditAsync<T>(
+            this IFileMakerApiClient client,
+            int recordId,
+            T input) where T : class, new()
+        {
+            var request = client.GenerateEditRequest(input);
+            request.RecordId = recordId;
+            return client.SendAsync(request);
+        }
 
         /// <summary>
         /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
         /// </summary>
         /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
+        /// <param name="client">FileMaker API client instance.</param>
         /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
         /// <param name="script">script to run after the request.</param>
         /// <param name="scriptParameter">Script parameter.</param>
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
         /// <returns></returns>
-        public virtual Task<IEditResponse> EditAsync<T>(int recordId, string script, string scriptParameter, T input) where T : class, new()
+        public static Task<IEditResponse> EditAsync<T>(
+            this IFileMakerApiClient client,
+            int recordId,
+            string script,
+            string scriptParameter,
+            T input) where T : class, new()
         {
-            var request = _editFactory<T>();
+            var request = client.GenerateEditRequest(input);
+            request.RecordId = recordId;
 
             if (!string.IsNullOrEmpty(script))
             {
@@ -34,43 +53,50 @@ namespace FMData
                 request.ScriptParameter = scriptParameter;
             }
 
-            request.Layout = GetLayoutName(input);
-            request.RecordId = recordId;
-            request.Data = input;
-            return SendAsync(request);
+            return client.SendAsync(request);
         }
 
         /// <summary>
         /// Edit a record.
         /// </summary>
         /// <typeparam name="T">Type parameter for this edit.</typeparam>
+        /// <param name="client">FileMaker API client instance.</param>
         /// <param name="layout">Explicitly define the layout to use.</param>
         /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
         /// <param name="input">Object with the updated values.</param>
         /// <returns></returns>
-        public virtual Task<IEditResponse> EditAsync<T>(string layout, int recordId, T input) where T : class, new()
+        public static Task<IEditResponse> EditAsync<T>(
+            this IFileMakerApiClient client,
+            string layout,
+            int recordId,
+            T input) where T : class, new()
         {
-            var request = _editFactory<T>();
+            var request = client.GenerateEditRequest<T>();
+            request.Data = input;
             request.Layout = layout;
             request.RecordId = recordId;
-            request.Data = input;
-            return SendAsync(request);
+            return client.SendAsync(request);
         }
 
         /// <summary>
         /// Edit a record.
         /// </summary>
         /// <param name="layout">Explicitly define the layout to use.</param>
+        /// <param name="client">FileMaker API client instance.</param>
         /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
         /// <param name="editValues">Object with the updated values.</param>
         /// <returns></returns>
-        public virtual Task<IEditResponse> EditAsync(int recordId, string layout, Dictionary<string, string> editValues)
+        public static Task<IEditResponse> EditAsync(
+            this IFileMakerApiClient client, 
+            int recordId, 
+            string layout, 
+            Dictionary<string, string> editValues)
         {
-            var req = _editFactory<Dictionary<string, string>>();
-            req.Data = editValues;
-            req.Layout = layout;
-            req.RecordId = recordId;
-            return SendAsync(req);
+            var request = client.GenerateEditRequest<Dictionary<string, string>>();
+            request.Data = editValues;
+            request.Layout = layout;
+            request.RecordId = recordId;
+            return client.SendAsync(request);
         }
     }
 }
