@@ -1,4 +1,11 @@
+plugins:
+ - jekyll-seo-tag
+ - jekyll-avatar
 theme: jekyll-theme-cayman
 title: A FileMaker Data API Client
 url: https://fmdata.io
 author: Nate Bross
+logo: https://repository-images.githubusercontent.com/126491080/72f6dd80-78ac-11e9-9d45-939bae6a8cb5
+twitter:
+  username: natebross
+  card: summary
