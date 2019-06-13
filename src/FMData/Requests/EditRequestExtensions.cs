@@ -6,20 +6,6 @@ namespace FMData
     public static class EditRequestExtensions
     {
         /// <summary>
-        /// Generates a new edit request for the input object.
-        /// </summary>
-        /// <param name="client">The FileMaker API client instance.</param>
-        /// <param name="data">The initial edit data request.</param>
-        /// <typeparam name="T">The type used for the edit request.</typeparam>
-        /// <returns>An IFindRequest{T} instance setup per the initial query paramater.</returns>
-        public static IEditRequest<T> GenerateEditRequest<T>(this IFileMakerApiClient client, T data)
-        {
-            return client.GenerateEditRequest<T>()
-                .SetData(data)
-                .UseLayout(data);
-        }
-
-        /// <summary>
         /// Set the data for this request.
         /// </summary>
         /// <param name="request">The request. This is the 'this' parameter.</param>

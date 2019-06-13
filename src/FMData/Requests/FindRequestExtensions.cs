@@ -6,20 +6,6 @@ namespace FMData
     public static class FindRequestExtensions
     {
         /// <summary>
-        /// Generates a new find request with an initial find query instance, specifying the layout via the model's DataContract attribute.
-        /// </summary>
-        /// <param name="client">The FileMaker API client instance.</param>
-        /// <param name="initialQuery">The initial find request data.</param>
-        /// <typeparam name="T">The type used for the find request.</typeparam>
-        /// <returns>An IFindRequest{T} instance setup per the initial query paramater.</returns>
-        public static IFindRequest<T> GenerateFindRequest<T>(this IFileMakerApiClient client, T initialQuery)
-        {
-            return client.GenerateFindRequest<T>()
-                .AddCriteria(initialQuery, false)
-                .UseLayout(initialQuery);
-        }
-
-        /// <summary>
         /// Adds a new find criteria to the find request.
         /// </summary>
         /// <param name="request">The request. This is the 'this' parameter.</param>

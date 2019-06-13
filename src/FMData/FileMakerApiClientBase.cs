@@ -25,6 +25,17 @@ namespace FMData
         protected abstract ICreateRequest<T> _createFactory<T>();
 
         /// <summary>
+        /// Generates a new edit request for the input object.
+        /// </summary>
+        /// <param name="data">The initial edit data request.</param>
+        /// <typeparam name="T">The type used for the edit request.</typeparam>
+        /// <returns>An IEditRequest{T} instance setup per the initial query paramater.</returns>
+        public IEditRequest<T> GenerateEditRequest<T>(T data)
+        {
+            return GenerateEditRequest<T>().SetData(data).UseLayout(data);
+        }
+
+        /// <summary>
         /// Make a new instance of the Edit Request class for Type T.
         /// </summary>
         public IEditRequest<T> GenerateEditRequest<T>() => _editFactory<T>();
@@ -33,6 +44,17 @@ namespace FMData
         /// Factory to get a new Edit Request of the correct type.
         /// </summary>
         protected abstract IEditRequest<T> _editFactory<T>();
+
+        /// <summary>
+        /// Generates a new find request with an initial find query instance, specifying the layout via the model's DataContract attribute.
+        /// </summary>
+        /// <param name="initialQuery">The initial find request data.</param>
+        /// <typeparam name="T">The type used for the find request.</typeparam>
+        /// <returns>An IFindRequest{T} instance setup per the initial query paramater.</returns>
+        public IFindRequest<T> GenerateFindRequest<T>(T initialQuery)
+        {
+            return GenerateFindRequest<T>().AddCriteria(initialQuery, false).UseLayout(initialQuery);
+        }
 
         /// <summary>
         /// Make a new instance of the Find Request for Type T.
@@ -205,7 +227,7 @@ namespace FMData
         public Task<IEnumerable<T>> FindAsync<T>(
             T request) where T : class, new()
         {
-            var req = this.GenerateFindRequest(request);
+            var req = GenerateFindRequest(request);
             return SendAsync(req);
         }
 
@@ -236,7 +258,7 @@ namespace FMData
             T request,
             Func<T, int, object> fmIdFunc) where T : class, new()
         {
-            var req = this.GenerateFindRequest(request);
+            var req = GenerateFindRequest(request);
             return SendAsync(req, fmIdFunc);
         }
 
@@ -254,7 +276,7 @@ namespace FMData
             int take,
             Func<T, int, object> fmIdFunc) where T : class, new()
         {
-            var req = this.GenerateFindRequest(request).SetLimit(take).SetOffset(skip);
+            var req = GenerateFindRequest(request).SetLimit(take).SetOffset(skip);
             return SendAsync(req, fmIdFunc);
         }
 
@@ -272,7 +294,7 @@ namespace FMData
              string scriptParameter,
              Func<T, int, object> fmIdFunc) where T : class, new()
         {
-            var req = this.GenerateFindRequest(request)
+            var req = GenerateFindRequest(request)
                 .SetLimit(100)
                 .SetOffset(0);
             req.Script = script;
@@ -298,7 +320,7 @@ namespace FMData
             string scriptParameter,
             Func<T, int, object> fmIdFunc) where T : class, new()
         {
-            var req = this.GenerateFindRequest(request)
+            var req = GenerateFindRequest(request)
                 .SetLimit(take)
                 .SetOffset(skip);
             req.Script = script;
@@ -326,7 +348,7 @@ namespace FMData
             Func<T, int, object> fmIdFunc,
             Func<T, int, object> fmModIdFunc) where T : class, new()
         {
-            var req = this.GenerateFindRequest(request)
+            var req = GenerateFindRequest(request)
                 .SetLimit(take)
                 .SetOffset(skip);
             req.Script = script;
@@ -364,7 +386,7 @@ namespace FMData
             int recordId,
             T input) where T : class, new()
         {
-            var request = this.GenerateEditRequest(input);
+            var request = GenerateEditRequest(input);
             request.RecordId = recordId;
             return SendAsync(request);
         }
@@ -384,7 +406,7 @@ namespace FMData
             string scriptParameter,
             T input) where T : class, new()
         {
-            var request = this.GenerateEditRequest(input);
+            var request = GenerateEditRequest(input);
             request.RecordId = recordId;
 
             if (!string.IsNullOrEmpty(script))
@@ -409,7 +431,7 @@ namespace FMData
             int recordId,
             T input) where T : class, new()
         {
-            var request = this.GenerateEditRequest<T>();
+            var request = GenerateEditRequest<T>();
             request.Data = input;
             request.Layout = layout;
             request.RecordId = recordId;
@@ -428,7 +450,7 @@ namespace FMData
             string layout, 
             Dictionary<string, string> editValues)
         {
-            var request = this.GenerateEditRequest<Dictionary<string, string>>();
+            var request = GenerateEditRequest<Dictionary<string, string>>();
             request.Data = editValues;
             request.Layout = layout;
             request.RecordId = recordId;
@@ -465,6 +487,7 @@ namespace FMData
         }
         #endregion
 
+        #region "Send Async Methods"
         /// <summary>
         /// Send a Create Record request to the FileMaker API.
         /// </summary>
@@ -505,6 +528,8 @@ namespace FMData
             IFindRequest<T> req,
             Func<T, int, object> fmId,
             Func<T, int, object> modId) where T : class, new();
+
+        #endregion
 
         /// <summary>
         /// Find a record with utilizing a class instance to define the find request field values.
