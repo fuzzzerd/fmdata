@@ -1,7 +1,7 @@
 namespace FMData
 {
     /// <summary>
-    /// Middle layer class used for custom JsonConvert
+    /// Middle layer class used for custom JsonConvert. This class helps generate the necessary JSON for the Find request.
     /// </summary>
     /// <typeparam name="TRequestType"></typeparam>
     public class RequestQueryInstance<TRequestType>
