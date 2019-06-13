@@ -98,6 +98,373 @@ namespace FMData
         }
         #endregion
 
+
+        #region Create
+        /// <summary>
+        /// Create a record in the database utilizing the TableAttribute to target the layout.
+        /// </summary>
+        /// <typeparam name="T">The type parameter to be created.</typeparam>
+        /// <param name="input">Object containing the data to be on the newly created record.</param>
+        /// <returns></returns>
+        public Task<ICreateResponse> CreateAsync<T>(T input) where T : class, new()
+        {
+            var request = this.GenerateCreateRequest(input);
+            return SendAsync(request);
+        }
+
+        /// <summary>
+        /// Create a record in the file via explicit layout.
+        /// </summary>
+        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
+        /// <param name="layout">The layout to use for the context of the request.</param>
+        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
+        /// <returns>The newly created RecordId and/or an error response code.</returns>
+        public Task<ICreateResponse> CreateAsync<T>(string layout, T input) where T : class, new()
+        {
+            var request = this.GenerateCreateRequest(input);
+            request.Layout = layout;
+            return SendAsync(request);
+        }
+
+        /// <summary>
+        /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout and perform a script with parameter.
+        /// </summary>
+        /// <typeparam name="T">The type to create</typeparam>
+        /// <param name="input">The input record to create.</param>
+        /// <param name="script">The name of a FileMaker script to run.</param>
+        /// <param name="scriptParameter">The parameter to pass to the script.</param>
+        /// <returns></returns>
+        public Task<ICreateResponse> CreateAsync<T>(
+            T input,
+            string script,
+            string scriptParameter) where T : class, new()
+        {
+            var request = this.GenerateCreateRequest(input);
+            request.Script = script;
+            request.ScriptParameter = scriptParameter;
+            return SendAsync(request);
+        }
+
+        /// <summary>
+        /// Creates a record matching the input data. All possible scripts available.
+        /// Empty script names will be ignored.
+        /// </summary>
+        /// <typeparam name="T">The type of record to be created.</typeparam>
+        /// <param name="input">The data to put in the record.</param>
+        /// <param name="script">Name of the script to run at request completion.</param>
+        /// <param name="scriptParameter">Parameter for script.</param>
+        /// <param name="preRequestScript">Script to run before the request. See FMS documentation for more details.</param>
+        /// <param name="preRequestScriptParameter">Parameter for script.</param>
+        /// <param name="preSortScript">Script to run after the request, but before the sort. See FMS documentation for more details.</param>
+        /// <param name="preSortScriptParameter">Parameter for script.</param>
+        /// <returns>A response indicating the results of the call to the FileMaker Server Data API.</returns>
+        public Task<ICreateResponse> CreateAsync<T>(
+            T input,
+            string script,
+            string scriptParameter,
+            string preRequestScript,
+            string preRequestScriptParameter,
+            string preSortScript,
+            string preSortScriptParameter) where T : class, new()
+        {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            var request = this.GenerateCreateRequest(input);
+
+            if (!string.IsNullOrEmpty(script))
+            {
+                request.Script = script;
+                request.ScriptParameter = scriptParameter;
+            }
+            if (!string.IsNullOrEmpty(preRequestScript))
+            {
+                request.PreRequestScript = preRequestScript;
+                request.PreRequestScriptParameter = preRequestScriptParameter;
+            }
+
+            if (!string.IsNullOrEmpty(preSortScript))
+            {
+                request.PreSortScript = preSortScript;
+                request.PreSortScriptParameter = preSortScriptParameter;
+            }
+
+            return SendAsync(request);
+        }
+        #endregion
+
+        #region Find
+        /// <summary>
+        /// Find a record with utilizing a class instance to define the find request field values.
+        /// </summary>
+        /// <typeparam name="T">The type of response objects to return.</typeparam>
+        /// <param name="request">The object with properties to map to the find request.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
+        public Task<IEnumerable<T>> FindAsync<T>(
+            T request) where T : class, new()
+        {
+            var req = this.GenerateFindRequest(request);
+            return SendAsync(req);
+        }
+
+        /// <summary>
+        /// Finds a record or records matching the properties of the input request object.
+        /// </summary>
+        /// <param name="request">The object to utilize for the find request parameters.</param>
+        /// <param name="skip">Number of records to skip.</param>
+        /// <param name="take">Number of records to return.</param>
+        /// <returns></returns>
+        public Task<IEnumerable<T>> FindAsync<T>(
+            T request,
+            int skip,
+            int take) where T : class, new()
+        {
+            var req = this.GenerateFindRequest(request).SetLimit(take).SetOffset(skip);
+            return SendAsync(req);
+        }
+
+        /// <summary>
+        /// Find a record with utilizing a class instance to define the find request field values.
+        /// </summary>
+        /// <typeparam name="T">The type of response objects to return.</typeparam>
+        /// <param name="request">The object with properties to map to the find request.</param>
+        /// <param name="fmIdFunc">Function to map a the FileMaker RecordId to each instance T.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
+        public Task<IEnumerable<T>> FindAsync<T>(
+            T request,
+            Func<T, int, object> fmIdFunc) where T : class, new()
+        {
+            var req = this.GenerateFindRequest(request);
+            return SendAsync(req, fmIdFunc);
+        }
+
+        /// <summary>
+        /// Finds a record or records matching the properties of the input request object.
+        /// </summary>
+        /// <param name="request">The object to utilize for the find request parameters.</param>
+        /// <param name="fmIdFunc">Function to map the FileMaker RecordId to each instance T.</param>
+        /// <param name="skip">Number of records to skip.</param>
+        /// <param name="take">Number of records to return.</param>
+        /// <returns></returns>
+        public Task<IEnumerable<T>> FindAsync<T>(
+            T request,
+            int skip,
+            int take,
+            Func<T, int, object> fmIdFunc) where T : class, new()
+        {
+            var req = this.GenerateFindRequest(request).SetLimit(take).SetOffset(skip);
+            return SendAsync(req, fmIdFunc);
+        }
+
+        /// <summary>
+        /// Finds a record or records matching the properties of the input request object.
+        /// </summary>
+        /// <param name="request">The object to utilize for the find request parameters.</param>
+        /// <param name="script">Script to run after the request is completed.</param>
+        /// <param name="scriptParameter">Script parameter.</param>
+        /// <param name="fmIdFunc">Function to map the FileMaker RecordId to each instance T.</param>
+        /// <returns></returns>
+        public Task<IEnumerable<T>> FindAsync<T>(
+             T request,
+             string script,
+             string scriptParameter,
+             Func<T, int, object> fmIdFunc) where T : class, new()
+        {
+            var req = this.GenerateFindRequest(request)
+                .SetLimit(100)
+                .SetOffset(0);
+            req.Script = script;
+            req.ScriptParameter = scriptParameter;
+            return SendAsync(req, fmIdFunc);
+        }
+
+        /// <summary>
+        /// Finds a record or records matching the properties of the input request object.
+        /// </summary>
+        /// <param name="request">The object to utilize for the find request parameters.</param>
+        /// <param name="skip">Number of records to skip.</param>
+        /// <param name="take">Number of records to return.</param>
+        /// <param name="script">Script to run after the request is completed.</param>
+        /// <param name="scriptParameter">Script parameter.</param>
+        /// <param name="fmIdFunc">Function to map the FileMaker RecordId to each instance T.</param>
+        /// <returns></returns>
+        public Task<IEnumerable<T>> FindAsync<T>(
+            T request,
+            int skip,
+            int take,
+            string script,
+            string scriptParameter,
+            Func<T, int, object> fmIdFunc) where T : class, new()
+        {
+            var req = this.GenerateFindRequest(request)
+                .SetLimit(take)
+                .SetOffset(skip);
+            req.Script = script;
+            req.ScriptParameter = scriptParameter;
+            return SendAsync(req, fmIdFunc);
+        }
+
+        /// <summary>
+        /// Finds a record or records matching the properties of the input request object.
+        /// </summary>
+        /// <param name="request">The object to utilize for the find request parameters.</param>
+        /// <param name="skip">Number of records to skip.</param>
+        /// <param name="take">Number of records to return.</param>
+        /// <param name="script">Script to run after the request is completed.</param>
+        /// <param name="scriptParameter">Script parameter.</param>
+        /// <param name="fmIdFunc">Function to map the FileMaker RecordId to each instance T.</param>
+        /// <param name="fmModIdFunc">Function to map hte FileMaker ModId to each instance of T.</param>
+        /// <returns></returns>
+        public Task<IEnumerable<T>> FindAsync<T>(
+            T request,
+            int skip,
+            int take,
+            string script,
+            string scriptParameter,
+            Func<T, int, object> fmIdFunc,
+            Func<T, int, object> fmModIdFunc) where T : class, new()
+        {
+            var req = this.GenerateFindRequest(request)
+                .SetLimit(take)
+                .SetOffset(skip);
+            req.Script = script;
+            req.ScriptParameter = scriptParameter;
+            return SendAsync(req, fmIdFunc, fmModIdFunc);
+        }
+
+        /// <summary>
+        /// Strongly typed find request.
+        /// </summary>
+        /// <typeparam name="T">The type of response objects to return.</typeparam>
+        /// <param name="layout">The name of the layout to run this request on.</param>
+        /// <param name="request">The object with properties to map to the find request.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
+        public Task<IEnumerable<T>> FindAsync<T>(
+            string layout, 
+            T request) where T : class, new()
+        {
+            var req = this.GenerateFindRequest<T>();
+            req.Layout = layout;
+            req.AddQuery(request, false);
+            return SendAsync(req);
+        }
+        #endregion
+
+        #region Edit
+        /// <summary>
+        /// Edit a record by FileMaker RecordId.
+        /// </summary>
+        /// <typeparam name="T">The type to pull the [Table] attribute from for context layout.</typeparam>
+        /// <param name="recordId">The FileMaker RecordId of the record to be edited.</param>
+        /// <param name="input">Object containing the values the record should reflect after the edit.</param>
+        /// <returns></returns>
+        public Task<IEditResponse> EditAsync<T>(
+            int recordId,
+            T input) where T : class, new()
+        {
+            var request = this.GenerateEditRequest(input);
+            request.RecordId = recordId;
+            return SendAsync(request);
+        }
+
+        /// <summary>
+        /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
+        /// </summary>
+        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
+        /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
+        /// <param name="script">script to run after the request.</param>
+        /// <param name="scriptParameter">Script parameter.</param>
+        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
+        /// <returns></returns>
+        public Task<IEditResponse> EditAsync<T>(
+            int recordId,
+            string script,
+            string scriptParameter,
+            T input) where T : class, new()
+        {
+            var request = this.GenerateEditRequest(input);
+            request.RecordId = recordId;
+
+            if (!string.IsNullOrEmpty(script))
+            {
+                request.Script = script;
+                request.ScriptParameter = scriptParameter;
+            }
+
+            return SendAsync(request);
+        }
+
+        /// <summary>
+        /// Edit a record.
+        /// </summary>
+        /// <typeparam name="T">Type parameter for this edit.</typeparam>
+        /// <param name="layout">Explicitly define the layout to use.</param>
+        /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
+        /// <param name="input">Object with the updated values.</param>
+        /// <returns></returns>
+        public Task<IEditResponse> EditAsync<T>(
+            string layout,
+            int recordId,
+            T input) where T : class, new()
+        {
+            var request = this.GenerateEditRequest<T>();
+            request.Data = input;
+            request.Layout = layout;
+            request.RecordId = recordId;
+            return SendAsync(request);
+        }
+
+        /// <summary>
+        /// Edit a record.
+        /// </summary>
+        /// <param name="layout">Explicitly define the layout to use.</param>
+        /// <param name="recordId">The internal FileMaker RecordId of the record to be edited.</param>
+        /// <param name="editValues">Object with the updated values.</param>
+        /// <returns></returns>
+        public Task<IEditResponse> EditAsync(
+            int recordId, 
+            string layout, 
+            Dictionary<string, string> editValues)
+        {
+            var request = this.GenerateEditRequest<Dictionary<string, string>>();
+            request.Data = editValues;
+            request.Layout = layout;
+            request.RecordId = recordId;
+            return SendAsync(request);
+        }
+        #endregion
+
+        #region Delete
+        /// <summary>
+        /// Delete a record utilizing a generic type with the [Table] attribute specifying the layout and the FileMaker RecordId.
+        /// </summary>
+        /// <typeparam name="T">Class with the [Table] attribute specifying the layout to use.</typeparam>
+        /// <param name="recId">The FileMaker RecordId of the record to delete.</param>
+        /// <returns></returns>
+        public Task<IResponse> DeleteAsync<T>(int recId) where T : class, new()
+        {
+            var request = GenerateDeleteRequest();
+            request.Layout = FileMakerApiClientBase.GetLayoutName(new T());
+            request.RecordId = recId;
+            return SendAsync(request);
+        }
+
+        /// <summary>
+        /// Delete a record by id and layout.
+        /// </summary>
+        public Task<IResponse> DeleteAsync(
+            int recId,
+            string layout)
+        {
+            var request = GenerateDeleteRequest();
+            request.Layout = layout;
+            request.RecordId = recId;
+            return SendAsync(request);
+        }
+        #endregion
+
         /// <summary>
         /// Send a Create Record request to the FileMaker API.
         /// </summary>
@@ -167,11 +534,11 @@ namespace FMData
         /// <typeparam name="T">The type to load the data into.</typeparam>
         /// <param name="fileMakerId">The FileMaker RecordId of the record to load.</param>
         /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
-        /// <param name="fmMod">The funtion to use to map the FileMaker ModId to the return object.</param>
+        /// <param name="fmMod">The function to use to map the FileMaker ModId to the return object.</param>
         /// <returns>A single record matching the FileMaker Record Id.</returns>
         public virtual Task<T> GetByFileMakerIdAsync<T>(int fileMakerId, Func<T, int, object> fmId = null, Func<T, int, object> fmMod = null) where T : class, new()
         {
-            var layout = GetLayoutName(new T()); // probably a beter way
+            var layout = GetLayoutName(new T()); // probably a better way
             return GetByFileMakerIdAsync(layout, fileMakerId, fmId, fmMod);
         }
 
@@ -239,7 +606,7 @@ namespace FMData
         }
 
         /// <summary>
-        /// Utility method that must be overridden in implemenations. Takes a containerfield url and populpates a byte array utilizing the instance's http client.
+        /// Utility method that must be overridden in implementations. Takes a containerfield url and populates a byte array utilizing the instance's http client.
         /// </summary>
         /// <param name="containerEndPoint">The container field to load.</param>
         /// <returns>An array of bytes with the data from the container field.</returns>
