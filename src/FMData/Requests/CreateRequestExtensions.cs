@@ -6,20 +6,6 @@ namespace FMData
     public static class CreateRequestExtensions
     {
         /// <summary>
-        /// Generates a new create request for the input data.
-        /// </summary>
-        /// <param name="client">The FileMaker API client instance.</param>
-        /// <param name="data">The initial find request data.</param>
-        /// <typeparam name="T">The type used for the create request.</typeparam>
-        /// <returns>An IFindRequest{T} instance setup per the initial query paramater.</returns>
-        public static ICreateRequest<T> GenerateCreateRequest<T>(this IFileMakerApiClient client, T data)
-        {
-            return client.GenerateCreateRequest<T>()
-                .SetData(data)
-                .UseLayout(data);
-        }
-
-        /// <summary>
         /// Set the data for this request.
         /// </summary>
         /// <param name="request">The request. This is the 'this' parameter.</param>

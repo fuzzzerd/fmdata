@@ -19,6 +19,18 @@ namespace FMData
         /// Make a new instance of the Create Request class for Type T.
         /// </summary>
         public ICreateRequest<T> GenerateCreateRequest<T>() => _createFactory<T>();
+
+        /// <summary>
+        /// Generates a new create request for the input data.
+        /// </summary>
+        /// <param name="data">The initial find request data.</param>
+        /// <typeparam name="T">The type used for the create request.</typeparam>
+        /// <returns>An IFindRequest{T} instance setup per the initial query paramater.</returns>
+        public ICreateRequest<T> GenerateCreateRequest<T>(T data)
+        {
+            return GenerateCreateRequest<T>().SetData(data).UseLayout(data);
+        }
+
         /// <summary>
         /// Factory to get a new Create Request of the correct type.
         /// </summary>
@@ -130,7 +142,7 @@ namespace FMData
         /// <returns></returns>
         public Task<ICreateResponse> CreateAsync<T>(T input) where T : class, new()
         {
-            var request = this.GenerateCreateRequest(input);
+            var request = GenerateCreateRequest(input);
             return SendAsync(request);
         }
 
@@ -143,7 +155,7 @@ namespace FMData
         /// <returns>The newly created RecordId and/or an error response code.</returns>
         public Task<ICreateResponse> CreateAsync<T>(string layout, T input) where T : class, new()
         {
-            var request = this.GenerateCreateRequest(input);
+            var request = GenerateCreateRequest(input);
             request.Layout = layout;
             return SendAsync(request);
         }
@@ -161,7 +173,7 @@ namespace FMData
             string script,
             string scriptParameter) where T : class, new()
         {
-            var request = this.GenerateCreateRequest(input);
+            var request = GenerateCreateRequest(input);
             request.Script = script;
             request.ScriptParameter = scriptParameter;
             return SendAsync(request);
@@ -194,7 +206,7 @@ namespace FMData
                 throw new ArgumentNullException(nameof(input));
             }
 
-            var request = this.GenerateCreateRequest(input);
+            var request = GenerateCreateRequest(input);
 
             if (!string.IsNullOrEmpty(script))
             {

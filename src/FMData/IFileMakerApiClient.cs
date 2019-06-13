@@ -13,15 +13,42 @@ namespace FMData
         /// <summary>
         /// Get a new Create Request of the correct type.
         /// </summary>
+
         ICreateRequest<T> GenerateCreateRequest<T>();
+        /// <summary>
+        /// Generates a new create request for the input data.
+        /// </summary>
+        /// <param name="data">The initial find request data.</param>
+        /// <typeparam name="T">The type used for the create request.</typeparam>
+        /// <returns>An IFindRequest{T} instance setup per the initial query paramater.</returns>
+        ICreateRequest<T> GenerateCreateRequest<T>(T data);
+
         /// <summary>
         /// Get a new Edit Request of the correct type.
         /// </summary>
+
         IEditRequest<T> GenerateEditRequest<T>();
+        /// <summary>
+        /// Generates a new edit request for the input object.
+        /// </summary>
+        /// <param name="data">The initial edit data request.</param>
+        /// <typeparam name="T">The type used for the edit request.</typeparam>
+        /// <returns>An IEditRequest{T} instance setup per the initial query paramater.</returns>
+        IEditRequest<T> GenerateEditRequest<T>(T data);
+
         /// <summary>
         /// Get a new Find Request of the correct type.
         /// </summary>
         IFindRequest<T> GenerateFindRequest<T>();
+
+        /// <summary>
+        /// Generates a new find request with an initial find query instance, specifying the layout via the model's DataContract attribute.
+        /// </summary>
+        /// <param name="initialQuery">The initial find request data.</param>
+        /// <typeparam name="T">The type used for the find request.</typeparam>
+        /// <returns>An IFindRequest{T} instance setup per the initial query paramater.</returns>
+        IFindRequest<T> GenerateFindRequest<T>(T initialQuery);
+
         /// <summary>
         /// Get a new Delete Request of the correct type.
         /// </summary>
