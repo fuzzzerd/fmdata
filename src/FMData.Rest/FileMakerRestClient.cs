@@ -162,6 +162,11 @@ namespace FMData.Rest
             requestMessage.Headers.Authorization = authHeader;
             requestMessage.Content = new StringContent("{ }", Encoding.UTF8, "application/json");
 
+            // do not pass character set. 
+            // this is due to fms 18 returning Bad Request when specified
+            // this hack is backward compatible for FMS17
+            requestMessage.Content.Headers.ContentType.CharSet = null;
+
             // run the post action
             var response = await _client.SendAsync(requestMessage);
 
@@ -546,6 +551,12 @@ namespace FMData.Rest
         {
             var str = req.SerializeRequest();
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
+
+            // do not pass character set. 
+            // this is due to fms 18 returning Bad Request when specified
+            // this hack is backward compatible for FMS17
+            httpContent.Headers.ContentType.CharSet = null;
+
             var httpRequest = new HttpRequestMessage(method, requestUri)
             {
                 Content = httpContent
