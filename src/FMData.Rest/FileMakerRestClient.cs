@@ -104,7 +104,7 @@ namespace FMData.Rest
         /// </summary>
         /// <param name="layout">The layout to use as the context for the response.</param>
         /// <param name="recordId">The FileMaker record Id for this request.</param>
-        /// <returns>The FileMaker Data API Endpoint for Get Records reqeusts.</returns>
+        /// <returns>The FileMaker Data API Endpoint for Get Records requests.</returns>
         public string GetRecordEndpoint(string layout, int recordId) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordId}";
 
         /// <summary>
@@ -113,34 +113,34 @@ namespace FMData.Rest
         /// <param name="layout">The layout to use as the context for the response.</param>
         /// <param name="limit">The number of records to return.</param>
         /// <param name="offset">The offset number of records to skip before starting to return records.</param>
-        /// <returns>The FileMaker Data API Endpoint for Get Records reqeusts.</returns>
+        /// <returns>The FileMaker Data API Endpoint for Get Records requests.</returns>
         public string GetRecordsEndpoint(string layout, int limit, int offset) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records?_limit={limit}&_offset={offset}";
 
         /// <summary>
         /// Generate the appropriate Edit/Update endpoint uri for this instance of the data client.
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
-        /// <param name="recordid">The record ID of the record to edit.</param>
+        /// <param name="recordId">The record ID of the record to edit.</param>
         /// <returns>The FileMaker Data API Endpoint for Update/Edit requests.</returns>
-        public string UpdateEndpoint(string layout, object recordid) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordid}";
+        public string UpdateEndpoint(string layout, object recordId) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordId}";
 
         /// <summary>
         /// Generate the appropriate Delete endpoint uri for this instance of the data client.
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
-        /// <param name="recordid">The record ID of the record to edit.</param>
+        /// <param name="recordId">The record ID of the record to edit.</param>
         /// <returns>The FileMaker Data API Endpoint for Delete requests.</returns>
-        public string DeleteEndpoint(string layout, object recordid) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordid}";
+        public string DeleteEndpoint(string layout, object recordId) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordId}";
 
         /// <summary>
         /// Generate the appropriate Container field endpoint.
         /// </summary>
         /// <param name="layout">The layout to use.</param>
-        /// <param name="recordid">the record ID of the record to edit.</param>
+        /// <param name="recordId">the record ID of the record to edit.</param>
         /// <param name="fieldName">The name of the container field.</param>
         /// <param name="repetition">Field repetition number.</param>
         /// <returns></returns>
-        public string ContainerEndpoint(string layout, object recordid, string fieldName, int repetition = 1) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordid}/containers/{Uri.EscapeDataString(fieldName)}/{repetition}";
+        public string ContainerEndpoint(string layout, object recordId, string fieldName, int repetition = 1) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordId}/containers/{Uri.EscapeDataString(fieldName)}/{repetition}";
         #endregion
 
         #region FM Data Token Management
@@ -331,7 +331,7 @@ namespace FMData.Rest
                         throw new Exception(responseObject.Messages.First().Message);
                     default:
                         // other error TODO: Improve handling
-                        throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responed with {response.StatusCode}");
+                        throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responded with {response.StatusCode}");
                 }
             }
 
@@ -453,7 +453,7 @@ namespace FMData.Rest
         /// </summary>
         /// <typeparam name="T">The type of response objects to return.</typeparam>
         /// <param name="req">The find request parameters.</param>
-        /// <param name="fmId">Function to assign the FileMaker RecordId to each instnace of {T}.</param>
+        /// <param name="fmId">Function to assign the FileMaker RecordId to each instance of {T}.</param>
         /// <param name="modId">Function to assign the FileMaker ModId to each instance of {T}.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         public override async Task<IEnumerable<T>> SendAsync<T>(
@@ -533,7 +533,7 @@ namespace FMData.Rest
             }
 
             // other error TODO: Improve handling
-            throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responed with {response.StatusCode}");
+            throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responded with {response.StatusCode}");
         }
         #endregion
 
@@ -685,7 +685,7 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// Utility method that must be overridden in implemenations. Takes a containerfield url and populpates a byte array utilizing the instance's http client.
+        /// Utility method that must be overridden in implementations. Takes a containerfield url and populates a byte array utilizing the instance's http client.
         /// </summary>
         /// <param name="containerEndPoint">The container field to load.</param>
         /// <returns>An array of bytes with the data from the container field.</returns>
@@ -702,7 +702,7 @@ namespace FMData.Rest
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="fmId">FileMaker Record Id map function.</param>
-        /// <param name="modId">Modifcation Id map function.</param>
+        /// <param name="modId">Modification Id map function.</param>
         /// <param name="input">JSON.NET JToken instance from Data Api Response.</param>
         /// <returns></returns>
         private static T ConvertJTokenToInstance<T>(Func<T, int, object> fmId, Func<T, int, object> modId, JToken input) where T : class, new()
@@ -732,7 +732,7 @@ namespace FMData.Rest
 
                     // .ToList() here so we iterate on a different copy of the collection
                     // which allows for calling add/remove on the list ;) clever
-                    // https://stackoverflow.com/a/26864676/86860 - explination 
+                    // https://stackoverflow.com/a/26864676/86860 - explication 
                     // https://stackoverflow.com/a/604843/86860 - solution
                     foreach (JObject jo in portalJ.ToList())
                     {
@@ -759,9 +759,9 @@ namespace FMData.Rest
             int fileMakerId = input["recordId"].ToObject<int>();
             fmId?.Invoke(searchResult, fileMakerId);
 
-            // modid
-            int fmmodId = input["modId"].ToObject<int>();
-            modId?.Invoke(searchResult, fmmodId);
+            // modId
+            int fmModId = input["modId"].ToObject<int>();
+            modId?.Invoke(searchResult, fmModId);
 
             return searchResult;
         }

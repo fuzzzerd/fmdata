@@ -2,6 +2,7 @@
     "dotnet-test-explorer.enableTelemetry": false,
     "dotnet-test-explorer.testProjectPath": "**/*.Tests.csproj",
     "cSpell.words": [
+        "fmdata",
         "newed"
     ],
     "git.enableCommitSigning": true
