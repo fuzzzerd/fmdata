@@ -1,4 +1,4 @@
-[![logo](https://repository-images.githubusercontent.com/126491080/72f6dd80-78ac-11e9-9d45-939bae6a8cb5)](https://github.com/fuzzzerd/fmdata)
+[![logo](https://raw.githubusercontent.com/fuzzzerd/fmdata/master/images/color-cropped.png)](https://github.com/fuzzzerd/fmdata)
 
 | Package | Build Status |  MyGet | Nuget |
 |---|---|---|---|
