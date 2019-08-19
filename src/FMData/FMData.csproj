@@ -9,7 +9,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseUrl>https://github.com/fuzzzerd/fmdata/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://fmdata.io/</PackageProjectUrl>
-    <PackageIconUrl></PackageIconUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/fuzzzerd/fmdata/master/images/nuget.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/fuzzzerd/fmdata</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <Authors>Nate Bross</Authors>
