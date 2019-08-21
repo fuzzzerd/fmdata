@@ -4,7 +4,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyTitle>FMData</AssemblyTitle>
     <AssemblyName>FMData</AssemblyName>
-    <Description>A client library for accessing FileMaker data. Contains base class implementations and request interfaces.</Description>
+    <Description>A .NET Client library for accessing data stored in FileMaker databases using FileMaker Server APIs.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseUrl>https://github.com/fuzzzerd/fmdata/blob/master/LICENSE</PackageLicenseUrl>
@@ -14,7 +14,7 @@
     <RepositoryType>GitHub</RepositoryType>
     <Authors>Nate Bross</Authors>
     <Company />
-    <PackageTags>filemaker data json rest xml api netstandard dotnet-standard</PackageTags>
+    <PackageTags>filemaker dapi dapi-client data json rest xml api netstandard dotnet-standard</PackageTags>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>

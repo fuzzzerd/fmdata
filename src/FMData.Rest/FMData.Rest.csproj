@@ -4,7 +4,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyTitle>FMData.Rest</AssemblyTitle>
     <AssemblyName>FMData.Rest</AssemblyName>
-    <Description>A client library for accessing FileMaker data through the REST API.</Description>
+    <Description>A client library for accessing FileMaker data through the FileMaker Data API (RESTful API) in FileMaker Server.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Version>3.2.2</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -15,7 +15,7 @@
     <RepositoryType>GitHub</RepositoryType>
     <Authors>Nate Bross</Authors>
     <Company />
-    <PackageTags>filemaker data api filemaker-rest filemaker-api netstandard json dotnet-standard</PackageTags>
+    <PackageTags>dataapi dapi-client filemaker data dapi api filemaker-rest filemaker-api netstandard json dotnet-standard</PackageTags>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
