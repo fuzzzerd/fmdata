@@ -6,7 +6,6 @@
     <AssemblyName>FMData.Xml</AssemblyName>
     <Description>A client library for accessing FileMaker data through the Custom Web Publishing XML API in FileMaker Server.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>3.2.2-beta</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseUrl>https://github.com/fuzzzerd/fmdata/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://fmdata.io/</PackageProjectUrl>
