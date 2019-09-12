@@ -8,7 +8,7 @@ about: Create a report to help us improve
 
 A clear and concise description of what the bug is.
 
-## To Reproduce
+## Steps To Reproduce
 
 Steps or code to reproduce the behavior:
 
@@ -22,6 +22,6 @@ A clear and concise description of what you expected to happen.
 
 vX.Y.Z
 
-## Additional context**
+## Additional context
 
 Add any other context about the problem here.
