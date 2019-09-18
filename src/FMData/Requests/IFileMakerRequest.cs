@@ -16,7 +16,7 @@
         string ResponseLayout { get; set; }
 
         /// <summary>
-        /// Name of the script to run afater the request has completed.
+        /// Name of the script to run after the request has completed.
         /// </summary>
         string Script { get; set; }
         /// <summary>
@@ -34,7 +34,7 @@
         string PreRequestScriptParameter { get; set; }
 
         /// <summary>
-        /// /// Pre-sort request. Occurs after the pre-request and the api request but before the sort has occured.
+        /// /// Pre-sort request. Occurs after the pre-request and the api request but before the sort has occurred.
         /// </summary>
         string PreSortScript { get; set; }
         /// <summary>
@@ -43,9 +43,9 @@
         string PreSortScriptParameter { get; set; }
 
         /// <summary>
-        /// Serailizes the request to the required format.
+        /// Serializes the request to the required format.
         /// </summary>
-        /// <returns>A serialzied string represneting the current request.</returns>
+        /// <returns>A serialized string represneting the current request.</returns>
         string SerializeRequest();
     }
 }

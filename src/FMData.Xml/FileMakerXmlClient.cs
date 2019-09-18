@@ -59,7 +59,7 @@ namespace FMData.Xml
         /// <summary>
         /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"/> instance to the class.
         /// </summary>
-        /// <param name="client">An <see ref="HttpClient"/> instance to utilize for the liftime of this Data Client.</param>
+        /// <param name="client">An <see ref="HttpClient"/> instance to utilize for the lifetime of this Data Client.</param>
         /// <param name="fmsUri">FileMaker Server HTTP Uri Endpoint.</param>
         /// <param name="file">Name of the FileMaker Database to connect to.</param>
         /// <param name="user">Account to connect with.</param>
@@ -170,7 +170,7 @@ namespace FMData.Xml
         /// <typeparam name="T">The type to project the results against.</typeparam>
         /// <param name="req">The Find Request Command.</param>
         /// <param name="fmId">The function to map FileMaker Record Ids to an instance of T.</param>
-        /// <param name="modId">The function to map FileMaker Modid to an instance of T</param>
+        /// <param name="modId">The function to map FileMaker modId to an instance of T</param>
         /// <returns>The projected results matching the find request.</returns>
         public override async Task<IEnumerable<T>> SendAsync<T>(
             IFindRequest<T> req,
@@ -182,10 +182,10 @@ namespace FMData.Xml
             if (response.IsSuccessStatusCode)
             {
                 // process response data return OK
-                var xdoc = XDocument.Load(await response.Content.ReadAsStreamAsync());
+                var xDocument = XDocument.Load(await response.Content.ReadAsStreamAsync());
 
                 // act
-                var metadata = xdoc
+                var metadata = xDocument
                     .Descendants(_ns + "metadata")
                     .Elements(_ns + "field-definition")
                     .ToDictionary(
@@ -193,8 +193,8 @@ namespace FMData.Xml
                         v => v.Attribute("result").Value
                     );
 
-                // load in relatedSet metadatas
-                var relatedMeta = xdoc
+                // load in relatedSet metadata
+                var relatedMeta = xDocument
                     .Descendants(_ns + "metadata")
                     .Elements(_ns + "relatedset-definition")
                     .ToDictionary(
@@ -207,7 +207,7 @@ namespace FMData.Xml
                     );
 
                 var dict = new Dictionary<string, string>();
-                var records = xdoc
+                var records = xDocument
                     .Descendants(_ns + "resultset")
                     .Elements(_ns + "record")
                     .Select(r => new RecordBase<T, Dictionary<string, IEnumerable<Dictionary<string, object>>>>
@@ -229,7 +229,7 @@ namespace FMData.Xml
                     })
                     .ToList(); // make sure to ToList here since if we don't subsequent setting of child fields/properties are lost for every time its enumerated again
 
-                // handle record and modid
+                // handle record and modId
                 foreach (var record in records)
                 {
                     fmId?.Invoke(record.FieldData, record.RecordId);
@@ -248,7 +248,7 @@ namespace FMData.Xml
 
                         // .ToList() here so we iterate on a different copy of the collection
                         // which allows for calling add/remove on the list ;) clever
-                        // https://stackoverflow.com/a/26864676/86860 - explination 
+                        // https://stackoverflow.com/a/26864676/86860 - explication 
                         // https://stackoverflow.com/a/604843/86860 - solution
                         foreach (var row in dataPortal.ToList())
                         {
@@ -307,7 +307,7 @@ namespace FMData.Xml
         }
 
         /// <summary>
-        /// Utility method that must be overridden in implemenations. Takes a containerfield url and populpates a byte array utilizing the instance's http client.
+        /// Utility method that must be overridden in implementations. Takes a containerfield url and populates a byte array utilizing the instance's http client.
         /// </summary>
         /// <param name="containerEndPoint">The container field to load.</param>
         /// <returns>An array of bytes with the data from the container field.</returns>
