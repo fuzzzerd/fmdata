@@ -65,6 +65,16 @@ namespace FMData
         Task<ICreateResponse> CreateAsync<T>(T input) where T : class, new();
 
         /// <summary>
+        /// Create a record in the file, attempt to use the [TableAttribute] to determine the layout.
+        /// </summary>
+        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
+        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
+        /// <param name="includeNullValues">Dictates the serialization behavior regarding null values.</param>
+        /// <param name="includeDefaultValues">Dictates the serialization behavior regarding default values.</param>
+        /// <returns>The newly created RecordId and/or an error response code.</returns>
+        Task<ICreateResponse> CreateAsync<T>(T input, bool includeNullValues, bool includeDefaultValues) where T : class, new();
+
+        /// <summary>
         /// <see cref="FileMakerApiClientBase.CreateAsync{T}(T, string, string)"/>
         /// </summary>
         Task<ICreateResponse> CreateAsync<T>(T input, string script, string scriptParameter) where T : class, new();
@@ -224,6 +234,16 @@ namespace FMData
         /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
         /// <returns></returns>
         Task<IEditResponse> EditAsync<T>(int recordId, T input) where T : class, new();
+
+        /// <summary>
+        /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
+        /// </summary>
+        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
+        /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
+        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
+        /// <param name="includeNullValues">Dictates the serialization behavior regarding null values.</param>
+        /// <param name="includeDefaultValues">Dictates the serialization behavior regarding default values.</param>
+        Task<IEditResponse> EditAsync<T>(int recordId, T input, bool includeNullValues, bool includeDefaultValues) where T : class, new();
 
         /// <summary>
         /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.

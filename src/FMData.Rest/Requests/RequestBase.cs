@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 namespace FMData.Rest
 {
     /// <summary>
-    /// Base Request Implemenation
+    /// Base Request Implementation
     /// </summary>
-    public class RequestBase : IFileMakerRequest
+    public abstract class RequestBase : IFileMakerRequest
     {
         /// <summary>
         /// Name of the layout FileMaker should be on when processing this request.
@@ -44,7 +44,7 @@ namespace FMData.Rest
         public string PreRequestScriptParameter { get; set; }
 
         /// <summary>
-        /// Pre-sort request. Occurs after the pre-request and the api request but before the sort has occured.
+        /// Pre-sort request. Occurs after the pre-request and the api request but before the sort has occurred.
         /// </summary>
         [JsonProperty("script.presort")]
         public string PreSortScript { get; set; }
@@ -56,6 +56,18 @@ namespace FMData.Rest
         public string PreSortScriptParameter { get; set; }
 
         /// <summary>
+        /// When set to true, serialization will include null values.
+        /// </summary>
+        [JsonIgnore] // don't serialize to output, this is internal to for our use as this is part of the route not the payload
+        public bool IncludeNullValuesInSerializedOutput { get; set; }
+
+        /// <summary>
+        /// When set to true, serialization will include null values.
+        /// </summary>
+        [JsonIgnore] // don't serialize to output, this is internal to for our use as this is part of the route not the payload
+        public bool IncludeDefaultValuesInSerializedOutput { get; set; }
+
+        /// <summary>
         /// JSON Convert the current object to a string for passing out to the API.
         /// </summary>
         /// <returns></returns>
@@ -63,8 +75,8 @@ namespace FMData.Rest
             Formatting.None,
             new JsonSerializerSettings
             {
-                NullValueHandling = NullValueHandling.Ignore,
-                DefaultValueHandling = DefaultValueHandling.Ignore,
+                NullValueHandling = IncludeNullValuesInSerializedOutput ? NullValueHandling.Include : NullValueHandling.Ignore,
+                DefaultValueHandling = IncludeDefaultValuesInSerializedOutput ? DefaultValueHandling.Include : DefaultValueHandling.Ignore,
                 Converters = { new FormatNumbersAsTextConverter() }
             });
     }

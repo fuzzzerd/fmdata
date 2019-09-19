@@ -42,7 +42,7 @@ namespace FMData.Rest.Requests
         /// <summary>
         /// Create a find request from Json
         /// </summary>
-        /// <param name="json">The incomming Json data to deserialize.</param>
+        /// <param name="json">The incoming Json data to deserialize.</param>
         /// <returns>An instance of the FindRequest object from the provided Json string.</returns>
         public static FindRequest<T> FromJson<T>(string json) => JsonConvert.DeserializeObject<FindRequest<T>>(json);
 
@@ -54,12 +54,12 @@ namespace FMData.Rest.Requests
             Formatting.None,
             new JsonSerializerSettings
             {
-                NullValueHandling = NullValueHandling.Ignore,
-                DefaultValueHandling = DefaultValueHandling.Ignore,
+                NullValueHandling = IncludeNullValuesInSerializedOutput ? NullValueHandling.Include : NullValueHandling.Ignore,
+                DefaultValueHandling = IncludeDefaultValuesInSerializedOutput ? DefaultValueHandling.Include : DefaultValueHandling.Ignore,
                 Converters = 
                 { 
                     new FormatNumbersAsTextConverter(), 
-                    new RequestQueryInstanceConverter<TRequestType>() 
+                    new RequestQueryInstanceConverter<TRequestType>(this) 
                 }
             });
 

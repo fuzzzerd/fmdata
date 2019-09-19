@@ -115,7 +115,7 @@ namespace FMData
         /// </summary>
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="conn">The connection information for FMS.</param>
-        public FileMakerApiClientBase(HttpClient client, ConnectionInfo conn) 
+        public FileMakerApiClientBase(HttpClient client, ConnectionInfo conn)
         {
             _client = client;
 
@@ -135,14 +135,25 @@ namespace FMData
 
         #region Create
         /// <summary>
-        /// Create a record in the database utilizing the TableAttribute to target the layout.
+        /// Create a record in the database utilizing the DataContract to target the layout.
         /// </summary>
         /// <typeparam name="T">The type parameter to be created.</typeparam>
         /// <param name="input">Object containing the data to be on the newly created record.</param>
         /// <returns></returns>
-        public Task<ICreateResponse> CreateAsync<T>(T input) where T : class, new()
+        public Task<ICreateResponse> CreateAsync<T>(T input) where T : class, new() => CreateAsync(input, false, false); // maintain backward compatibility.
+
+        /// <summary>
+        /// Create a record in the database utilizing the DataContract attribute to target the layout.
+        /// </summary>
+        /// <typeparam name="T">The type parameter to be created.</typeparam>
+        /// <param name="input">Object containing the data to be on the newly created record.</param>
+        /// <param name="includeNullValues">Dictates the serialization behavior regarding null values.</param>
+        /// <param name="includeDefaultValues">Dictates the serialization behavior regarding default values.</param>
+        public Task<ICreateResponse> CreateAsync<T>(T input, bool includeNullValues, bool includeDefaultValues) where T : class, new()
         {
             var request = GenerateCreateRequest(input);
+            request.IncludeNullValuesInSerializedOutput = includeNullValues;
+            request.IncludeDefaultValuesInSerializedOutput = includeDefaultValues;
             return SendAsync(request);
         }
 
@@ -376,7 +387,7 @@ namespace FMData
         /// <param name="request">The object with properties to map to the find request.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         public Task<IEnumerable<T>> FindAsync<T>(
-            string layout, 
+            string layout,
             T request) where T : class, new()
         {
             var req = this.GenerateFindRequest<T>();
@@ -393,13 +404,22 @@ namespace FMData
         /// <typeparam name="T">The type to pull the [Table] attribute from for context layout.</typeparam>
         /// <param name="recordId">The FileMaker RecordId of the record to be edited.</param>
         /// <param name="input">Object containing the values the record should reflect after the edit.</param>
-        /// <returns></returns>
-        public Task<IEditResponse> EditAsync<T>(
-            int recordId,
-            T input) where T : class, new()
+        public Task<IEditResponse> EditAsync<T>(int recordId, T input) where T : class, new() => EditAsync(recordId, input, false, false); // maintain backward compatibility.
+
+        /// <summary>
+        /// Edit a record in the file, attempt to use the [TableAttribute] to determine the layout.
+        /// </summary>
+        /// <typeparam name="T">Properties of this generic type should match fields on target layout.</typeparam>
+        /// <param name="recordId">The internal FileMaker RecordId of the record to edit.</param>
+        /// <param name="input">The object containing the data to be sent across the wire to FileMaker.</param>
+        /// <param name="includeNullValues">Dictates the serialization behavior regarding null values.</param>
+        /// <param name="includeDefaultValues">Dictates the serialization behavior regarding default values.</param>
+        public Task<IEditResponse> EditAsync<T>(int recordId, T input, bool includeNullValues, bool includeDefaultValues) where T : class, new()
         {
             var request = GenerateEditRequest(input);
             request.RecordId = recordId;
+            request.IncludeDefaultValuesInSerializedOutput = includeDefaultValues;
+            request.IncludeNullValuesInSerializedOutput = includeNullValues;
             return SendAsync(request);
         }
 
@@ -458,8 +478,8 @@ namespace FMData
         /// <param name="editValues">Object with the updated values.</param>
         /// <returns></returns>
         public Task<IEditResponse> EditAsync(
-            int recordId, 
-            string layout, 
+            int recordId,
+            string layout,
             Dictionary<string, string> editValues)
         {
             var request = GenerateEditRequest<Dictionary<string, string>>();
@@ -623,7 +643,7 @@ namespace FMData
         {
             var ti = typeof(T).GetTypeInfo();
             var props = ti.DeclaredProperties.Where(p => p.GetCustomAttribute<ContainerDataForAttribute>() != null);
-            foreach(var prop in props)
+            foreach (var prop in props)
             {
                 var containerField = prop.GetCustomAttribute<ContainerDataForAttribute>().ContainerField;
                 var containerEndPoint = ti.GetDeclaredProperty(containerField).GetValue(instance) as string;
@@ -658,7 +678,7 @@ namespace FMData
         {
             List<Task> instanceTasks = new List<Task>();
 
-            foreach(var instance in instances)
+            foreach (var instance in instances)
             {
                 instanceTasks.Add(ProcessContainer(instance));
             }

@@ -21,7 +21,7 @@ namespace FMData.Xml.Requests
         public override string SerializeRequest()
         {
             var layout = Layout;
-            var dictionary = Data.AsDictionary(false);
+            var dictionary = Data.AsDictionary(IncludeNullValuesInSerializedOutput);
             var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeDataString(i.Key)}={Uri.EscapeDataString(i.Value.ToString())}"));
             var requestContent = $"-new&-lay={layout}{stringContent}";
             return requestContent;

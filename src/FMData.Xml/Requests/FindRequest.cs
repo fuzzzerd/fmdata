@@ -8,12 +8,8 @@ namespace FMData.Xml.Requests
     /// Find request for an instance T.
     /// </summary>
     /// <typeparam name="T">The type to use for the find request parameters.</typeparam>
-    public class FindRequest<T> : IFindRequest<T>
+    public class FindRequest<T> : RequestBase, IFindRequest<T>
     {
-        /// <summary>
-        /// The layout to execute the request on.
-        /// </summary>
-        public string Layout { get; set; }
         /// <summary>
         /// The query values to provide to FMS.
         /// </summary>
@@ -32,35 +28,6 @@ namespace FMData.Xml.Requests
         /// Sort options for the results.
         /// </summary>
         public IEnumerable<ISort> Sort { get; set; }
-        /// <summary>
-        /// The layout to utilize for the response projection.
-        /// </summary>
-        /// <value></value>
-        public string ResponseLayout { get; set; }
-        /// <summary>
-        /// Script to run.
-        /// </summary>
-        public string Script { get; set; }
-        /// <summary>
-        /// Script Parameter.
-        /// </summary>
-        public string ScriptParameter { get; set; }
-        /// <summary>
-        /// Script to run.
-        /// </summary>
-        public string PreRequestScript { get; set; }
-        /// <summary>
-        /// Script Parameter.
-        /// </summary>
-        public string PreRequestScriptParameter { get; set; }
-        /// <summary>
-        /// Script to run.
-        /// </summary>
-        public string PreSortScript { get; set; }
-        /// <summary>
-        /// Script Parameter.
-        /// </summary>
-        public string PreSortScriptParameter { get; set; }
 
         /// <summary>
         /// Determines if container data attributes are processed and loaded.
@@ -71,9 +38,9 @@ namespace FMData.Xml.Requests
         /// Serialize the request. 
         /// </summary>
         /// <returns>The string representation for this request to be sent along the wire to FMS.</returns>
-        public string SerializeRequest()
+        public override string SerializeRequest()
         {
-            var dictionary = Query.First().QueryInstance.AsDictionary(false);
+            var dictionary = Query.First().QueryInstance.AsDictionary(IncludeNullValuesInSerializedOutput);
             var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeDataString(i.Key)}={Uri.EscapeDataString(i.Value.ToString())}"));
             var requestContent = $"-find&-lay={Layout}{stringContent}";
             return requestContent;

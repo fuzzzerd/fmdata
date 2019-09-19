@@ -2,8 +2,12 @@
     "dotnet-test-explorer.enableTelemetry": false,
     "dotnet-test-explorer.testProjectPath": "**/*.Tests.csproj",
     "cSpell.words": [
+        "Szalay",
         "fmdata",
-        "newed"
+        "fmresultset",
+        "fuzzzerd",
+        "newed",
+        "stringly"
     ],
     "git.enableCommitSigning": true
 }

@@ -9,14 +9,14 @@
         /// The layout to run the request against.
         /// </summary>
         string Layout { get; set; }
-        
+
         /// <summary>
         /// The layout to respond with. 
         /// </summary>
         string ResponseLayout { get; set; }
 
         /// <summary>
-        /// Name of the script to run afater the request has completed.
+        /// Name of the script to run after the request has completed.
         /// </summary>
         string Script { get; set; }
         /// <summary>
@@ -34,7 +34,7 @@
         string PreRequestScriptParameter { get; set; }
 
         /// <summary>
-        /// /// Pre-sort request. Occurs after the pre-request and the api request but before the sort has occured.
+        /// /// Pre-sort request. Occurs after the pre-request and the api request but before the sort has occurred.
         /// </summary>
         string PreSortScript { get; set; }
         /// <summary>
@@ -43,9 +43,19 @@
         string PreSortScriptParameter { get; set; }
 
         /// <summary>
-        /// Serailizes the request to the required format.
+        /// When set to true, serialization will include null values.
         /// </summary>
-        /// <returns>A serialzied string represneting the current request.</returns>
+        bool IncludeNullValuesInSerializedOutput { get; set; }
+
+        /// <summary>
+        /// When set to true, serialization will include null values.
+        /// </summary>
+        bool IncludeDefaultValuesInSerializedOutput { get; set; }
+
+        /// <summary>
+        /// Serializes the request to the required format.
+        /// </summary>
+        /// <returns>A serialized string represneting the current request.</returns>
         string SerializeRequest();
     }
 }
