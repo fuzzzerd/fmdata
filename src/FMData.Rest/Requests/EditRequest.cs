@@ -23,7 +23,7 @@ namespace FMData.Rest.Requests
         /// <summary>
         /// Optional -- FileMaker Modification ID to ensure no update was made from the time the data was read to updated.
         /// </summary>
-        [JsonProperty("modId")]
+        [JsonProperty("modId", NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int ModId { get; set; }
     }
 }

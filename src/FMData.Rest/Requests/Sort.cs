@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FMData.Rest.Requests
 {
@@ -15,6 +12,7 @@ namespace FMData.Rest.Requests
         /// </summary>
         [JsonProperty("fieldName")]
         public string FieldName { get; set; }
+
         /// <summary>
         /// Sort direction (ascend/descend).
         /// </summary>
