@@ -70,6 +70,32 @@ namespace FMData.Rest.Tests
             Assert.DoesNotContain("\"Id\":1", json);
         }
 
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        [InlineData(false, false)]
+        [InlineData(true, true)]
+        public void IRequest_ShouldNot_Include_Null_FileMaker_Operators(bool includeNull, bool includeDefault)
+        {
+            //arrange 
+            var r = FindReq();
+
+            r.IncludeNullValuesInSerializedOutput = includeNull;
+            r.IncludeDefaultValuesInSerializedOutput = includeDefault;
+
+            // act
+            var json = r.SerializeRequest();
+
+            //assert
+            Assert.DoesNotContain("\"layout.response\":", json);
+            Assert.DoesNotContain("\"script\":", json);
+            Assert.DoesNotContain("\"script.param\":", json);
+            Assert.DoesNotContain("\"script.prerequest\":", json);
+            Assert.DoesNotContain("\"script.prerequest.param\":", json);
+            Assert.DoesNotContain("\"script.presort\":", json);
+            Assert.DoesNotContain("\"script.presort.param\":", json);
+        }
+
         [Fact]
         public void GenCreate_ShouldBeCreateRequest()
         {
