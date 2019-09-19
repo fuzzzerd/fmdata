@@ -16,43 +16,43 @@ namespace FMData.Rest
         /// <summary>
         /// The layout the response should take place on (useful for projecting different data than the request).
         /// </summary>
-        [JsonProperty("layout.response")]
+        [JsonProperty("layout.response", NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string ResponseLayout { get; set; }
 
         /// <summary>
         /// Request Script. Occurs post request, and post sort.
         /// </summary>
-        [JsonProperty("script")]
+        [JsonProperty("script", NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string Script { get; set; }
 
         /// <summary>
         /// Request Script Parameter.
         /// </summary>
-        [JsonProperty("script.param")]
+        [JsonProperty("script.param", NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string ScriptParameter { get; set; }
 
         /// <summary>
         /// Pre-request script. Runs after going to the layout in the request, but before the API request takes place.
         /// </summary>
-        [JsonProperty("script.prerequest")]
+        [JsonProperty("script.prerequest", NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string PreRequestScript { get; set; }
 
         /// <summary>
         /// Pre-request script parameter.
         /// </summary>
-        [JsonProperty("script.prerequest.param")]
+        [JsonProperty("script.prerequest.param", NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string PreRequestScriptParameter { get; set; }
 
         /// <summary>
         /// Pre-sort request. Occurs after the pre-request and the api request but before the sort has occurred.
         /// </summary>
-        [JsonProperty("script.presort")]
+        [JsonProperty("script.presort", NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string PreSortScript { get; set; }
 
         /// <summary>
         /// Pre-sort script parameter.
         /// </summary>
-        [JsonProperty("script.presort.param")]
+        [JsonProperty("script.presort.param", NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string PreSortScriptParameter { get; set; }
 
         /// <summary>
