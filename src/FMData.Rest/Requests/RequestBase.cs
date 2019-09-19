@@ -1,3 +1,5 @@
+using System.IO;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace FMData.Rest
@@ -70,14 +72,25 @@ namespace FMData.Rest
         /// <summary>
         /// JSON Convert the current object to a string for passing out to the API.
         /// </summary>
-        /// <returns></returns>
-        public virtual string SerializeRequest() => JsonConvert.SerializeObject(this,
-            Formatting.None,
-            new JsonSerializerSettings
+        public virtual string SerializeRequest()
+        {
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter sw = new StringWriter(sb))
+            using (NullJsonWriter njw = new NullJsonWriter(sw))
             {
-                NullValueHandling = IncludeNullValuesInSerializedOutput ? NullValueHandling.Include : NullValueHandling.Ignore,
-                DefaultValueHandling = IncludeDefaultValuesInSerializedOutput ? DefaultValueHandling.Include : DefaultValueHandling.Ignore,
-                Converters = { new FormatNumbersAsTextConverter() }
-            });
+                // use our custom NullJsonWriter (that writes empty string for null values)
+                // while still respecting the above configured Null and Default value handle flags.
+                JsonSerializer ser = new JsonSerializer
+                {
+                    DefaultValueHandling = IncludeDefaultValuesInSerializedOutput ? DefaultValueHandling.Include : DefaultValueHandling.Ignore,
+                    NullValueHandling = IncludeNullValuesInSerializedOutput ? NullValueHandling.Include : NullValueHandling.Ignore,
+                    Formatting = Formatting.None,
+                };
+                // serialize this instance
+                ser.Serialize(njw, this);
+            }
+            // return the string representation
+            return sb.ToString();
+        }
     }
 }
