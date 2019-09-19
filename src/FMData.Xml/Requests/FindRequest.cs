@@ -40,7 +40,7 @@ namespace FMData.Xml.Requests
         /// <returns>The string representation for this request to be sent along the wire to FMS.</returns>
         public override string SerializeRequest()
         {
-            var dictionary = Query.First().QueryInstance.AsDictionary(false);
+            var dictionary = Query.First().QueryInstance.AsDictionary(IncludeNullValuesInSerializedOutput);
             var stringContent = string.Join("", dictionary.Select(i => $"&{Uri.EscapeDataString(i.Key)}={Uri.EscapeDataString(i.Value.ToString())}"));
             var requestContent = $"-find&-lay={Layout}{stringContent}";
             return requestContent;
