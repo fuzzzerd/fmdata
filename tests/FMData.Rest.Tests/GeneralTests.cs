@@ -70,6 +70,21 @@ namespace FMData.Rest.Tests
             Assert.DoesNotContain("\"Id\":1", json);
         }
 
+        [Fact]
+        public void Nullable_Model_Property_Should_Be_EmptyString_When_Serialized_With_NullValueHandling_Include()
+        {
+            //arrange 
+            var r = new EditRequest<User>() { Data = new User { Id = 94, ForeignKeyId = null } };
+            r.IncludeDefaultValuesInSerializedOutput = true;
+            r.IncludeNullValuesInSerializedOutput = true;
+
+            // act
+            var json = r.SerializeRequest();
+
+            //assert
+            Assert.Contains("\"ForeignKeyId\":\"\"", json);
+        }
+
         [Theory]
         [InlineData(false, false)]
         [InlineData(true, false)]
