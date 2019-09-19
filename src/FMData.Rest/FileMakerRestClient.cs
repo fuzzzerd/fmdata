@@ -79,6 +79,7 @@ namespace FMData.Rest
         /// Note we assume _fmsUri has no trailing slash as its cut off in the constructor.
         /// </summary>
         private string _baseEndPoint => $"{_fmsUri}/fmi/data/v1/databases/{_fileName}";
+
         /// <summary>
         /// Generate the appropriate Authentication endpoint uri for this instance of the data client.
         /// </summary>

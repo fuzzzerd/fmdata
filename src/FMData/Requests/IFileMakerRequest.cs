@@ -9,7 +9,7 @@
         /// The layout to run the request against.
         /// </summary>
         string Layout { get; set; }
-        
+
         /// <summary>
         /// The layout to respond with. 
         /// </summary>
@@ -41,6 +41,16 @@
         /// Pre-sort script parameter.
         /// </summary>
         string PreSortScriptParameter { get; set; }
+
+        /// <summary>
+        /// When set to true, serialization will include null values.
+        /// </summary>
+        bool IncludeNullValuesInSerializedOutput { get; set; }
+
+        /// <summary>
+        /// When set to true, serialization will include null values.
+        /// </summary>
+        bool IncludeDefaultValuesInSerializedOutput { get; set; }
 
         /// <summary>
         /// Serializes the request to the required format.

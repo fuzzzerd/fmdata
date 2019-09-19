@@ -1,9 +1,9 @@
 namespace FMData.Xml
 {
     /// <summary>
-    /// Base Request Implemenation
+    /// Base Request Implementation
     /// </summary>
-    public class RequestBase : IFileMakerRequest
+    public abstract class RequestBase : IFileMakerRequest
     {
         /// <summary>
         /// Name of the layout to run the request on
@@ -39,7 +39,7 @@ namespace FMData.Xml
         public string PreRequestScriptParameter { get; set; }
 
         /// <summary>
-        /// Pre-sort request. Occurs after the pre-request and the api request but before the sort has occured.
+        /// Pre-sort request. Occurs after the pre-request and the api request but before the sort has occurred.
         /// </summary>
         //[JsonProperty("script.presort")]
         public string PreSortScript { get; set; }
@@ -50,9 +50,19 @@ namespace FMData.Xml
         public string PreSortScriptParameter { get; set; }
 
         /// <summary>
-        /// JSON Convert the current object to a string for passing out to the API.
+        /// When set to true, serialization will include null values.
+        /// </summary>
+        public bool IncludeNullValuesInSerializedOutput { get; set; }
+
+        /// <summary>
+        /// When set to true, serialization will include null values.
+        /// </summary>
+        public bool IncludeDefaultValuesInSerializedOutput { get; set; }
+
+        /// <summary>
+        /// XML Serialize the current object to a string for passing out to the API.
         /// </summary>
         /// <returns></returns>
-        public virtual string SerializeRequest() => "";
+        public abstract string SerializeRequest();
     }
 }
