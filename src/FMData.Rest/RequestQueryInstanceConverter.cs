@@ -1,5 +1,4 @@
 using Newtonsoft.Json;
-using FMData;
 using System;
 using Newtonsoft.Json.Linq;
 
@@ -9,14 +8,20 @@ namespace FMData.Rest
     /// JSON Convert Class that is used to combine the query object with the omit attribute that FileMaker Server expects to see.
     /// </summary>
     /// <typeparam name="T">Generic Type Instance of the Request to be converted.</typeparam>
-    class RequestQueryInstanceConverter<T> : JsonConverter<RequestQueryInstance<T>>
+    sealed class RequestQueryInstanceConverter<T> : JsonConverter<RequestQueryInstance<T>>
     {
+        private readonly IFileMakerRequest _parentRequest;
+        public RequestQueryInstanceConverter(IFileMakerRequest parentRequest)
+        {
+            _parentRequest = parentRequest;
+        }
+
         public override void WriteJson(JsonWriter writer, RequestQueryInstance<T> value, JsonSerializer serializer)
         {
-            var jcnvt = JsonConvert.SerializeObject(value.QueryInstance, new JsonSerializerSettings
+            var jsonConverted = JsonConvert.SerializeObject(value.QueryInstance, new JsonSerializerSettings
             {
-                NullValueHandling = NullValueHandling.Ignore,
-                DefaultValueHandling = DefaultValueHandling.Ignore,
+                NullValueHandling = _parentRequest.IncludeNullValuesInSerializedOutput ? NullValueHandling.Include : NullValueHandling.Ignore,
+                DefaultValueHandling = _parentRequest.IncludeDefaultValuesInSerializedOutput ? DefaultValueHandling.Include : DefaultValueHandling.Ignore,
                 Converters =
                 {
                     new FormatNumbersAsTextConverter()
@@ -26,14 +31,14 @@ namespace FMData.Rest
             // only parse a second time if we have an omit to insert.
             if (value.Omit)
             {
-                var jo = JObject.Parse(jcnvt);
+                var jo = JObject.Parse(jsonConverted);
                 // as always, filemaker is stringly typed...
                 jo.Add("omit", "true");
                 // overwrite original since we have an omit situation
-                jcnvt = jo.ToString();
+                jsonConverted = jo.ToString();
             }
 
-            writer.WriteRawValue(jcnvt);
+            writer.WriteRawValue(jsonConverted);
         }
 
         public override RequestQueryInstance<T> ReadJson(JsonReader reader, Type objectType, RequestQueryInstance<T> existingValue, bool hasExistingValue, JsonSerializer serializer)

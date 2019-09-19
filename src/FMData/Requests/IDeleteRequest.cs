@@ -1,7 +1,7 @@
 ﻿namespace FMData
 {
     /// <summary>
-    /// Delete Requeset Interface
+    /// Delete Request Interface
     /// </summary>
     public interface IDeleteRequest : IFileMakerRequest
     {

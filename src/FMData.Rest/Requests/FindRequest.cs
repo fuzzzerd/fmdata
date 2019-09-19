@@ -59,7 +59,7 @@ namespace FMData.Rest.Requests
                 Converters = 
                 { 
                     new FormatNumbersAsTextConverter(), 
-                    new RequestQueryInstanceConverter<TRequestType>() 
+                    new RequestQueryInstanceConverter<TRequestType>(this) 
                 }
             });
 

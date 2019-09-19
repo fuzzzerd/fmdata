@@ -6,7 +6,8 @@
         "fmdata",
         "fmresultset",
         "fuzzzerd",
-        "newed"
+        "newed",
+        "stringly"
     ],
     "git.enableCommitSigning": true
 }
