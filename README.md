@@ -71,7 +71,7 @@ public class Model
 
 ### Using IHttpClientFactory
 
-Constructors take an `HttpClient` and you can setup the DI pipeline in Startup.cs like so.
+Constructors take an `HttpClient` and you can setup the DI pipeline in Startup.cs like so for standard use:
 
 ```csharp
 services.AddSingleton<FMData.ConnectionInfo>(ci => new FMData.ConnectionInfo
@@ -83,6 +83,28 @@ services.AddSingleton<FMData.ConnectionInfo>(ci => new FMData.ConnectionInfo
 });
 services.AddHttpClient<IFileMakerApiClient, FileMakerRestClient>();
 ```
+
+If you prefer to use a singleton instance of `IFileMakerApiClient` you have to do a little bit more work in startup. This can improve performance if you're making lots of hits to the Data API over a single request to your application:
+
+```csharp
+services.AddHttpClient(); // setup IHttpClientFactory in the DI container
+services.AddSingleton<FMData.ConnectionInfo>(ci => new FMData.ConnectionInfo
+{
+    FmsUri = "https://example.com",
+    Username = "user",
+    Password = "password",
+    Database = "FILEMAKERFILE"
+});
+// Keep the FileMaker client as a singleton for speed
+services.AddSingleton<IFileMakerApiClient, FileMakerRestClient>(s => {
+    var hcf = s.GetRequiredService<IHttpClientFactory>();
+    var ci = s.GetRequiredService<ConnectionInfo>();
+    return new FileMakerRestClient(hcf.CreateClient(), ci);
+});
+```
+Behind the scenes, the injected `HttpClient` is kept alive for the lifetime of the FMData client (rest/xml) and reused throughout. This is useful to manage the lifetime of `IFileMakerApiClient` as a singleton, since it stores data about FileMaker Data API tokens and reuses them as much as possible.  Simply using `services.AddHttpClient<IFileMakerApiClient, FileMakerRestClient>();` keeps the lifetime of our similar to that of a 'managed `HttpClient`' which works for simple scenarios. 
+
+Test both approaches in your solution and use what works.
 
 ### Performing a Find
 
