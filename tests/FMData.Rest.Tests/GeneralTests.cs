@@ -88,7 +88,7 @@ namespace FMData.Rest.Tests
         [Theory]
         [InlineData(false, false)]
         [InlineData(true, false)]
-        [InlineData(false, false)]
+        [InlineData(false, true)]
         [InlineData(true, true)]
         public void IRequest_ShouldNot_Include_Null_FileMaker_Operators(bool includeNull, bool includeDefault)
         {
