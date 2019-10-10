@@ -2,9 +2,9 @@
 
 | Package | Build Status |  MyGet | Nuget |
 |---|---|---|---|
-| FMData | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![Myget](https://img.shields.io/myget/filemaker/vpre/FMData.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://buildstats.info/nuget/fmdata)](https://www.nuget.org/packages/FMData/) |
-| FMData.Rest | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet Pre Release](https://img.shields.io/myget/filemaker/vpre/FMData.Rest.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest) | [![NuGet](https://buildstats.info/nuget/fmdata.rest)](https://www.nuget.org/packages/FMData.Rest/) |
-| FMData.Xml  | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![FMData.Xml](https://img.shields.io/myget/filemaker/vpre/FMData.Xml.svg?style=flat-square)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Xml/) | [![NuGet](https://buildstats.info/nuget/fmdata.xml)](https://www.nuget.org/packages/FMData.Xml/) |
+| FMData | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![Myget](https://img.shields.io/myget/filemaker/vpre/FMData.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://buildstats.info/nuget/fmdata)](https://www.nuget.org/packages/FMData/) |
+| FMData.Rest | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet Pre Release](https://img.shields.io/myget/filemaker/vpre/FMData.Rest.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest) | [![NuGet](https://buildstats.info/nuget/fmdata.rest)](https://www.nuget.org/packages/FMData.Rest/) |
+| FMData.Xml  | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![FMData.Xml](https://img.shields.io/myget/filemaker/vpre/FMData.Xml.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Xml/) | [![NuGet](https://buildstats.info/nuget/fmdata.xml)](https://www.nuget.org/packages/FMData.Xml/) |
 
 There are plenty of ways to consume RESTful APIs from .NET, but the goal of this project is to provide a blended FileMaker-idiomatic and .NET-idiomatic experience for developers consuming data from FileMaker databases in .NET applications.
 
@@ -20,7 +20,7 @@ If you've found a bug, please submit a bug report. If you have a feature idea, o
 
 | Chat | Tests | Grade | Activity | License |
 | ---- | ---- | ---- | ---- | ---- |
-| [![Join the chat at https://gitter.im/fmdataio/community](https://badges.gitter.im/fmdataio/community.svg)](https://gitter.im/fmdataio/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)| [![AppVeyor tests branch](https://img.shields.io/appveyor/tests/fuzzzerd/fmdata/dev.svg?style=flat-square)](https://ci.appveyor.com/project/fuzzzerd/fmdata/build/tests) | [![CodeFactor](https://www.codefactor.io/repository/github/fuzzzerd/fmdata/badge)](https://www.codefactor.io/repository/github/fuzzzerd/fmdata) | [![FMData repository/commit activity](https://img.shields.io/github/commit-activity/w/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master)|[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE) |
+| [![Join the chat at https://gitter.im/fmdataio/community](https://badges.gitter.im/fmdataio/community.svg)](https://gitter.im/fmdataio/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)| [![AppVeyor tests](https://img.shields.io/appveyor/tests/fuzzzerd/fmdata)](https://ci.appveyor.com/project/fuzzzerd/fmdata/build/tests) | [![CodeFactor](https://www.codefactor.io/repository/github/fuzzzerd/fmdata/badge)](https://www.codefactor.io/repository/github/fuzzzerd/fmdata) | [![FMData repository/commit activity](https://img.shields.io/github/commit-activity/w/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)|[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE) |
 
 -----
 > *Version 4 has several breaking changes. Please [review the changes](https://github.com/fuzzzerd/fmdata/milestone/5?closed=1) prior to updating your project.*
@@ -206,14 +206,14 @@ We use [Semantic Versioning](http://semver.org/). Using the Major.Minor.Patch sy
 
 ## Repository Statistics
 
-[![FMData repository/commit activity the past year](https://img.shields.io/github/commit-activity/y/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master)
+[![FMData repository/commit activity the past year](https://img.shields.io/github/commit-activity/y/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)
 
-[![FMData issues](https://img.shields.io/github/issues/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/issues)
+[![FMData issues](https://img.shields.io/github/issues/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/issues)
 
-[![Code size in bytes](https://img.shields.io/github/languages/code-size/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master)
+[![Code size in bytes](https://img.shields.io/github/languages/code-size/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)
 
-[![Language Count](https://img.shields.io/github/languages/count/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/commits/master)
+[![Language Count](https://img.shields.io/github/languages/count/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)
 
-[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg?style=flat-square)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE)
 
 -----
