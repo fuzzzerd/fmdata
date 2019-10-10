@@ -1,3 +1,5 @@
+using System;
+
 namespace FMData
 {
     /// <summary>
@@ -12,9 +14,10 @@ namespace FMData
         /// <param name="scriptName">Name of the script to be called.</param>
         /// <param name="scriptParameter">Script parameter.</param>
         /// <returns>The request instanced that was implicitly passed in which is useful for method chaining.</returns>
+        [Obsolete]
         public static IFileMakerRequest SetPreRequestScript(
-            this IFileMakerRequest request, 
-            string scriptName, 
+            this IFileMakerRequest request,
+            string scriptName,
             string scriptParameter = null)
         {
             request.PreRequestScript = scriptName;
@@ -29,9 +32,10 @@ namespace FMData
         /// <param name="scriptName">Name of the script to be called.</param>
         /// <param name="scriptParameter">Script parameter.</param>
         /// <returns>The request instanced that was implicitly passed in which is useful for method chaining.</returns>
+        [Obsolete]
         public static IFileMakerRequest SetPreSortScript(
-            this IFileMakerRequest request, 
-            string scriptName, 
+            this IFileMakerRequest request,
+            string scriptName,
             string scriptParameter = null)
         {
             request.PreSortScript = scriptName;
@@ -46,9 +50,10 @@ namespace FMData
         /// <param name="scriptName">Name of the script to be called.</param>
         /// <param name="scriptParameter">Script parameter.</param>
         /// <returns>The request instanced that was implicitly passed in which is useful for method chaining.</returns>
+        [Obsolete]
         public static IFileMakerRequest SetScript(
-            this IFileMakerRequest request, 
-            string scriptName, 
+            this IFileMakerRequest request,
+            string scriptName,
             string scriptParameter = null)
         {
             request.Script = scriptName;

@@ -82,5 +82,56 @@ namespace FMData
             request.LoadContainerData = true;
             return request;
         }
+
+        /// <summary>
+        /// Adds a pre request script to the request, with a parameter.
+        /// </summary>
+        /// <param name="request">The request. This is the 'this' parameter.</param>
+        /// <param name="scriptName">Name of the script to be called.</param>
+        /// <param name="scriptParameter">Script parameter.</param>
+        /// <returns>The request instanced that was implicitly passed in which is useful for method chaining.</returns>
+        public static IFindRequest<T> SetPreRequestScript<T>(
+            this IFindRequest<T> request,
+            string scriptName,
+            string scriptParameter = null)
+        {
+            request.PreRequestScript = scriptName;
+            if (!string.IsNullOrEmpty(scriptParameter)) request.PreRequestScriptParameter = scriptParameter;
+            return request;
+        }
+
+        /// <summary>
+        /// Adds a pre sort script to the request, with a parameter.
+        /// </summary>
+        /// <param name="request">The request. This is the 'this' parameter.</param>
+        /// <param name="scriptName">Name of the script to be called.</param>
+        /// <param name="scriptParameter">Script parameter.</param>
+        /// <returns>The request instanced that was implicitly passed in which is useful for method chaining.</returns>
+        public static IFindRequest<T> SetPreSortScript<T>(
+            this IFindRequest<T> request,
+            string scriptName,
+            string scriptParameter = null)
+        {
+            request.PreSortScript = scriptName;
+            if (!string.IsNullOrEmpty(scriptParameter)) request.PreSortScriptParameter = scriptParameter;
+            return request;
+        }
+
+        /// <summary>
+        /// Adds a script to the request, with a parameter.
+        /// </summary>
+        /// <param name="request">The request. This is the 'this' parameter.</param>
+        /// <param name="scriptName">Name of the script to be called.</param>
+        /// <param name="scriptParameter">Script parameter.</param>
+        /// <returns>The request instanced that was implicitly passed in which is useful for method chaining.</returns>
+        public static IFindRequest<T> SetScript<T>(
+            this IFindRequest<T> request,
+            string scriptName,
+            string scriptParameter = null)
+        {
+            request.Script = scriptName;
+            if (!string.IsNullOrEmpty(scriptParameter)) request.ScriptParameter = scriptParameter;
+            return request;
+        }
     }
 }
