@@ -153,6 +153,13 @@ namespace FMData
         Task<IEnumerable<string>> GetDatabasesAsync();
 
         /// <summary>
+        /// Gets all the layouts within a database
+        /// </summary>
+        /// <param name="database">The database to query.</param>
+        /// <returns>The names of the layouts in the specified database.</returns>
+        Task<IEnumerable<LayoutListItem>> GetLayoutsAsync(string database);
+
+        /// <summary>
         /// Gets the metadata for a layout object.
         /// </summary>
         /// <param name="database">The name of the database the layout is in.</param>
@@ -412,7 +419,7 @@ namespace FMData
         /// <param name="req">Find request.</param>
         /// <param name="fmId">Function to map the FileMaker Id to the model.</param>
         Task<IEnumerable<T>> SendAsync<T>(
-            IFindRequest<T> req, 
+            IFindRequest<T> req,
             Func<T, int, object> fmId) where T : class, new();
 
         /// <summary>
@@ -422,8 +429,8 @@ namespace FMData
         /// <param name="fmId">Function to map the FileMaker Id to the model.</param>
         /// <param name="modId">Function to map the FileMaker Mod Id to the model.</param>
         Task<IEnumerable<T>> SendAsync<T>(
-            IFindRequest<T> req, 
-            Func<T, int, object> fmId, 
+            IFindRequest<T> req,
+            Func<T, int, object> fmId,
             Func<T, int, object> modId) where T : class, new();
 
         /// <summary>
@@ -436,7 +443,7 @@ namespace FMData
         /// Delete record
         /// </summary>
         /// <param name="req">Delete record request.</param>
-        Task<IResponse> SendAsync(IDeleteRequest req); 
+        Task<IResponse> SendAsync(IDeleteRequest req);
         #endregion
     }
 }

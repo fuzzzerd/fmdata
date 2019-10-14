@@ -58,6 +58,31 @@ namespace FMData.Rest.Tests
             Assert.Equal("Database1", response.First());
         }
 
+        [Fact(DisplayName = "Get Layouts Should Return Layout List")]
+        public async Task GetLayouts_Should_Return_Layout_List()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            var layoutData = System.IO.File.ReadAllText("ResponseData\\LayoutList.json");
+            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/layouts")
+               .Respond("application/json", layoutData);
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
+
+            var response = await fdc.GetLayoutsAsync(file);
+
+            Assert.NotNull(response);
+            Assert.Equal("Customers", response.First().Name);
+        }
+
         [Fact(DisplayName = "Get Layout Should Return Layout Metadata")]
         public async Task GetLayout_Should_Return_Layout_Metadata()
         {

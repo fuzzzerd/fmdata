@@ -382,6 +382,16 @@ namespace FMData.Xml
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="database"></param>
+        /// <returns></returns>
+        public override Task<IEnumerable<LayoutListItem>> GetLayoutsAsync(string database)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Utility method that must be overridden in implementations. Takes a containerfield url and populates a byte array utilizing the instance's http client.
         /// </summary>
         /// <param name="containerEndPoint">The container field to load.</param>

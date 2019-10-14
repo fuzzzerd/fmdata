@@ -1,0 +1,30 @@
+{
+    "messages": [
+        {
+            "message": "OK",
+            "code": "0"
+        }
+    ],
+    "response": {
+        "layouts": [
+            {
+                "name": "Customers"
+            },
+            {
+                "name": "Details"
+            },
+            {
+                "folderLayoutNames": [
+                    {
+                        "name": "Mark as sent"
+                    },
+                    {
+                        "name": "Find Unsent"
+                    }
+                ],
+                "isFolder": true,
+                "name": "Package Management"
+            }
+        ]
+    }
+}
