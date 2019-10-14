@@ -31,6 +31,9 @@
 
 
   <ItemGroup>
+    <None Update="ResponseData\Databases.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ResponseData\ProductInfo.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

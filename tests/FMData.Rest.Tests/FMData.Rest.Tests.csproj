@@ -45,6 +45,9 @@
 
 
   <ItemGroup>
+    <None Update="ResponseData\Databases.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ResponseData\ProductInfo.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

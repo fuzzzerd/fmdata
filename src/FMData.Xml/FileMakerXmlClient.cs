@@ -340,6 +340,34 @@ namespace FMData.Xml
         }
 
         /// <summary>
+        /// Get FileMaker Server Product Information.
+        /// </summary>
+        /// <returns>An instance of the FileMaker Product Info.</returns>
+        public override async Task<IEnumerable<string>> GetDatabasesAsync()
+        {
+            var url = _fmsUri + "/fmi/xml/fmresultset.xml?-dbnames";
+
+            var response = await _client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // process response data return OK
+                var xDocument = XDocument.Load(await response.Content.ReadAsStreamAsync());
+
+                // act
+                var metadata = xDocument
+                    .Descendants(_ns + "resultset")
+                    .Elements(_ns + "record")
+                    .Elements(_ns + "field")
+                    .Select(db => db.Value);
+
+                return metadata;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Utility method that must be overridden in implementations. Takes a containerfield url and populates a byte array utilizing the instance's http client.
         /// </summary>
         /// <param name="containerEndPoint">The container field to load.</param>

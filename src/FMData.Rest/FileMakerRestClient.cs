@@ -669,6 +669,44 @@ namespace FMData.Rest
         }
 
         /// <summary>
+        /// Get the databases the current instance is authorized to access.
+        /// </summary>
+        /// <returns>The names of the databases the current user is able to connect.</returns>
+        public async override Task<IEnumerable<string>> GetDatabasesAsync()
+        {
+            // don't need to refresh the token, because this is a basic authentication request
+
+            // generate request url
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_fmsUri}/fmi/data/v1/databases");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("basic", Convert.ToBase64String(
+                    Encoding.UTF8.GetBytes($"{_userName}:{_password}")
+                )
+            );
+
+            // run the patch action
+            var response = await _client.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            try
+            {
+                // process json as JObject and only grab the part we're interested in (response.productInfo).
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJObject = JObject.Parse(responseJson);
+                var responseObject = responseJObject["response"]["databases"];
+                return responseObject.Select(t => t.Value<string>("name"));
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
+        }
+
+        /// <summary>
         /// Puts the contents of the byte array into the specified container field.
         /// </summary>
         /// <param name="layout">The layout to perform this operation on.</param>

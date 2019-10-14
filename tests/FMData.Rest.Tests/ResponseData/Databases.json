@@ -1,0 +1,39 @@
+﻿{
+  "response": {
+    "databases": [
+      {
+        "name": "Database1"
+      },
+      {
+        "name": "Database2"
+      },
+      {
+        "name": "Database3"
+      },
+      {
+        "name": "Database4"
+      },
+      {
+        "name": "Database5"
+      },
+      {
+        "name": "Database6"
+      },
+      {
+        "name": "Database7"
+      },
+      {
+        "name": "Database8"
+      },
+      {
+        "name": "Database9"
+      }
+    ]
+  },
+  "messages": [
+    {
+      "code": "0",
+      "message": "OK"
+    }
+  ]
+}

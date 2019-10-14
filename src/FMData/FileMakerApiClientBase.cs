@@ -246,6 +246,12 @@ namespace FMData
         /// </summary>
         /// <returns>An instance of the FileMaker Product Info.</returns>
         public abstract Task<ProductInformation> GetProductInformationAsync();
+
+        /// <summary>
+        /// Get the databases the current instance is authorized to access.
+        /// </summary>
+        /// <returns>The names of the databases the current user is able to connect.</returns>
+        public abstract Task<IEnumerable<string>> GetDatabasesAsync();
         #endregion
 
         #region Find
