@@ -109,5 +109,30 @@ namespace FMData.Rest.Tests
             // sample data has one value list with two items
             Assert.Equal(2, response.ValueLists.First().Values.Count);
         }
+
+        [Fact(DisplayName = "Get Scripts Should Return Script List")]
+        public async Task GetScripts_Should_Return_Script_List()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            var layoutData = System.IO.File.ReadAllText("ResponseData\\ScriptList.json");
+            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/scripts")
+               .Respond("application/json", layoutData);
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
+
+            var response = await fdc.GetLayoutsAsync(file);
+
+            Assert.NotNull(response);
+            Assert.Equal("GotoFirst", response.First().Name);
+        }
     }
 }

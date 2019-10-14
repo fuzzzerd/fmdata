@@ -261,6 +261,13 @@ namespace FMData
         public abstract Task<IEnumerable<LayoutListItem>> GetLayoutsAsync(string database);
 
         /// <summary>
+        /// Gets all the scripts within a database.
+        /// </summary>
+        /// <param name="database">The database to query.</param>
+        /// <returns>The names of the scripts in the specified database.</returns>
+        public abstract Task<IEnumerable<ScriptListItem>> GetScriptsAsync(string database);
+
+        /// <summary>
         /// Gets the metadata for a layout object.
         /// </summary>
         /// <param name="database">The name of the database the layout is in.</param>

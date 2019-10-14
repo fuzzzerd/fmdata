@@ -743,6 +743,42 @@ namespace FMData.Rest
         }
 
         /// <summary>
+        /// Gets all the scripts within a database.
+        /// </summary>
+        /// <param name="database">The database to query.</param>
+        /// <returns>The names of the scripts in the specified database.</returns>
+        public async override Task<IEnumerable<ScriptListItem>> GetScriptsAsync(string database)
+        {
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+
+            // generate request url{
+            var uri = $"{_fmsUri}/fmi/data/v1/databases/{database}/layouts";
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            // run the patch action
+            var response = await _client.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            try
+            {
+                // process json as JObject and only grab the part we're interested in (response.productInfo).
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJObject = JObject.Parse(responseJson);
+                var responseObject = responseJObject["response"]["scripts"].ToObject<IEnumerable<ScriptListItem>>();
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
+        }
+
+        /// <summary>
         /// Gets the metadata for a layout object.
         /// </summary>
         /// <param name="database">The name of the database the layout is in.</param>
@@ -755,7 +791,8 @@ namespace FMData.Rest
 
             // generate request url
             var uri = $"{_fmsUri}/fmi/data/v1/databases/{database}/layouts/{layout}";
-            if(recordId.HasValue) {
+            if (recordId.HasValue)
+            {
                 uri += $"?recordId={recordId}";
             }
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);

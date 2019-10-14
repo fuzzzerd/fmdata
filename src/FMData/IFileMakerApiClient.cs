@@ -167,6 +167,13 @@ namespace FMData
         /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
         /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
         Task<LayoutMetadata> GetLayoutAsync(string database, string layout, int? recordId = null);
+
+        /// <summary>
+        /// Gets all the scripts within a database.
+        /// </summary>
+        /// <param name="database">The database to query.</param>
+        /// <returns>The names of the scripts in the specified database.</returns>
+        Task<IEnumerable<ScriptListItem>> GetScriptsAsync(string database);
         #endregion
 
         #endregion
