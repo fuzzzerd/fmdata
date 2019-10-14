@@ -151,6 +151,15 @@ namespace FMData
         /// </summary>
         /// <returns>The names of the databases the current user is able to connect.</returns>
         Task<IEnumerable<string>> GetDatabasesAsync();
+
+        /// <summary>
+        /// Gets the metadata for a layout object.
+        /// </summary>
+        /// <param name="database">The name of the database the layout is in.</param>
+        /// <param name="layout">The layout to get data about.</param>
+        /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
+        /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
+        Task<LayoutMetadata> GetLayoutAsync(string database, string layout, int? recordId = null);
         #endregion
 
         #endregion

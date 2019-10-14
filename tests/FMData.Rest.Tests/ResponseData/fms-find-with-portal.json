@@ -1,9 +1,8 @@
 {
-	"response": {
+  "response": {
     "data": [
       {
         "fieldData": {
-
           "ES_Account": "",
           "ES_RECORD_ID": 111,
           "ES_UTC_Time": 63670994415764
@@ -54,9 +53,11 @@
         "modId": "16"
       }
     ]
-	},
-	"messages": [{
-		"code": "0",
-		"message": "OK"
-	}]
+  },
+  "messages": [
+    {
+      "code": "0",
+      "message": "OK"
+    }
+  ]
 }

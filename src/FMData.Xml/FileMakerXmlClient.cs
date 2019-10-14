@@ -340,9 +340,9 @@ namespace FMData.Xml
         }
 
         /// <summary>
-        /// Get FileMaker Server Product Information.
+        /// Get the databases the current instance is authorized to access.
         /// </summary>
-        /// <returns>An instance of the FileMaker Product Info.</returns>
+        /// <returns>The names of the databases the current user is able to connect.</returns>
         public override async Task<IEnumerable<string>> GetDatabasesAsync()
         {
             var url = _fmsUri + "/fmi/xml/fmresultset.xml?-dbnames";
@@ -365,6 +365,20 @@ namespace FMData.Xml
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Gets the metadata for a layout object.
+        /// </summary>
+        /// <param name="database">The name of the database the layout is in.</param>
+        /// <param name="layout">The layout to get data about.</param>
+        /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
+        /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
+        public override Task<LayoutMetadata> GetLayoutAsync(string database, string layout, int? recordId = null)
+        {
+            var url = $"{_fmsUri}/fmi/xml/FMPXMLLAYOUT.xml?-db={database}&-lay={layout}&-view";
+
+            throw new NotImplementedException();
         }
 
         /// <summary>

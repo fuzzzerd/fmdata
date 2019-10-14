@@ -1,0 +1,46 @@
+{
+    "response": {
+        "fieldMetaData": [
+            {
+                "name": "CustomerName",
+                "type": "normal",
+                "displayType": "editText",
+                "result": "text",
+                "valueList": "Text",
+                "global": false,
+                "autoEnter": false,
+                "fourDigitYear": false,
+                "maxRepeat": 1,
+                "maxCharacters": 0,
+                "notEmpty": false,
+                "numeric": false,
+                "timeOfDay": false,
+                "repetitionStart": 1,
+                "repetitionEnd": 1
+            }
+        ],
+        "portalMetaData": {},
+        "valueLists": [
+            {
+                "name": "Region",
+                "type": "customList",
+                "values": [
+                    {
+                        "displayValue": "West",
+                        "value": "West"
+                    },
+                    {
+                        "displayValue": "East",
+                        "value": "East"
+                    }
+                ]
+            }
+        ]
+    },
+    "messages": [
+        {
+            "code": "0",
+            "message": "OK"
+        }
+    ]
+}
