@@ -752,7 +752,7 @@ namespace FMData.Rest
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
             // generate request url{
-            var uri = $"{_fmsUri}/fmi/data/v1/databases/{database}/layouts";
+            var uri = $"{_fmsUri}/fmi/data/v1/databases/{database}/scripts";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
             // run the patch action

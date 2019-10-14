@@ -129,7 +129,7 @@ namespace FMData.Rest.Tests
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 
-            var response = await fdc.GetLayoutsAsync(file);
+            var response = await fdc.GetScriptsAsync(file);
 
             Assert.NotNull(response);
             Assert.Equal("GotoFirst", response.First().Name);
