@@ -635,6 +635,192 @@ namespace FMData.Rest
         }
 
         /// <summary>
+        /// Get FileMaker Server Product Information.
+        /// </summary>
+        /// <returns>An instance of the FileMaker Product Info.</returns>
+        public async override Task<ProductInformation> GetProductInformationAsync()
+        {
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+
+            // generate request url
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_fmsUri}/fmi/data/v1/productinfo");
+
+            // run the patch action
+            var response = await _client.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            try
+            {
+                // process json as JObject and only grab the part we're interested in (response.productInfo).
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJObject = JObject.Parse(responseJson);
+                var responseObject = responseJObject["response"]["productInfo"].ToObject<ProductInformation>();
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
+        }
+
+        /// <summary>
+        /// Get the databases the current instance is authorized to access.
+        /// </summary>
+        /// <returns>The names of the databases the current user is able to connect.</returns>
+        public async override Task<IEnumerable<string>> GetDatabasesAsync()
+        {
+            // don't need to refresh the token, because this is a basic authentication request
+
+            // generate request url
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_fmsUri}/fmi/data/v1/databases");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("basic", Convert.ToBase64String(
+                    Encoding.UTF8.GetBytes($"{_userName}:{_password}")
+                )
+            );
+
+            // run the patch action
+            var response = await _client.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            try
+            {
+                // process json as JObject and only grab the part we're interested in (response.productInfo).
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJObject = JObject.Parse(responseJson);
+                var responseObject = responseJObject["response"]["databases"];
+                return responseObject.Select(t => t.Value<string>("name"));
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
+        }
+
+        /// <summary>
+        /// Gets all the layouts within a database
+        /// </summary>
+        /// <param name="database">The database to query.</param>
+        /// <returns>The names of the layouts in the specified database.</returns>
+        public async override Task<IEnumerable<LayoutListItem>> GetLayoutsAsync(string database)
+        {
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+
+            // generate request url{
+            var uri = $"{_fmsUri}/fmi/data/v1/databases/{database}/layouts";
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            // run the patch action
+            var response = await _client.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            try
+            {
+                // process json as JObject and only grab the part we're interested in (response.productInfo).
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJObject = JObject.Parse(responseJson);
+                var responseObject = responseJObject["response"]["layouts"].ToObject<IEnumerable<LayoutListItem>>();
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
+        }
+
+        /// <summary>
+        /// Gets all the scripts within a database.
+        /// </summary>
+        /// <param name="database">The database to query.</param>
+        /// <returns>The names of the scripts in the specified database.</returns>
+        public async override Task<IEnumerable<ScriptListItem>> GetScriptsAsync(string database)
+        {
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+
+            // generate request url{
+            var uri = $"{_fmsUri}/fmi/data/v1/databases/{database}/scripts";
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            // run the patch action
+            var response = await _client.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            try
+            {
+                // process json as JObject and only grab the part we're interested in (response.productInfo).
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJObject = JObject.Parse(responseJson);
+                var responseObject = responseJObject["response"]["scripts"].ToObject<IEnumerable<ScriptListItem>>();
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
+        }
+
+        /// <summary>
+        /// Gets the metadata for a layout object.
+        /// </summary>
+        /// <param name="database">The name of the database the layout is in.</param>
+        /// <param name="layout">The layout to get data about.</param>
+        /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
+        /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
+        public async override Task<LayoutMetadata> GetLayoutAsync(string database, string layout, int? recordId = null)
+        {
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+
+            // generate request url
+            var uri = $"{_fmsUri}/fmi/data/v1/databases/{database}/layouts/{layout}";
+            if (recordId.HasValue)
+            {
+                uri += $"?recordId={recordId}";
+            }
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            // run the patch action
+            var response = await _client.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            try
+            {
+                // process json as JObject and only grab the part we're interested in (response.productInfo).
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJObject = JObject.Parse(responseJson);
+                var responseObject = responseJObject["response"].ToObject<LayoutMetadata>();
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
+        }
+
+        /// <summary>
         /// Puts the contents of the byte array into the specified container field.
         /// </summary>
         /// <param name="layout">The layout to perform this operation on.</param>

@@ -95,6 +95,8 @@ namespace FMData
         #endregion
 
         #region Get
+
+        #region Get Records
         /// <summary>
         /// Get a single record by FileMaker RecordId
         /// </summary>
@@ -134,6 +136,46 @@ namespace FMData
         /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
         /// <returns>A single record matching the FileMaker Record Id.</returns>
         Task<T> GetByFileMakerIdAsync<T>(string layout, int fileMakerId, Func<T, int, object> fmId = null) where T : class, new();
+        #endregion
+
+        #region Get Metadata
+
+        /// <summary>
+        /// Get FileMaker Server Product Information.
+        /// </summary>
+        /// <returns>An instance of the FileMaker Product Info.</returns>
+        Task<ProductInformation> GetProductInformationAsync();
+
+        /// <summary>
+        /// Get the databases the current instance is authorized to access.
+        /// </summary>
+        /// <returns>The names of the databases the current user is able to connect.</returns>
+        Task<IEnumerable<string>> GetDatabasesAsync();
+
+        /// <summary>
+        /// Gets all the layouts within a database
+        /// </summary>
+        /// <param name="database">The database to query.</param>
+        /// <returns>The names of the layouts in the specified database.</returns>
+        Task<IEnumerable<LayoutListItem>> GetLayoutsAsync(string database);
+
+        /// <summary>
+        /// Gets the metadata for a layout object.
+        /// </summary>
+        /// <param name="database">The name of the database the layout is in.</param>
+        /// <param name="layout">The layout to get data about.</param>
+        /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
+        /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
+        Task<LayoutMetadata> GetLayoutAsync(string database, string layout, int? recordId = null);
+
+        /// <summary>
+        /// Gets all the scripts within a database.
+        /// </summary>
+        /// <param name="database">The database to query.</param>
+        /// <returns>The names of the scripts in the specified database.</returns>
+        Task<IEnumerable<ScriptListItem>> GetScriptsAsync(string database);
+        #endregion
+
         #endregion
 
         #region Find
@@ -223,7 +265,6 @@ namespace FMData
         /// <returns></returns>
         Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
         #endregion
-
 
         #region Edit
         /// <summary>
@@ -343,6 +384,7 @@ namespace FMData
             byte[] content);
         #endregion
 
+        #region Process Containers
         /// <summary>
         /// Load the contents of the container data into the attributed property of the model.
         /// </summary>
@@ -356,6 +398,7 @@ namespace FMData
         /// <typeparam name="T">The type of object to populate.</typeparam>
         /// <param name="instances">Collection of objects that have container data with the ContainerDataForAttribute.</param>
         Task ProcessContainers<T>(IEnumerable<T> instances);
+        #endregion
 
         #region Send Request Methods
         /// <summary>
@@ -383,7 +426,7 @@ namespace FMData
         /// <param name="req">Find request.</param>
         /// <param name="fmId">Function to map the FileMaker Id to the model.</param>
         Task<IEnumerable<T>> SendAsync<T>(
-            IFindRequest<T> req, 
+            IFindRequest<T> req,
             Func<T, int, object> fmId) where T : class, new();
 
         /// <summary>
@@ -393,8 +436,8 @@ namespace FMData
         /// <param name="fmId">Function to map the FileMaker Id to the model.</param>
         /// <param name="modId">Function to map the FileMaker Mod Id to the model.</param>
         Task<IEnumerable<T>> SendAsync<T>(
-            IFindRequest<T> req, 
-            Func<T, int, object> fmId, 
+            IFindRequest<T> req,
+            Func<T, int, object> fmId,
             Func<T, int, object> modId) where T : class, new();
 
         /// <summary>
@@ -407,7 +450,7 @@ namespace FMData
         /// Delete record
         /// </summary>
         /// <param name="req">Delete record request.</param>
-        Task<IResponse> SendAsync(IDeleteRequest req); 
+        Task<IResponse> SendAsync(IDeleteRequest req);
         #endregion
     }
 }

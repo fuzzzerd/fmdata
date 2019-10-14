@@ -1,0 +1,48 @@
+{
+    "response": {
+        "scripts": [
+            {
+                "name": "GotoFirst",
+                "isFolder": false
+            },
+            {
+                "name": "A Folder",
+                "isFolder": true,
+                "folderScriptNames": [
+                    {
+                        "name": "script1",
+                        "isFolder": false
+                    },
+                    {
+                        "name": "-",
+                        "isFolder": false
+                    },
+                    {
+                        "name": "script2",
+                        "isFolder": false
+                    },
+                    {
+                        "name": "Another Folder",
+                        "isFolder": true,
+                        "folderScriptNames": [
+                            {
+                                "name": "script3",
+                                "isFolder": false
+                            }
+                        ]
+                    },
+                    {
+                        "name": "script4",
+                        "isFolder": false
+                    }
+                ]
+            }
+        ]
+    },
+    "messages": [
+        {
+            "message": "OK",
+            "code": "0"
+        }
+    ]
+}

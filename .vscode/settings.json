@@ -2,7 +2,9 @@
     "dotnet-test-explorer.enableTelemetry": false,
     "dotnet-test-explorer.testProjectPath": "**/*.Tests.csproj",
     "cSpell.words": [
+        "FMPXMLLAYOUT",
         "Szalay",
+        "dbnames",
         "fmdata",
         "fmresultset",
         "fuzzzerd",

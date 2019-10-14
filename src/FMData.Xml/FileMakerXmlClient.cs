@@ -54,7 +54,8 @@ namespace FMData.Xml
             {
                 Credentials = new NetworkCredential(user, pass)
             }),
-                    new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }) { }
+                    new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass })
+        { }
 
         /// <summary>
         /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"/> instance to the class.
@@ -272,7 +273,7 @@ namespace FMData.Xml
                 var results = records.Select(r => r.FieldData);
 
                 // make container processing part of the request, IF specified in the original request.
-                if (req.LoadContainerData) 
+                if (req.LoadContainerData)
                 {
                     await ProcessContainers(results);
                 }
@@ -302,6 +303,100 @@ namespace FMData.Xml
         /// TODO: Workaround with B64 encoding and container auto-enter?
         /// </summary>
         public override Task<IEditResponse> UpdateContainerAsync(string layout, int recordId, string fieldName, string fileName, int repetition, byte[] content)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Get FileMaker Server Product Information.
+        /// </summary>
+        /// <returns>An instance of the FileMaker Product Info.</returns>
+        public override async Task<ProductInformation> GetProductInformationAsync()
+        {
+            var url = _fmsUri + "/fmi/xml/fmresultset.xml";
+
+            var response = await _client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // process response data return OK
+                var xDocument = XDocument.Load(await response.Content.ReadAsStreamAsync());
+
+                // act
+                var metadata = xDocument
+                    .Descendants(_ns + "product")
+                    .Select(p => new ProductInformation
+                    {
+                        Name = p.Attribute("name").Value,
+                        BuildDate = DateTime.Parse(p.Attribute("build").Value),
+                        Version = Version.Parse(p.Attribute("version").Value)
+                    })
+                    .FirstOrDefault();
+
+                return metadata;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Get the databases the current instance is authorized to access.
+        /// </summary>
+        /// <returns>The names of the databases the current user is able to connect.</returns>
+        public override async Task<IEnumerable<string>> GetDatabasesAsync()
+        {
+            var url = _fmsUri + "/fmi/xml/fmresultset.xml?-dbnames";
+
+            var response = await _client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // process response data return OK
+                var xDocument = XDocument.Load(await response.Content.ReadAsStreamAsync());
+
+                // act
+                var metadata = xDocument
+                    .Descendants(_ns + "resultset")
+                    .Elements(_ns + "record")
+                    .Elements(_ns + "field")
+                    .Select(db => db.Value);
+
+                return metadata;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the metadata for a layout object.
+        /// </summary>
+        /// <param name="database">The name of the database the layout is in.</param>
+        /// <param name="layout">The layout to get data about.</param>
+        /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
+        /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
+        public override Task<LayoutMetadata> GetLayoutAsync(string database, string layout, int? recordId = null)
+        {
+            var url = $"{_fmsUri}/fmi/xml/FMPXMLLAYOUT.xml?-db={database}&-lay={layout}&-view";
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="database"></param>
+        /// <returns></returns>
+        public override Task<IEnumerable<LayoutListItem>> GetLayoutsAsync(string database)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="database"></param>
+        /// <returns></returns>
+        public override Task<IEnumerable<ScriptListItem>> GetScriptsAsync(string database)
         {
             throw new NotImplementedException();
         }
