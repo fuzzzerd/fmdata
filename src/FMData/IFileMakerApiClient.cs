@@ -95,6 +95,8 @@ namespace FMData
         #endregion
 
         #region Get
+
+        #region Get Records
         /// <summary>
         /// Get a single record by FileMaker RecordId
         /// </summary>
@@ -134,6 +136,17 @@ namespace FMData
         /// <param name="fmId">The function to use to map the FileMakerId to the return object.</param>
         /// <returns>A single record matching the FileMaker Record Id.</returns>
         Task<T> GetByFileMakerIdAsync<T>(string layout, int fileMakerId, Func<T, int, object> fmId = null) where T : class, new();
+        #endregion
+
+        #region Get Metadata
+
+        /// <summary>
+        /// Get FileMaker Server Product Information.
+        /// </summary>
+        /// <returns>An instance of the FileMaker Product Info.</returns>
+        Task<ProductInformation> GetProductInformationAsync();
+        #endregion
+
         #endregion
 
         #region Find
@@ -223,7 +236,6 @@ namespace FMData
         /// <returns></returns>
         Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
         #endregion
-
 
         #region Edit
         /// <summary>
@@ -343,6 +355,7 @@ namespace FMData
             byte[] content);
         #endregion
 
+        #region Process Containers
         /// <summary>
         /// Load the contents of the container data into the attributed property of the model.
         /// </summary>
@@ -356,6 +369,7 @@ namespace FMData
         /// <typeparam name="T">The type of object to populate.</typeparam>
         /// <param name="instances">Collection of objects that have container data with the ContainerDataForAttribute.</param>
         Task ProcessContainers<T>(IEnumerable<T> instances);
+        #endregion
 
         #region Send Request Methods
         /// <summary>

@@ -132,7 +132,6 @@ namespace FMData
         }
         #endregion
 
-
         #region Create
         /// <summary>
         /// Create a record in the database utilizing the DataContract to target the layout.
@@ -238,6 +237,15 @@ namespace FMData
 
             return SendAsync(request);
         }
+        #endregion
+
+        #region Get Metadata
+
+        /// <summary>
+        /// Get FileMaker Server Product Information.
+        /// </summary>
+        /// <returns>An instance of the FileMaker Product Info.</returns>
+        public abstract Task<ProductInformation> GetProductInformationAsync();
         #endregion
 
         #region Find

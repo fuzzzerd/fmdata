@@ -635,6 +635,40 @@ namespace FMData.Rest
         }
 
         /// <summary>
+        /// Get FileMaker Server Product Information.
+        /// </summary>
+        /// <returns>An instance of the FileMaker Product Info.</returns>
+        public async override Task<ProductInformation> GetProductInformationAsync()
+        {
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+
+            // generate request url
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_fmsUri}/fmi/data/v1/productinfo");
+
+            // run the patch action
+            var response = await _client.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            try
+            {
+                // process json as JObject and only grab the part we're interested in (response.productInfo).
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJObject = JObject.Parse(responseJson);
+                var responseObject = responseJObject["response"]["productInfo"].ToObject<ProductInformation>();
+                return responseObject;
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
+        }
+
+        /// <summary>
         /// Puts the contents of the byte array into the specified container field.
         /// </summary>
         /// <param name="layout">The layout to perform this operation on.</param>
