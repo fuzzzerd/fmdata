@@ -811,6 +811,8 @@ namespace FMData.Rest
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseJObject = JObject.Parse(responseJson);
                 var responseObject = responseJObject["response"].ToObject<LayoutMetadata>();
+                // set the layout name on this instance, since it doesn't come back from the api
+                responseObject.Name = layout;
                 return responseObject;
             }
             catch (Exception ex)
