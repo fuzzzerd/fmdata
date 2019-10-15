@@ -42,7 +42,7 @@ namespace FMData.Rest
         /// <summary>
         /// Indicates that the client is authenticated and has a token within the refresh window.
         /// </summary>
-        public bool IsAuthenticated => !String.IsNullOrEmpty(dataToken) && DateTime.UtcNow.Subtract(dataTokenLastUse).TotalMinutes <= tokenExpiration;
+        public bool IsAuthenticated => !string.IsNullOrEmpty(dataToken) && DateTime.UtcNow.Subtract(dataTokenLastUse).TotalMinutes <= tokenExpiration;
 
         #region FM DATA SPECIFIC
         internal readonly int tokenExpiration = 15;
@@ -575,6 +575,7 @@ namespace FMData.Rest
         /// Helper For Getting Raw Responses from Data API.
         /// </summary>
         public Task<HttpResponseMessage> ExecuteRequestAsync<T>(ICreateRequest<T> req) => ExecuteRequestAsync(HttpMethod.Post, CreateEndpoint(req.Layout), req);
+
         /// <summary>
         /// Helper For Getting Raw Responses from Data API.
         /// </summary>

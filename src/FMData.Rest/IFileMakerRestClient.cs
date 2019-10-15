@@ -108,12 +108,12 @@ namespace FMData.Rest
         /// Helper For Getting Raw Responses from Data API.
         /// </summary>
         Task<HttpResponseMessage> ExecuteRequestAsync<T>(ICreateRequest<T> req);
-        
+
         /// <summary>
         /// Helper For Getting Raw Responses from Data API.
         /// </summary>
         Task<HttpResponseMessage> ExecuteRequestAsync<T>(IEditRequest<T> req);
-        
+
         /// <summary>
         /// Helper For Getting Raw Responses from Data API.
         /// </summary>

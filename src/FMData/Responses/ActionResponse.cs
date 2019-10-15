@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FMData
+﻿namespace FMData
 {
     /// <summary>
     /// Type holder for the nested 'Response' Type
