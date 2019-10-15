@@ -343,7 +343,7 @@ namespace FMData.Xml
         /// Get the databases the current instance is authorized to access.
         /// </summary>
         /// <returns>The names of the databases the current user is able to connect.</returns>
-        public override async Task<IEnumerable<string>> GetDatabasesAsync()
+        public override async Task<IReadOnlyCollection<string>> GetDatabasesAsync()
         {
             var url = _fmsUri + "/fmi/xml/fmresultset.xml?-dbnames";
 
@@ -359,7 +359,8 @@ namespace FMData.Xml
                     .Descendants(_ns + "resultset")
                     .Elements(_ns + "record")
                     .Elements(_ns + "field")
-                    .Select(db => db.Value);
+                    .Select(db => db.Value)
+                    .ToList();
 
                 return metadata;
             }
@@ -386,7 +387,7 @@ namespace FMData.Xml
         /// </summary>
         /// <param name="database"></param>
         /// <returns></returns>
-        public override Task<IEnumerable<LayoutListItem>> GetLayoutsAsync(string database)
+        public override Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync(string database)
         {
             throw new NotImplementedException();
         }
@@ -396,7 +397,7 @@ namespace FMData.Xml
         /// </summary>
         /// <param name="database"></param>
         /// <returns></returns>
-        public override Task<IEnumerable<ScriptListItem>> GetScriptsAsync(string database)
+        public override Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync(string database)
         {
             throw new NotImplementedException();
         }

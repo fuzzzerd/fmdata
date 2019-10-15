@@ -150,14 +150,14 @@ namespace FMData
         /// Get the databases the current instance is authorized to access.
         /// </summary>
         /// <returns>The names of the databases the current user is able to connect.</returns>
-        Task<IEnumerable<string>> GetDatabasesAsync();
+        Task<IReadOnlyCollection<string>> GetDatabasesAsync();
 
         /// <summary>
         /// Gets all the layouts within a database
         /// </summary>
         /// <param name="database">The database to query.</param>
         /// <returns>The names of the layouts in the specified database.</returns>
-        Task<IEnumerable<LayoutListItem>> GetLayoutsAsync(string database);
+        Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync(string database);
 
         /// <summary>
         /// Gets the metadata for a layout object.
@@ -173,7 +173,7 @@ namespace FMData
         /// </summary>
         /// <param name="database">The database to query.</param>
         /// <returns>The names of the scripts in the specified database.</returns>
-        Task<IEnumerable<ScriptListItem>> GetScriptsAsync(string database);
+        Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync(string database);
         #endregion
 
         #endregion

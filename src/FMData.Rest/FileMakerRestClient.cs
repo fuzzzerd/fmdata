@@ -672,7 +672,7 @@ namespace FMData.Rest
         /// Get the databases the current instance is authorized to access.
         /// </summary>
         /// <returns>The names of the databases the current user is able to connect.</returns>
-        public async override Task<IEnumerable<string>> GetDatabasesAsync()
+        public async override Task<IReadOnlyCollection<string>> GetDatabasesAsync()
         {
             // don't need to refresh the token, because this is a basic authentication request
 
@@ -697,7 +697,7 @@ namespace FMData.Rest
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseJObject = JObject.Parse(responseJson);
                 var responseObject = responseJObject["response"]["databases"];
-                return responseObject.Select(t => t.Value<string>("name"));
+                return responseObject.Select(t => t.Value<string>("name")).ToList();
             }
             catch (Exception ex)
             {
@@ -711,7 +711,7 @@ namespace FMData.Rest
         /// </summary>
         /// <param name="database">The database to query.</param>
         /// <returns>The names of the layouts in the specified database.</returns>
-        public async override Task<IEnumerable<LayoutListItem>> GetLayoutsAsync(string database)
+        public async override Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync(string database)
         {
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
@@ -732,7 +732,7 @@ namespace FMData.Rest
                 // process json as JObject and only grab the part we're interested in (response.productInfo).
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseJObject = JObject.Parse(responseJson);
-                var responseObject = responseJObject["response"]["layouts"].ToObject<IEnumerable<LayoutListItem>>();
+                var responseObject = responseJObject["response"]["layouts"].ToObject<IReadOnlyCollection<LayoutListItem>>();
                 return responseObject;
             }
             catch (Exception ex)
@@ -747,7 +747,7 @@ namespace FMData.Rest
         /// </summary>
         /// <param name="database">The database to query.</param>
         /// <returns>The names of the scripts in the specified database.</returns>
-        public async override Task<IEnumerable<ScriptListItem>> GetScriptsAsync(string database)
+        public async override Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync(string database)
         {
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
@@ -768,7 +768,7 @@ namespace FMData.Rest
                 // process json as JObject and only grab the part we're interested in (response.productInfo).
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseJObject = JObject.Parse(responseJson);
-                var responseObject = responseJObject["response"]["scripts"].ToObject<IEnumerable<ScriptListItem>>();
+                var responseObject = responseJObject["response"]["scripts"].ToObject<IReadOnlyCollection<ScriptListItem>>();
                 return responseObject;
             }
             catch (Exception ex)
