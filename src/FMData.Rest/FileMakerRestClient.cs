@@ -579,7 +579,6 @@ namespace FMData.Rest
                 }
                 // if there is a script error, return that.
                 return responseObject.ScriptError.ToString();
-
             }
             catch (Exception ex)
             {
