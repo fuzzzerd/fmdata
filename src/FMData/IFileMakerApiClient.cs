@@ -157,7 +157,14 @@ namespace FMData
         /// </summary>
         /// <param name="database">The database to query.</param>
         /// <returns>The names of the layouts in the specified database.</returns>
+        [Obsolete]
         Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync(string database);
+
+        /// <summary>
+        /// Gets all the layouts within the database.
+        /// </summary>
+        /// <returns>The names of the layouts in the database.</returns>
+        Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync();
 
         /// <summary>
         /// Gets the metadata for a layout object.
@@ -166,14 +173,30 @@ namespace FMData
         /// <param name="layout">The layout to get data about.</param>
         /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
         /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
+        [Obsolete]
         Task<LayoutMetadata> GetLayoutAsync(string database, string layout, int? recordId = null);
+
+        /// <summary>
+        /// Gets the metadata for a layout object.
+        /// </summary>
+        /// <param name="layout">The layout to get data about.</param>
+        /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
+        /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
+        Task<LayoutMetadata> GetLayoutAsync(string layout, int? recordId = null);
 
         /// <summary>
         /// Gets all the scripts within a database.
         /// </summary>
         /// <param name="database">The database to query.</param>
         /// <returns>The names of the scripts in the specified database.</returns>
+        [Obsolete]
         Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync(string database);
+
+        /// <summary>
+        /// Gets all the scripts within the database.
+        /// </summary>
+        /// <returns>The names of the scripts in the database.</returns>
+        Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync();
         #endregion
 
         #endregion

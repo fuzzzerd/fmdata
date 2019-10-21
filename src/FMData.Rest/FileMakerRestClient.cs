@@ -712,12 +712,12 @@ namespace FMData.Rest
         /// </summary>
         /// <param name="database">The database to query.</param>
         /// <returns>The names of the layouts in the specified database.</returns>
-        public async override Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync(string database)
+        public async override Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync()
         {
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
             // generate request url{
-            var uri = $"{_fmsUri}/fmi/data/v1/databases/{database}/layouts";
+            var uri = $"{_fmsUri}/fmi/data/v1/databases/{_fileName}/layouts";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
             // run the patch action
@@ -744,16 +744,15 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// Gets all the scripts within a database.
+        /// Gets all the scripts within the database.
         /// </summary>
-        /// <param name="database">The database to query.</param>
         /// <returns>The names of the scripts in the specified database.</returns>
-        public async override Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync(string database)
+        public async override Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync()
         {
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
             // generate request url{
-            var uri = $"{_fmsUri}/fmi/data/v1/databases/{database}/scripts";
+            var uri = $"{_fmsUri}/fmi/data/v1/databases/{_fileName}/scripts";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
             // run the patch action
@@ -782,16 +781,15 @@ namespace FMData.Rest
         /// <summary>
         /// Gets the metadata for a layout object.
         /// </summary>
-        /// <param name="database">The name of the database the layout is in.</param>
         /// <param name="layout">The layout to get data about.</param>
         /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
         /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
-        public async override Task<LayoutMetadata> GetLayoutAsync(string database, string layout, int? recordId = null)
+        public async override Task<LayoutMetadata> GetLayoutAsync(string layout, int? recordId = null)
         {
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
             // generate request url
-            var uri = $"{_fmsUri}/fmi/data/v1/databases/{database}/layouts/{layout}";
+            var uri = $"{_fmsUri}/fmi/data/v1/databases/{_fileName}/layouts/{layout}";
             if (recordId.HasValue)
             {
                 uri += $"?recordId={recordId}";
