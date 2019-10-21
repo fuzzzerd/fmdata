@@ -258,14 +258,42 @@ namespace FMData
         /// </summary>
         /// <param name="database">The database to query.</param>
         /// <returns>The names of the layouts in the specified database.</returns>
-        public abstract Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync(string database);
+        [Obsolete]
+        public Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync(string database)
+        {
+            if(database != _fileName)
+            {
+                throw new ArgumentOutOfRangeException("database", database, "Name of the database must match the file used in the constructor.");
+            }
+            return GetLayoutsAsync();
+        }
+
+        /// <summary>
+        /// Gets all the layouts within a database
+        /// </summary>
+        /// <returns>The names of the layouts in the specified database.</returns>
+        public abstract Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync();
 
         /// <summary>
         /// Gets all the scripts within a database.
         /// </summary>
         /// <param name="database">The database to query.</param>
         /// <returns>The names of the scripts in the specified database.</returns>
-        public abstract Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync(string database);
+        [Obsolete]
+        public Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync(string database)
+        {
+            if (database != _fileName)
+            {
+                throw new ArgumentOutOfRangeException("database", database, "Name of the database must match the file used in the constructor.");
+            }
+            return GetScriptsAsync();
+        }
+
+        /// <summary>
+        /// Gets all the scripts within the database.
+        /// </summary>
+        /// <returns>The names of the scripts in the database.</returns>
+        public abstract Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync();
 
         /// <summary>
         /// Gets the metadata for a layout object.
@@ -274,7 +302,23 @@ namespace FMData
         /// <param name="layout">The layout to get data about.</param>
         /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
         /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
-        public abstract Task<LayoutMetadata> GetLayoutAsync(string database, string layout, int? recordId = null);
+        [Obsolete]
+        public Task<LayoutMetadata> GetLayoutAsync(string database, string layout, int? recordId = null)
+        {
+            if (database != _fileName)
+            {
+                throw new ArgumentOutOfRangeException("database", database, "Name of the database must match the file used in the constructor.");
+            }
+            return GetLayoutAsync(layout, recordId);
+        }
+
+        /// <summary>
+        /// Gets the metadata for a layout object.
+        /// </summary>
+        /// <param name="layout">The layout to get data about.</param>
+        /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
+        /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
+        public abstract Task<LayoutMetadata> GetLayoutAsync(string layout, int? recordId = null);
         #endregion
 
         #region Find
