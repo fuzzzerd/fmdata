@@ -19,7 +19,7 @@ namespace FMData
     /// Needed to wrap the response in a 'Response' object.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class FindResultType<T>
+    public class FindResultType<T> : ActionResponse
     {
         /// <summary>
         /// The data contained in the response.

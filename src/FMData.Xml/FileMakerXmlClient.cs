@@ -400,6 +400,18 @@ namespace FMData.Xml
         }
 
         /// <summary>
+        /// Runs a script with the specified layout context and with an optional (null/empty OK) paramater.
+        /// </summary>
+        /// <param name="layout">The layout to use for the context of the script.</param>
+        /// <param name="script">The name of the script to run.</param>
+        /// <param name="scriptParameter">The parameter to pass to the script. Null or Empty is OK.</param>
+        /// <returns>The script result when OK, or the error code if not OK.</returns>
+        public async override Task<string> RunScriptAsync(string layout, string script, string scriptParameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Utility method that must be overridden in implementations. Takes a containerfield url and populates a byte array utilizing the instance's http client.
         /// </summary>
         /// <param name="containerEndPoint">The container field to load.</param>

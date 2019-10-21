@@ -539,6 +539,55 @@ namespace FMData.Rest
         #endregion
 
         /// <summary>
+        /// Runs a script with the specified layout context and with an optional (null/empty OK) paramater.
+        /// </summary>
+        /// <param name="layout">The layout to use for the context of the script.</param>
+        /// <param name="script">The name of the script to run.</param>
+        /// <param name="scriptParameter">The parameter to pass to the script. Null or Empty is OK.</param>
+        /// <returns>The script result when OK, or the error code if not OK.</returns>
+        public async override Task<string> RunScriptAsync(string layout, string script, string scriptParameter)
+        {
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+
+            // generate request url{
+            var uri = $"{_fmsUri}/fmi/data/v1/databases/{_fileName}/layouts/{layout}/script/{script}";
+            if (!string.IsNullOrEmpty(scriptParameter))
+            {
+                uri += $"?script.param={scriptParameter}";
+            }
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            // run the patch action
+            var response = await _client.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            try
+            {
+                // process json as JObject and only grab the part we're interested in (response.productInfo).
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJObject = JObject.Parse(responseJson);
+                var responseObject = responseJObject["response"].ToObject<ActionResponse>();
+
+                if (responseObject.ScriptError == 0)
+                {
+                    // if no script error, return the script result
+                    return responseObject.ScriptResult;
+                }
+                // if there is a script error, return that.
+                return responseObject.ScriptError.ToString();
+            }
+            catch (Exception ex)
+            {
+                // something bad happened. TODO: improve non-OK response handling
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
+            }
+        }
+
+        /// <summary>
         /// Executes a FileMaker Request to a JSON string.
         /// </summary>
         /// <param name="method">The http method to use for the request.</param>
@@ -580,6 +629,7 @@ namespace FMData.Rest
         /// Helper For Getting Raw Responses from Data API.
         /// </summary>
         public Task<HttpResponseMessage> ExecuteRequestAsync<T>(IEditRequest<T> req) => ExecuteRequestAsync(new HttpMethod("PATCH"), UpdateEndpoint(req.Layout, req.RecordId), req);
+
         /// <summary>
         /// Helper For Getting Raw Responses from Data API.
         /// </summary>

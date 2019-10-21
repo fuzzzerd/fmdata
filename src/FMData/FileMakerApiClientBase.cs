@@ -132,6 +132,15 @@ namespace FMData
         }
         #endregion
 
+        /// <summary>
+        /// Runs a script with the specified layout context and with an optional (null/empty OK) paramater.
+        /// </summary>
+        /// <param name="layout">The layout to use for the context of the script.</param>
+        /// <param name="script">The name of the script to run.</param>
+        /// <param name="scriptParameter">The parameter to pass to the script. Null or Empty is OK.</param>
+        /// <returns>The script result when OK, or the error code if not OK.</returns>
+        public abstract Task<string> RunScriptAsync(string layout, string script, string scriptParameter);
+
         #region Create
         /// <summary>
         /// Create a record in the database utilizing the DataContract to target the layout.

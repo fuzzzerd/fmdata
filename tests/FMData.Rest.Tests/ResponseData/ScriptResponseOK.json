@@ -1,0 +1,12 @@
+﻿{
+  "response": {
+    "scriptResult": "Text Based Script Result",
+    "scriptError": "0"
+  },
+  "messages": [
+    {
+      "code": "0",
+      "message": "OK"
+    }
+  ]
+}
