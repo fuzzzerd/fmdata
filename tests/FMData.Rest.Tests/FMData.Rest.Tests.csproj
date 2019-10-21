@@ -14,6 +14,9 @@
     <None Update="ResponseData\b64-string.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="ResponseData\ScriptResponseOK.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ResponseData\fms-find-with-portal.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

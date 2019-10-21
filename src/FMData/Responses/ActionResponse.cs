@@ -19,5 +19,10 @@
         /// Script Error (if any)
         /// </summary>
         public int ScriptError { get; set; }
+
+        /// <summary>
+        /// Result of the script that was run as part of this action.
+        /// </summary>
+        public string ScriptResult { get; set; }
     }
 }
