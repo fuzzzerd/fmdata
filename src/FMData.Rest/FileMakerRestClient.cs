@@ -607,10 +607,16 @@ namespace FMData.Rest
             // build the request for global fields manually
             var str = $"{{ \"globalFields\" : {{ \"{baseTable}::{fieldName}\" : \"{targetValue}\" }} }}";
             var method = new HttpMethod("PATCH");
+
             var requestMessage = new HttpRequestMessage(method, $"{_baseEndPoint}/globals")
             {
                 Content = new StringContent(str, Encoding.UTF8, "application/json")
             };
+
+            // do not pass character set. 
+            // this is due to fms 18 returning Bad Request when specified
+            // this hack is backward compatible for FMS17
+            requestMessage.Content.Headers.ContentType.CharSet = null;
 
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
