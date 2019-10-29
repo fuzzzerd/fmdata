@@ -371,13 +371,12 @@ namespace FMData.Xml
         /// <summary>
         /// Gets the metadata for a layout object.
         /// </summary>
-        /// <param name="database">The name of the database the layout is in.</param>
         /// <param name="layout">The layout to get data about.</param>
         /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
         /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
-        public override Task<LayoutMetadata> GetLayoutAsync(string database, string layout, int? recordId = null)
+        public override Task<LayoutMetadata> GetLayoutAsync(string layout, int? recordId = null)
         {
-            var url = $"{_fmsUri}/fmi/xml/FMPXMLLAYOUT.xml?-db={database}&-lay={layout}&-view";
+            var url = $"{_fmsUri}/fmi/xml/FMPXMLLAYOUT.xml?-db={_fileName}&-lay={layout}&-view";
 
             throw new NotImplementedException();
         }
@@ -385,9 +384,8 @@ namespace FMData.Xml
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="database"></param>
         /// <returns></returns>
-        public override Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync(string database)
+        public override Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync()
         {
             throw new NotImplementedException();
         }
@@ -395,9 +393,20 @@ namespace FMData.Xml
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="database"></param>
         /// <returns></returns>
-        public override Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync(string database)
+        public override Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Runs a script with the specified layout context and with an optional (null/empty OK) paramater.
+        /// </summary>
+        /// <param name="layout">The layout to use for the context of the script.</param>
+        /// <param name="script">The name of the script to run.</param>
+        /// <param name="scriptParameter">The parameter to pass to the script. Null or Empty is OK.</param>
+        /// <returns>The script result when OK, or the error code if not OK.</returns>
+        public async override Task<string> RunScriptAsync(string layout, string script, string scriptParameter)
         {
             throw new NotImplementedException();
         }
