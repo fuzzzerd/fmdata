@@ -13,8 +13,8 @@ namespace FMData
         /// <summary>
         /// Get a new Create Request of the correct type.
         /// </summary>
-
         ICreateRequest<T> GenerateCreateRequest<T>();
+
         /// <summary>
         /// Generates a new create request for the input data.
         /// </summary>
@@ -26,8 +26,8 @@ namespace FMData
         /// <summary>
         /// Get a new Edit Request of the correct type.
         /// </summary>
-
         IEditRequest<T> GenerateEditRequest<T>();
+
         /// <summary>
         /// Generates a new edit request for the input object.
         /// </summary>
