@@ -58,22 +58,26 @@ public class FMDataFake : FileMakerApiClientBase
     private List<PropertyInfo> GetMatchingProperties(object source, object target)
     {
         if (source == null)
-            throw new ArgumentNullException("source");
-        if (target == null)
-            throw new ArgumentNullException("target");
+                throw new ArgumentNullException("source");
+            if (target == null)
+                throw new ArgumentNullException("target");
 
-        var sourceType = source.GetType();
-        var sourceProperties = sourceType.GetProperties();
-        var targetType = target.GetType();
-        var targetProperties = targetType.GetProperties();
+            var sourceType = source.GetType();
+            var sourceProperties = sourceType.GetProperties();
+            var targetType = target.GetType();
+            var targetProperties = targetType.GetProperties()
+                .Where(t =>
+                    (!t.PropertyType.IsValueType && t.GetValue(target) != null)
+                    || (t.PropertyType.IsValueType && !Object.Equals(t.GetValue(target), Activator.CreateInstance(t.PropertyType)))
+                );
 
-        var properties = (from s in sourceProperties
-                          from t in targetProperties
-                          where s.Name == t.Name &&
-                                s.PropertyType == t.PropertyType &&
-                                s.GetValue(source) == t.GetValue(target)
-                          select s).ToList();
-        return properties;
+            var properties = (from s in sourceProperties
+                              from t in targetProperties
+                              where s.Name == t.Name 
+                                    && s.PropertyType == t.PropertyType 
+                                    && Object.Equals(s.GetValue(source, null), t.GetValue(target, null))
+                              select s).ToList();
+            return properties;
     }
     #endregion
 
