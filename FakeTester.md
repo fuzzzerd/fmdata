@@ -1,4 +1,4 @@
-Start of an in-memory fake implementation for testing.
+Start of an in-memory fake implementation for testing data access. Scripts, Containers, Globals are ignored, though some of those could be implemented as well. The objective here is to provide a base that can be tested against without hitting FileMaker data stores.
 
 ```csharp
 /// <summary>
