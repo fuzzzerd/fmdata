@@ -16,8 +16,7 @@
     <Company />
     <PackageTags>filemaker dapi dapi-client data json rest xml api netstandard dotnet-standard</PackageTags>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <DebugType>Embedded</DebugType>
   </PropertyGroup>
 
   <PropertyGroup>
