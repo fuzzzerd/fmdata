@@ -16,8 +16,7 @@
     <Company />
     <PackageTags>filemaker xml cwp filemaker-xml</PackageTags>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <DebugType>Embedded</DebugType>
   </PropertyGroup>
 
   <PropertyGroup>
