@@ -974,6 +974,12 @@ namespace FMData.Rest
                     var pt = portal.PropertyType;
                     JToken portalJ = input["portalData"][namedPortal];
 
+                    // if the portal json is null, but the model expects it throw argument null exception.
+                    if (portalJ == null)
+                    {
+                        throw new ArgumentNullException("portalData", $"Data Api Response does not have a named portal matching: {namedPortal}");
+                    }
+
                     // .ToList() here so we iterate on a different copy of the collection
                     // which allows for calling add/remove on the list ;) clever
                     // https://stackoverflow.com/a/26864676/86860 - explication 
