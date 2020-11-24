@@ -406,7 +406,7 @@ namespace FMData.Xml
         /// <param name="script">The name of the script to run.</param>
         /// <param name="scriptParameter">The parameter to pass to the script. Null or Empty is OK.</param>
         /// <returns>The script result when OK, or the error code if not OK.</returns>
-        public async override Task<string> RunScriptAsync(string layout, string script, string scriptParameter)
+        public override Task<string> RunScriptAsync(string layout, string script, string scriptParameter)
         {
             throw new NotImplementedException();
         }

@@ -766,7 +766,6 @@ namespace FMData.Rest
         /// <summary>
         /// Gets all the layouts within a database
         /// </summary>
-        /// <param name="database">The database to query.</param>
         /// <returns>The names of the layouts in the specified database.</returns>
         public async override Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync()
         {

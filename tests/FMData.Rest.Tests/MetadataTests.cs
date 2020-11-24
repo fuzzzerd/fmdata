@@ -76,7 +76,7 @@ namespace FMData.Rest.Tests
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 
-            var response = await fdc.GetLayoutsAsync(file);
+            var response = await fdc.GetLayoutsAsync();
 
             Assert.NotNull(response);
             Assert.Equal("Customers", response.First().Name);
@@ -101,7 +101,7 @@ namespace FMData.Rest.Tests
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 
-            var response = await fdc.GetLayoutAsync(file, "layout");
+            var response = await fdc.GetLayoutAsync("layout");
 
             Assert.NotNull(response);
             Assert.Equal("CustomerName", response.FieldMetaData.FirstOrDefault().Name);
@@ -128,7 +128,7 @@ namespace FMData.Rest.Tests
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 
-            var response = await fdc.GetLayoutAsync(file, "layout");
+            var response = await fdc.GetLayoutAsync("layout");
 
             Assert.NotNull(response);
             Assert.Equal("layout", response.Name);
