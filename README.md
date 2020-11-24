@@ -53,7 +53,7 @@ public class Model
     public string Name { get; set; }
 
     // if your model name does not match use DataMember
-    [DataMember(Name="overrideFieldName")] // the filemaker field to use
+    [DataMember(Name="overrideFieldName")] // the internal database field to use
     public string Address { get; set; }
 
     [DataMember]
@@ -79,7 +79,7 @@ services.AddSingleton<FMData.ConnectionInfo>(ci => new FMData.ConnectionInfo
     FmsUri = "https://example.com",
     Username = "user",
     Password = "password",
-    Database = "FILEMAKERFILE"
+    Database = "FILE_NAME"
 });
 services.AddHttpClient<IFileMakerApiClient, FileMakerRestClient>();
 ```
@@ -93,7 +93,7 @@ services.AddSingleton<FMData.ConnectionInfo>(ci => new FMData.ConnectionInfo
     FmsUri = "https://example.com",
     Username = "user",
     Password = "password",
-    Database = "FILEMAKERFILE"
+    Database = "FILE_NAME"
 });
 // Keep the FileMaker client as a singleton for speed
 services.AddSingleton<IFileMakerApiClient, FileMakerRestClient>(s => {
@@ -112,7 +112,7 @@ Test both approaches in your solution and use what works.
 var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
 var toFind = new Model { Name = "someName" };
 var results = await client.FindAsync(toFind);
-// results = IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
+// results = IEnumerable<Model> matching with Name field matching "someName" as a FileMaker FindRequest.
 ```
 
 ### Create a new record
@@ -143,7 +143,7 @@ Func<Model, int, object> FMRecordIdMapper = (o, id) => o.FileMakerRecordId = id;
 var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // without .fmp12
 var toFind = new Model { Name = "someName" };
 var results = await client.FindAsync(toFind, FMRecordIdMapper);
-// results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
+// results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker FindRequest.
 ```
 
 Alternatively, if you create a calculated field `Get(RecordID)` and put it on your layout then map it the normal way.
@@ -157,7 +157,7 @@ var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // w
 var toFind = new Model { Name = "someName" };
 var results = await client.FindAsync(toFind);
 await client.ProcessContainers(results);
-// results = IEnumerable<Model> matching with Name field matching "someName" as a FileMaker Findrequest.
+// results = IEnumerable<Model> matching with Name field matching "someName" as a FileMaker FindRequest.
 ```
 
 ### Insert or Update Container Data
@@ -182,13 +182,15 @@ _client.UpdateContainerAsync(
 
 Latest Versions
 
-- [FileMaker Data API Documentation (FMS18)](https://fmhelp.filemaker.com/docs/18/en/dataapi/)
-- [FileMaker Server 18 Custom Web Publishing Guide](https://fmhelp.filemaker.com/docs/18/en/fms18_cwp_guide.pdf)
+- [FileMaker Data API Documentation (FMS19)](https://help.claris.com/en/data-api-guide/)
+- [FileMaker Server 19 Custom Web Publishing Guide](https://help.claris.com/en/server-custom-web-publishing-guide.pdf)
 
 Older Versions
 
+- [FileMaker Data API Documentation (FMS18)](https://fmhelp.filemaker.com/docs/18/en/dataapi/)
+- [FileMaker Server 18 Custom Web Publishing Guide](https://fmhelp.filemaker.com/docs/18/en/fms18_cwp_guide.pdf)
 - [FileMaker Data API Documentation (FMS17)](https://fmhelp.filemaker.com/docs/17/en/dataapi/)
-- [FileMaker REST API Documentation (FMS16)](https://fmhelp.filemaker.com/docs/16/en/restapi/) -- Not Supported by this project.
+- [FileMaker REST API Documentation (FMS16)](https://fmhelp.filemaker.com/docs/16/en/restapi/) *-- Not Supported by this project.*
 - [FileMaker Server 16 Web Publishing Guide](https://fmhelp.filemaker.com/docs/16/en/fms16_cwp_guide.pdf)
 - [FileMaker Server 15 Web Publishing Guide](https://fmhelp.filemaker.com/docs/15/en/fms15_cwp_guide.pdf)
 
