@@ -47,6 +47,7 @@ namespace FMData.Rest
         #region FM DATA SPECIFIC
         internal readonly int tokenExpiration = 15;
         private string dataToken;
+        private AuthenticationHeaderValue _authHeader;
         private DateTime dataTokenLastUse = DateTime.MinValue;
 
         #region Constructors
@@ -69,11 +70,7 @@ namespace FMData.Rest
         public FileMakerRestClient(HttpClient client, ConnectionInfo conn)
             : base(client, conn) { }
         #endregion
-        private async Task UpdateTokenDateAsync()
-        {
-            if (!IsAuthenticated) { await RefreshTokenAsync(_userName, _password); }
-            dataTokenLastUse = DateTime.UtcNow;
-        }
+
         #region API Endpoint Functions
         /// <summary>
         /// Note we assume _fmsUri has no trailing slash as its cut off in the constructor.
@@ -147,6 +144,15 @@ namespace FMData.Rest
         #region FM Data Token Management
 
         /// <summary>
+        /// Update the last used time for the token; and if its out of spec, refresh it.
+        /// </summary>
+        private async Task UpdateTokenDateAsync()
+        {
+            if (!IsAuthenticated) { await RefreshTokenAsync(_userName, _password); }
+            dataTokenLastUse = DateTime.UtcNow;
+        }
+
+        /// <summary>
         /// Refreshes the internally stored authentication token from filemaker server.
         /// </summary>
         /// <param name="username">Username of the account to authenticate.</param>
@@ -181,7 +187,7 @@ namespace FMData.Rest
                 // got a new token, so update our timestamp
                 this.dataTokenLastUse = DateTime.UtcNow;
                 // setup the token as an auth bearer header.
-                this._client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.dataToken);
+                _authHeader = new AuthenticationHeaderValue("Bearer", this.dataToken);
 
                 return responseObject;
             }
@@ -203,7 +209,13 @@ namespace FMData.Rest
         /// <returns>FileMaker Response</returns>
         public async Task<IResponse> LogoutAsync()
         {
-            // add a default request header of our data token to nuke
+            if (!IsAuthenticated)
+            {
+                // do not issue an http call if we're not actually authenticated.
+                return new BaseResponse() { Messages = new[] { new ResponseMessage { Code = "0", Message = "OK" } } };
+            }
+
+            // remove our token from the data api
             var response = await _client.DeleteAsync(AuthEndpoint() + $"/{this.dataToken}");
 
             // process the response
@@ -557,6 +569,9 @@ namespace FMData.Rest
             }
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
+            // include auth token
+            requestMessage.Headers.Authorization = _authHeader;
+
             // run the patch action
             var response = await _client.SendAsync(requestMessage);
 
@@ -599,6 +614,9 @@ namespace FMData.Rest
             string requestUri,
             IFileMakerRequest req)
         {
+            // we're about to use the token so update date used, and refresh if needed.
+            await UpdateTokenDateAsync();
+
             var str = req.SerializeRequest();
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
 
@@ -609,11 +627,11 @@ namespace FMData.Rest
 
             var httpRequest = new HttpRequestMessage(method, requestUri)
             {
-                Content = httpContent
+                Content = httpContent,
             };
 
-            // we're about to use the token so update date used, and refresh if needed.
-            await UpdateTokenDateAsync();
+            // include our authorization header
+            httpRequest.Headers.Authorization = _authHeader;
 
             // run and return the action
             var response = await _client.SendAsync(httpRequest);
@@ -654,6 +672,8 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(fieldName)) throw new ArgumentException("fieldName is required on set global.");
             if (string.IsNullOrEmpty(targetValue)) throw new ArgumentException("targetValue is required on set global.");
 
+            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+
             // build the request for global fields manually
             var str = $"{{ \"globalFields\" : {{ \"{baseTable}::{fieldName}\" : \"{targetValue}\" }} }}";
             var method = new HttpMethod("PATCH");
@@ -663,12 +683,13 @@ namespace FMData.Rest
                 Content = new StringContent(str, Encoding.UTF8, "application/json")
             };
 
+            // include auth token
+            requestMessage.Headers.Authorization = _authHeader;
+
             // do not pass character set. 
             // this is due to fms 18 returning Bad Request when specified
             // this hack is backward compatible for FMS17
             requestMessage.Content.Headers.ContentType.CharSet = null;
-
-            await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
             // run the patch action
             var response = await _client.SendAsync(requestMessage);
@@ -701,6 +722,9 @@ namespace FMData.Rest
 
             // generate request url
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_fmsUri}/fmi/data/v1/productinfo");
+
+            // include auth token
+            requestMessage.Headers.Authorization = _authHeader;
 
             // run the patch action
             var response = await _client.SendAsync(requestMessage);
@@ -735,6 +759,8 @@ namespace FMData.Rest
 
             // generate request url
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_fmsUri}/fmi/data/v1/databases");
+
+            // special non-token auth to list databases
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("basic", Convert.ToBase64String(
                     Encoding.UTF8.GetBytes($"{_userName}:{_password}")
                 )
@@ -775,6 +801,9 @@ namespace FMData.Rest
             var uri = $"{_fmsUri}/fmi/data/v1/databases/{_fileName}/layouts";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
+            // include auth token
+            requestMessage.Headers.Authorization = _authHeader;
+
             // run the patch action
             var response = await _client.SendAsync(requestMessage);
 
@@ -809,6 +838,9 @@ namespace FMData.Rest
             // generate request url{
             var uri = $"{_fmsUri}/fmi/data/v1/databases/{_fileName}/scripts";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            // include auth token
+            requestMessage.Headers.Authorization = _authHeader;
 
             // run the patch action
             var response = await _client.SendAsync(requestMessage);
@@ -850,6 +882,9 @@ namespace FMData.Rest
                 uri += $"?recordId={recordId}";
             }
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            // include auth token
+            requestMessage.Headers.Authorization = _authHeader;
 
             // run the patch action
             var response = await _client.SendAsync(requestMessage);
@@ -894,6 +929,8 @@ namespace FMData.Rest
             int repetition,
             byte[] content)
         {
+            await UpdateTokenDateAsync(); // about to use token, so update
+
             var form = new MultipartFormDataContent();
 
             //var stream = new MemoryStream(content);
@@ -905,8 +942,15 @@ namespace FMData.Rest
 
             form.Add(containerContent, "upload", Path.GetFileName(fileName));
 
-            await UpdateTokenDateAsync();
-            var response = await _client.PostAsync(uri, form);
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri)
+            {
+                Content = form
+            };
+
+            // include auth token
+            requestMessage.Headers.Authorization = _authHeader;
+
+            var response = await _client.SendAsync(requestMessage);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -934,7 +978,15 @@ namespace FMData.Rest
         /// <returns>An array of bytes with the data from the container field.</returns>
         protected override async Task<byte[]> GetContainerOnClient(string containerEndPoint)
         {
-            var data = await _client.GetAsync(containerEndPoint);
+            // build the request message
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, containerEndPoint);
+
+            // include auth token on the request
+            requestMessage.Headers.Authorization = _authHeader;
+
+            // send the request out
+            var data = await _client.SendAsync(requestMessage);
+            // read the bytes as a stream
             var dataBytes = await data.Content.ReadAsByteArrayAsync();
             return dataBytes;
         }
