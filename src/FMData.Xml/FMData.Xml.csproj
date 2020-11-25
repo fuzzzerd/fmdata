@@ -6,10 +6,10 @@
     <AssemblyName>FMData.Xml</AssemblyName>
     <Description>A client library for accessing FileMaker data through the Custom Web Publishing XML API in FileMaker Server.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageLicenseUrl>https://github.com/fuzzzerd/fmdata/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicense>https://github.com/fuzzzerd/fmdata/blob/master/LICENSE</PackageLicense>
     <PackageProjectUrl>https://fmdata.io/</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/fuzzzerd/fmdata/master/images/nuget.png</PackageIconUrl>
+    <PackageIcon>nuget.png</PackageIcon>
     <RepositoryUrl>https://github.com/fuzzzerd/fmdata</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <Authors>Nate Bross</Authors>
@@ -28,6 +28,10 @@
   <PropertyGroup>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\images\nuget.png" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FMData\FMData.csproj" />
