@@ -73,7 +73,15 @@ namespace FMData.Xml
         /// </summary>
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="conn">The connection information for FMS.</param>
-        public FileMakerXmlClient(HttpClient client, ConnectionInfo conn) : base(client, conn) { }
+        public FileMakerXmlClient(HttpClient client, ConnectionInfo conn) : base(client, conn)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location).ProductVersion;
+            var header = new System.Net.Http.Headers.ProductHeaderValue(assembly.GetName().Name, fvi);
+            var userAgent = new System.Net.Http.Headers.ProductInfoHeaderValue(header);
+
+            _client.DefaultRequestHeaders.UserAgent.Add(userAgent);
+        }
         #endregion
 
         #region Special Implementations
