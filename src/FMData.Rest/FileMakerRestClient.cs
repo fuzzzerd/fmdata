@@ -70,11 +70,16 @@ namespace FMData.Rest
         public FileMakerRestClient(HttpClient client, ConnectionInfo conn)
             : base(client, conn)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location).ProductVersion;
-            var header = new System.Net.Http.Headers.ProductHeaderValue(assembly.GetName().Name, fvi);
-            var userAgent = new System.Net.Http.Headers.ProductInfoHeaderValue(header);
 
+#if NETSTANDARD1_3
+            var header = new System.Net.Http.Headers.ProductHeaderValue("FMData.Rest", "4");
+            var userAgent = new System.Net.Http.Headers.ProductInfoHeaderValue(header);
+#else
+            var assembly = Assembly.GetExecutingAssembly();
+            var version = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location).ProductVersion;
+            var header = new System.Net.Http.Headers.ProductHeaderValue(assembly.GetName().Name, version);
+            var userAgent = new System.Net.Http.Headers.ProductInfoHeaderValue(header);
+#endif
             _client.DefaultRequestHeaders.UserAgent.Add(userAgent);
         }
         #endregion
