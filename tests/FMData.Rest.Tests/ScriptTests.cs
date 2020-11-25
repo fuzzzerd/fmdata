@@ -57,5 +57,36 @@ namespace FMData.Rest.Tests
 
             Assert.Equal("Text Based Script Result", response);
         }
+
+
+        [Fact(DisplayName = "No Script Error Should Return Script Result")]
+        public async Task Agetn_Check()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var layout = "layout";
+
+            var fmrAssembly = System.Reflection.Assembly.GetExecutingAssembly().GetReferencedAssemblies().Single(a => a.Name.StartsWith("FMData.Rest"));
+            var asm = System.Reflection.Assembly.Load(fmrAssembly.ToString());
+            var fmrVer = System.Diagnostics.FileVersionInfo.GetVersionInfo(asm.Location).ProductVersion;
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                .WithHeaders("User-Agent", $"{fmrAssembly.Name}/{fmrVer}")
+               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            var scriptResponse = System.IO.File.ReadAllText("ResponseData\\ScriptResponseOK.json");
+            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/script/*")
+               .Respond("application/json", scriptResponse);
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
+
+            var response = await fdc.RunScriptAsync(layout, "script-name", null);
+
+            Assert.Equal("Text Based Script Result", response);
+        }
     }
 }

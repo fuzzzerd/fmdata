@@ -1,5 +1,6 @@
 using RichardSzalay.MockHttp;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -104,6 +105,34 @@ namespace FMData.Rest.Tests
             using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass }))
             {
                 await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.RefreshTokenAsync(user, pass));
+            }
+        }
+
+        [Fact(DisplayName = "User-Agent Should Match Version Of Assembly")]
+        public async Task UserAgent_Should_Match_Version_Of_Assembly()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+
+            var fmrAssembly = System.Reflection.Assembly.GetExecutingAssembly().GetReferencedAssemblies().Single(a => a.Name.StartsWith("FMData.Rest"));
+            var asm = System.Reflection.Assembly.Load(fmrAssembly.ToString());
+            var fmrVer = System.Diagnostics.FileVersionInfo.GetVersionInfo(asm.Location).ProductVersion;
+
+            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
+                .WithHeaders("User-Agent", $"{fmrAssembly.Name}/{fmrVer}")
+               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/sessions*")
+                .Respond(HttpStatusCode.OK, "application/json", "");
+
+            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass }))
+            {
+                await fdc.RefreshTokenAsync(user, pass);
+                Assert.True(fdc.IsAuthenticated);
             }
         }
     }
