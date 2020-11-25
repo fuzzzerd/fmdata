@@ -41,7 +41,7 @@ namespace FMData.Rest.Tests
         }
 
         [Fact(DisplayName = "FMS 401 Should Result In Unauthorized Client")]
-        public void DataCliet_ShouldHandle_401_From_Sessions()
+        public void DataClient_ShouldHandle_401_From_Sessions()
         {
             var mockHttp = new MockHttpMessageHandler();
 
