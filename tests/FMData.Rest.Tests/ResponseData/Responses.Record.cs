@@ -114,5 +114,10 @@ public static string SuccessfulGetByIdWithContainer(int id, string containerPath
         {
             return System.IO.File.ReadAllText("ResponseData\\fms-find-with-portal.json");
         }
+
+        public static string SuccessfulFindWithDataInfo()
+        {
+            return System.IO.File.ReadAllText("ResponseData\\fms-find-with-datainfo.json");
+        }
     }
 }

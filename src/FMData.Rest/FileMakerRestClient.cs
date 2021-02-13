@@ -481,9 +481,11 @@ namespace FMData.Rest
         /// <param name="req">The find request parameters.</param>
         /// <param name="fmId">Function to assign the FileMaker RecordId to each instance of {T}.</param>
         /// <param name="modId">Function to assign the FileMaker ModId to each instance of {T}.</param>
+        /// <param name="includeDataInfo">Indicates whether the data information portion should be parsed.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public override async Task<IEnumerable<T>> SendAsync<T>(
+        public override async Task<(IEnumerable<T>, DataInfoModel)> SendAsync<T>(
             IFindRequest<T> req,
+            bool includeDataInfo,
             Func<T, int, object> fmId = null,
             Func<T, int, object> modId = null)
         {
@@ -510,6 +512,13 @@ namespace FMData.Rest
                 // get JSON result objects into a list
                 IList<JToken> results = joResponse["response"]["data"].Children().ToList();
 
+                DataInfoModel dataInfo = null;
+                var infoDataToken = joResponse["response"]["dataInfo"];
+                if (infoDataToken != null)
+                {
+                    dataInfo = infoDataToken.ToObject<DataInfoModel>();
+                }
+
                 // serialize JSON results into .NET objects
                 IList<T> searchResults = new List<T>();
                 foreach (JToken result in results)
@@ -526,7 +535,7 @@ namespace FMData.Rest
                     await ProcessContainers(searchResults);
                 }
 
-                return searchResults;
+                return (searchResults, dataInfo);
             }
 
             if (response.StatusCode == HttpStatusCode.InternalServerError)
@@ -541,7 +550,7 @@ namespace FMData.Rest
                     if (responseObject.Messages.Any(m => m.Code == "401"))
                     {
                         // filemaker no records match the find request => empty list.
-                        return new List<T>();
+                        return (new List<T>(), new DataInfoModel());
                     }
 
                     throw new Exception(responseObject.Messages.First().Message);
@@ -555,7 +564,7 @@ namespace FMData.Rest
             // not found, so return empty list
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                return new List<T>();
+                return (new List<T>(), new DataInfoModel());
             }
 
             // other error TODO: Improve handling

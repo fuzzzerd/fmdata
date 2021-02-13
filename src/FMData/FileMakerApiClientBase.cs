@@ -270,7 +270,7 @@ namespace FMData
         [Obsolete]
         public Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync(string database)
         {
-            if(database != _fileName)
+            if (database != _fileName)
             {
                 throw new ArgumentOutOfRangeException("database", database, "Name of the database must match the file used in the constructor.");
             }
@@ -646,10 +646,23 @@ namespace FMData
         /// <summary>
         /// Send a Find Record request to the FileMaker API.
         /// </summary>
-        public abstract Task<IEnumerable<T>> SendAsync<T>(
+        public async virtual Task<IEnumerable<T>> SendAsync<T>(
             IFindRequest<T> req,
             Func<T, int, object> fmId,
-            Func<T, int, object> modId) where T : class, new();
+            Func<T, int, object> modId) where T : class, new()
+        {
+            var (data, info) = await SendAsync(req, false, fmId, modId);
+            return data;
+        }
+
+        /// <summary>
+        /// Send a Find Record request to the FileMaker API.
+        /// </summary>
+        public abstract Task<(IEnumerable<T>, DataInfoModel)> SendAsync<T>(
+            IFindRequest<T> req,
+            bool includeDataInfo,
+            Func<T, int, object> fmId = null,
+            Func<T, int, object> modId = null) where T : class, new();
 
         #endregion
 

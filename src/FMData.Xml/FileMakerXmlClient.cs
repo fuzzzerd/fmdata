@@ -75,7 +75,7 @@ namespace FMData.Xml
         /// <param name="conn">The connection information for FMS.</param>
         public FileMakerXmlClient(HttpClient client, ConnectionInfo conn) : base(client, conn)
         {
-            #if NETSTANDARD1_3
+#if NETSTANDARD1_3
             var header = new System.Net.Http.Headers.ProductHeaderValue("FMData.Xml", "4");
             var userAgent = new System.Net.Http.Headers.ProductInfoHeaderValue(header);
 #else
@@ -182,13 +182,15 @@ namespace FMData.Xml
         /// </summary>
         /// <typeparam name="T">The type to project the results against.</typeparam>
         /// <param name="req">The Find Request Command.</param>
+        /// <param name="includeDataInfo">Return the data info portion of the request.</param>
         /// <param name="fmId">The function to map FileMaker Record Ids to an instance of T.</param>
         /// <param name="modId">The function to map FileMaker modId to an instance of T</param>
         /// <returns>The projected results matching the find request.</returns>
-        public override async Task<IEnumerable<T>> SendAsync<T>(
+        public override async Task<(IEnumerable<T>, DataInfoModel)> SendAsync<T>(
             IFindRequest<T> req,
-            Func<T, int, object> fmId,
-            Func<T, int, object> modId)
+            bool includeDataInfo,
+            Func<T, int, object> fmId = null,
+            Func<T, int, object> modId = null)
         {
             HttpResponseMessage response = await ExecuteRequestAsync(req);
 
@@ -290,10 +292,10 @@ namespace FMData.Xml
                     await ProcessContainers(results);
                 }
 
-                return results;
+                return (results, new DataInfoModel());
             }
 
-            return null;
+            return (null, new DataInfoModel());
         }
         #endregion
 

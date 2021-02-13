@@ -20,6 +20,9 @@
     <None Update="ResponseData\fms-find-with-portal.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="ResponseData\fms-find-with-datainfo.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ResponseData\Databases.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

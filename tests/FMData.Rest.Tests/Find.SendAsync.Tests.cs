@@ -195,6 +195,35 @@ namespace FMData.Rest.Tests
         }
 
         [Fact]
+        public async Task SendAsync_Find_Should_Have_DataInfo()
+        {
+            // arrange
+            var mockHttp = new MockHttpMessageHandler();
+
+            var layout = "the-layout";
+
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/layouts/{layout}/_find")
+                .Respond(HttpStatusCode.OK, "application/json", DataApiResponses.SuccessfulFindWithDataInfo());
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
+
+            var toFind = new User() { Id = 35 };
+            var req = new FindRequest<User>() { Layout = layout };
+            req.AddQuery(toFind, false);
+
+            // act
+            var (data, info) = await fdc.SendAsync(req, true);
+
+            // assert
+            Assert.NotEmpty(data);
+            Assert.Equal(1, info.ReturnedCount);
+            Assert.Equal(123, info.FoundCount);
+        }
+
+        [Fact]
         public async Task SendAsyncFind_WithOmit_Omits()
         {
             // arrange
