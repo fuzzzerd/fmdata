@@ -1,12 +1,12 @@
 ﻿namespace FMData
 {
     /// <summary>
-    /// Contains information about the response.
+    /// Contains information about the response. Source Table, Layout, and Found Count information.
     /// </summary>
     public class DataInfoModel
     {
         /// <summary>
-        /// Database the data came from
+        /// Database the data came from.
         /// </summary>
         public string Database { get; set; }
 
@@ -16,7 +16,7 @@
         public string Layout { get; set; }
 
         /// <summary>
-        /// Table the data came from
+        /// Table the data came from.
         /// </summary>
         public string Table { get; set; }
 

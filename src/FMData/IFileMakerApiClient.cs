@@ -473,7 +473,7 @@ namespace FMData
             Func<T, int, object> modId) where T : class, new();
 
         /// <summary>
-        /// Find a record or records matching the request.
+        /// Find a record or records matching the request and include a data info model as well as the response.
         /// </summary>
         /// <typeparam name="T">The type of response objects to return.</typeparam>
         /// <param name="req">The find request parameters.</param>
@@ -481,6 +481,7 @@ namespace FMData
         /// <param name="modId">Function to assign the FileMaker ModId to each instance of {T}.</param>
         /// <param name="includeDataInfo">Indicates whether the data information portion should be parsed.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
+        /// <remarks>The data info portion of the response is always returned when correctly parsed.</remarks>
         Task<(IEnumerable<T>, DataInfoModel)> SendAsync<T>(
             IFindRequest<T> req,
             bool includeDataInfo,

@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <MinVerMinimumMajorMinor>4.1</MinVerMinimumMajorMinor>
+    <MinVerMinimumMajorMinor>4.3</MinVerMinimumMajorMinor>
     <MinVerTagPrefix>v</MinVerTagPrefix>
     <MinVerDefaultPreReleasePhase>beta</MinVerDefaultPreReleasePhase>
   </PropertyGroup>
