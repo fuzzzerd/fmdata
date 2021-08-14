@@ -8,7 +8,6 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicense>https://github.com/fuzzzerd/fmdata/blob/master/LICENSE</PackageLicense>
     <PackageProjectUrl>https://fmdata.io/</PackageProjectUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/fuzzzerd/fmdata/master/images/nuget.png</PackageIconUrl>
     <PackageIcon>nuget.png</PackageIcon>
     <RepositoryUrl>https://github.com/fuzzzerd/fmdata</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
