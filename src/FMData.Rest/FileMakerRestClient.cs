@@ -690,19 +690,33 @@ namespace FMData.Rest
         /// <returns>FileMaker Response</returns>
         public override async Task<IResponse> SetGlobalFieldAsync(string baseTable, string fieldName, string targetValue)
         {
+            // base table and field are required
             if (string.IsNullOrEmpty(baseTable)) throw new ArgumentException("baseTable is required on set global.");
             if (string.IsNullOrEmpty(fieldName)) throw new ArgumentException("fieldName is required on set global.");
-            if (string.IsNullOrEmpty(targetValue)) throw new ArgumentException("targetValue is required on set global.");
+
+            // target value is required, but can be empty or white space, just not null
+            if (targetValue == null) throw new ArgumentNullException("targetValue cannot be null on set global.");
 
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
             // build the request for global fields manually
-            var str = $"{{ \"globalFields\" : {{ \"{baseTable}::{fieldName}\" : \"{targetValue}\" }} }}";
+            var jsonWriter = new JTokenWriter();
+            jsonWriter.WriteStartObject();
+            jsonWriter.WritePropertyName("globalFields");
+            jsonWriter.WriteStartObject();
+            jsonWriter.WritePropertyName($"{baseTable}::{fieldName}");
+            jsonWriter.WriteValue(targetValue);
+            jsonWriter.WriteEndObject();
+            jsonWriter.WriteEndObject();
+
+            // no formatting for minimum size and consistency in unit test MockHttpRequest matching
+            var json = jsonWriter.Token.ToString(Formatting.None);
+
             var method = new HttpMethod("PATCH");
 
             var requestMessage = new HttpRequestMessage(method, $"{_baseEndPoint}/globals")
             {
-                Content = new StringContent(str, Encoding.UTF8, "application/json")
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
             };
 
             // include auth token
