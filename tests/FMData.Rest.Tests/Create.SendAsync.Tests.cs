@@ -196,8 +196,71 @@ namespace FMData.Rest.Tests
         /// Global Field / PATCH
         /// </summary>
         /// <returns></returns>
+        [Fact(DisplayName = "Set Global Should Generate Correct Json")]
+        public async Task SetGlobal_Should_Generate_Valid_Json()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/globals")
+                .WithPartialContent("{\"globalFields\":{\"Table::Field\":\"Value\\nValue\"}}") // ensure newline is properly escaped
+                .Respond("application/json", DataApiResponses.SetGlobalSuccess());
+
+            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+
+            var globalResponse = await fdc.SetGlobalFieldAsync("Table", "Field", "Value\nValue");
+
+            Assert.NotNull(globalResponse);
+            Assert.Contains(globalResponse.Messages, r => r.Message == "OK");
+        }
+
+        /// <summary>
+        /// Global Field / PATCH
+        /// </summary>
+        /// <returns></returns>
+        [Fact(DisplayName = "Set Global Should Have FMS Compatible GlobalField attributes In JSON")]
+        public async Task SetGlobal_Should_Have_Valid_Global_In_Json()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/globals")
+                .WithPartialContent("{\"globalFields\":{\"Table::Field\":\"Value\"}}")
+                .Respond("application/json", DataApiResponses.SetGlobalSuccess());
+
+            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+
+            var globalResponse = await fdc.SetGlobalFieldAsync("Table", "Field", "Value");
+
+            Assert.NotNull(globalResponse);
+            Assert.Contains(globalResponse.Messages, r => r.Message == "OK");
+        }
+
+        /// <summary>
+        /// Global Field / PATCH
+        /// </summary>
+        /// <returns></returns>
         [Fact(DisplayName = "Set Global Should Have Global In JSON")]
-        public async Task CreateWithGlobal_Should_GetTwoOKs()
+        public async Task SetGlobal_Should_Have_Global_In_Json()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/globals")
+                .WithPartialContent("{\"globalFields\":{\"Table::Field\":\"Value\"}}")
+                .Respond("application/json", DataApiResponses.SetGlobalSuccess());
+
+            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+
+            var globalResponse = await fdc.SetGlobalFieldAsync("Table", "Field", "Value");
+
+            Assert.NotNull(globalResponse);
+            Assert.Contains(globalResponse.Messages, r => r.Message == "OK");
+        }
+
+        /// <summary>
+        /// Global Field / PATCH
+        /// </summary>
+        /// <returns></returns>
+        [Fact(DisplayName = "Set Global Should Throw When Table Is Not Provided")]
+        public async Task SetGlobal_Should_Throw_When_Table_Not_Specified()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -207,17 +270,43 @@ namespace FMData.Rest.Tests
 
             IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
 
-            var req = new CreateRequest<User>()
-            {
-                Layout = "layout",
-                Data = new User { Name = "test name" },
-                Script = "run_this_script"
-            };
+            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.SetGlobalFieldAsync(null, "Field", "Value"));
+        }
 
-            var globalResponse = await fdc.SetGlobalFieldAsync("Table", "Field", "Value");
+        /// <summary>
+        /// Global Field / PATCH
+        /// </summary>
+        /// <returns></returns>
+        [Fact(DisplayName = "Set Global Should Throw When Field Is Not Provided")]
+        public async Task SetGlobal_Should_Throw_When_Field_Not_Specified()
+        {
+            var mockHttp = new MockHttpMessageHandler();
 
-            Assert.NotNull(globalResponse);
-            Assert.Contains(globalResponse.Messages, r => r.Message == "OK");
+            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/globals")
+                .WithPartialContent("globalFields")
+                .Respond("application/json", DataApiResponses.SetGlobalSuccess());
+
+            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+
+            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.SetGlobalFieldAsync("Table", null, "Value"));
+        }
+
+        /// <summary>
+        /// Global Field / PATCH
+        /// </summary>
+        /// <returns></returns>
+        [Fact(DisplayName = "Set Global Should Throw When Value Is Not Provided")]
+        public async Task SetGlobal_Should_Throw_When_Value_Not_Specified()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/globals")
+                .WithPartialContent("globalFields")
+                .Respond("application/json", DataApiResponses.SetGlobalSuccess());
+
+            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await fdc.SetGlobalFieldAsync("Table", "Field", null));
         }
     }
 }
