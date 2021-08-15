@@ -602,6 +602,24 @@ namespace FMData.Rest
                 return null;
             }
 
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                try
+                {
+                    // attempt to read response content
+                    if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
+
+                    var responseJson = await response.Content.ReadAsStringAsync();
+                    var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+                    var firstMessage = responseObject.Messages.First();
+                    throw new Exception(firstMessage.Code + " - " + firstMessage.Message);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Could not read response from Data API.", ex);
+                }
+            }
+
             try
             {
                 // process json as JObject and only grab the part we're interested in (response.productInfo).
