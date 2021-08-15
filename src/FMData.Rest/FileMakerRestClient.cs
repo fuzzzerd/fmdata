@@ -611,8 +611,8 @@ namespace FMData.Rest
 
                     var responseJson = await response.Content.ReadAsStringAsync();
                     var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
-
-                    throw new Exception(responseObject.Messages.First().Message);
+                    var firstMessage = responseObject.Messages.First();
+                    throw new Exception(firstMessage.Code + " - " + firstMessage.Message);
                 }
                 catch (Exception ex)
                 {
@@ -641,7 +641,6 @@ namespace FMData.Rest
                 throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
             }
         }
-
 
         /// <summary>
         /// Executes a FileMaker Request to a JSON string.

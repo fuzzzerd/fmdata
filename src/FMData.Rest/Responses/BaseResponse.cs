@@ -11,6 +11,7 @@ namespace FMData.Rest.Responses
         /// Constructor that news up the list of messages.
         /// </summary>
         public BaseResponse() { Messages = new List<ResponseMessage>(); }
+
         /// <summary>
         /// Constructor helper for quickly throwing a code/message into the list for testing.
         /// </summary>
