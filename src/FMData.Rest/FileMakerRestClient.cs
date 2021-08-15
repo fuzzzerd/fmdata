@@ -602,6 +602,24 @@ namespace FMData.Rest
                 return null;
             }
 
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                try
+                {
+                    // attempt to read response content
+                    if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
+
+                    var responseJson = await response.Content.ReadAsStringAsync();
+                    var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+
+                    throw new Exception(responseObject.Messages.First().Message);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Could not read response from Data API.", ex);
+                }
+            }
+
             try
             {
                 // process json as JObject and only grab the part we're interested in (response.productInfo).
@@ -623,6 +641,7 @@ namespace FMData.Rest
                 throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
             }
         }
+
 
         /// <summary>
         /// Executes a FileMaker Request to a JSON string.
