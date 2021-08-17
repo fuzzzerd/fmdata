@@ -4,16 +4,17 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyTitle>FMData.Rest</AssemblyTitle>
     <AssemblyName>FMData.Rest</AssemblyName>
-    <Description>A client library for accessing FileMaker data through the FileMaker Data API (RESTful API) in FileMaker Server.</Description>
+    <Description>A client library for accessing FileMaker databases using the FileMaker Data API (RESTful API) in FileMaker Server.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicense>https://github.com/fuzzzerd/fmdata/blob/master/LICENSE</PackageLicense>
     <PackageProjectUrl>https://fmdata.io/</PackageProjectUrl>
     <PackageIcon>nuget.png</PackageIcon>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/fuzzzerd/fmdata</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <Authors>Nate Bross</Authors>
     <Company />
-    <PackageTags>dataapi dapi-client filemaker data dapi api filemaker-rest filemaker-api netstandard json dotnet-standard</PackageTags>
+    <PackageTags>data-api filemaker dataapi dapi-client data dapi api filemaker-rest filemaker-api netstandard json dotnet-standard</PackageTags>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <DebugType>Embedded</DebugType>
   </PropertyGroup>
@@ -30,6 +31,7 @@
 
   <ItemGroup>
     <None Include="..\..\images\nuget.png" Pack="true" PackagePath="\"/>
+    <None Include="..\..\readme.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>

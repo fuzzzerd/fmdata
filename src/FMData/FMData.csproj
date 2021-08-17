@@ -9,6 +9,7 @@
     <PackageLicense>https://github.com/fuzzzerd/fmdata/blob/master/LICENSE</PackageLicense>
     <PackageProjectUrl>https://fmdata.io/</PackageProjectUrl>
     <PackageIcon>nuget.png</PackageIcon>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/fuzzzerd/fmdata</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <Authors>Nate Bross</Authors>
@@ -30,6 +31,7 @@
 
   <ItemGroup>
     <None Include="..\..\images\nuget.png" Pack="true" PackagePath="\"/>
+    <None Include="..\..\readme.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>
