@@ -772,13 +772,8 @@ namespace FMData.Rest
         /// <returns>An instance of the FileMaker Product Info.</returns>
         public async override Task<ProductInformation> GetProductInformationAsync()
         {
-            await UpdateTokenDateAsync(); // we're about to use the token so update date used
-
             // generate request url
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_fmsUri}/fmi/data/v1/productinfo");
-
-            // include auth token
-            requestMessage.Headers.Authorization = _authHeader;
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_fmsUri}/fmi/data/v1/productinfo");         
 
             // run the patch action
             var response = await _client.SendAsync(requestMessage);
