@@ -19,7 +19,12 @@
     <DebugType>Embedded</DebugType>
     <IncludeUntrackedSources>true</IncludeUntrackedSources>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
+
+  <ItemGroup Condition="'$(CI)' == 'true'">
+   <EmbeddedFiles Include="$(GeneratedAssemblyInfoFile)"/>
+ </ItemGroup>
 
   <PropertyGroup>
     <MinVerMinimumMajorMinor>4.3</MinVerMinimumMajorMinor>
