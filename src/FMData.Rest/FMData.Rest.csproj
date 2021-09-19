@@ -17,6 +17,8 @@
     <PackageTags>data-api filemaker dataapi dapi-client data dapi api filemaker-rest filemaker-api netstandard json dotnet-standard</PackageTags>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <DebugType>Embedded</DebugType>
+    <IncludeUntrackedSources>true</IncludeUntrackedSources>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <PropertyGroup>
