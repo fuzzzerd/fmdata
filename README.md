@@ -2,9 +2,9 @@
 
 | Package | Build Status |  MyGet | Nuget |
 |---|---|---|---|
-| FMData | ![FMData Build Status](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml/badge.svg) | [![Myget](https://img.shields.io/myget/filemaker/vpre/FMData.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://buildstats.info/nuget/fmdata)](https://www.nuget.org/packages/FMData/) |
-| FMData.Rest | ![FMData.Rest Build Status](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml/badge.svg)  | [![MyGet Pre Release](https://img.shields.io/myget/filemaker/vpre/FMData.Rest.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest) | [![NuGet](https://buildstats.info/nuget/fmdata.rest)](https://www.nuget.org/packages/FMData.Rest/) |
-| FMData.Xml  | ![FMData.Xml Build Status](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml/badge.svg)  | [![FMData.Xml](https://img.shields.io/myget/filemaker/vpre/FMData.Xml.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Xml/) | [![NuGet](https://buildstats.info/nuget/fmdata.xml)](https://www.nuget.org/packages/FMData.Xml/) |
+| FMData | [![.NET CI Build](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml/badge.svg)](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml)| [![Myget](https://img.shields.io/myget/filemaker/vpre/FMData.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://buildstats.info/nuget/fmdata)](https://www.nuget.org/packages/FMData/) |
+| FMData.Rest | [![.NET CI Build](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml/badge.svg)](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml) | [![MyGet Pre Release](https://img.shields.io/myget/filemaker/vpre/FMData.Rest.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest) | [![NuGet](https://buildstats.info/nuget/fmdata.rest)](https://www.nuget.org/packages/FMData.Rest/) |
+| FMData.Xml  | [![.NET CI Build](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml/badge.svg)](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml) | [![FMData.Xml](https://img.shields.io/myget/filemaker/vpre/FMData.Xml.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Xml/) | [![NuGet](https://buildstats.info/nuget/fmdata.xml)](https://www.nuget.org/packages/FMData.Xml/) |
 
 There are plenty of ways to consume RESTful APIs from .NET, but the goal of this project is to provide a blended FileMaker-idiomatic and .NET-idiomatic experience for developers consuming data from FileMaker databases in .NET applications.
 
@@ -18,9 +18,9 @@ The project is organized as three packages.
 
 If you've found a bug, please submit a bug report. If you have a feature idea, open an issue and consider creating a pull request.
 
-| Tests | Grade | Activity | License |
- | ---- | ---- | ---- | ---- |
-| [![AppVeyor tests](https://img.shields.io/appveyor/tests/fuzzzerd/fmdata)](https://ci.appveyor.com/project/fuzzzerd/fmdata/build/tests) | [![CodeFactor](https://www.codefactor.io/repository/github/fuzzzerd/fmdata/badge)](https://www.codefactor.io/repository/github/fuzzzerd/fmdata) | [![FMData repository/commit activity](https://img.shields.io/github/commit-activity/w/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)|[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE) |
+| Grade | Activity | License |
+| ---- | ---- | ---- |
+| [![CodeFactor](https://www.codefactor.io/repository/github/fuzzzerd/fmdata/badge)](https://www.codefactor.io/repository/github/fuzzzerd/fmdata) | [![FMData repository/commit activity](https://img.shields.io/github/commit-activity/w/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)|[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE) |
 
 -----
 > *Version 4 has several breaking changes. Please [review the changes](https://github.com/fuzzzerd/fmdata/milestone/5?closed=1) prior to updating your project.*
