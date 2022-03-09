@@ -6,13 +6,25 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - job:
+            os: windows-latest
+            push: true
+          - job:
+            os: macos-latest
+          - job:
+            os: ubuntu-latest
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.job.os }}
 
     steps:
     - name: Checkout Branch
@@ -37,6 +49,6 @@ jobs:
     - name: Push to MyGet
       env:
         API_KEY: ${{ secrets.MYGET_FILEMAKER_FEED_API_TOKEN }}
-      if: ${{ env.API_KEY != '' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')) }}
+      if: ${{ matrix.job.push && env.API_KEY != '' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')) }}
       run: |
         dotnet nuget push src/**/*.nupkg --source https://www.myget.org/F/filemaker/api/v2/package --api-key ${{ env.API_KEY }}
