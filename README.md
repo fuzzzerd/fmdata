@@ -2,9 +2,9 @@
 
 | Package | Build Status |  MyGet | Nuget |
 |---|---|---|---|
-| FMData | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![Myget](https://img.shields.io/myget/filemaker/vpre/FMData.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://buildstats.info/nuget/fmdata)](https://www.nuget.org/packages/FMData/) |
-| FMData.Rest | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![MyGet Pre Release](https://img.shields.io/myget/filemaker/vpre/FMData.Rest.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest) | [![NuGet](https://buildstats.info/nuget/fmdata.rest)](https://www.nuget.org/packages/FMData.Rest/) |
-| FMData.Xml  | [![Build status](https://ci.appveyor.com/api/projects/status/nnqby0f5rpcsl3uv?svg=true)](https://ci.appveyor.com/project/fuzzzerd/fmdata) | [![FMData.Xml](https://img.shields.io/myget/filemaker/vpre/FMData.Xml.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Xml/) | [![NuGet](https://buildstats.info/nuget/fmdata.xml)](https://www.nuget.org/packages/FMData.Xml/) |
+| FMData | ![FMData Build Status](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml/badge.svg) | [![Myget](https://img.shields.io/myget/filemaker/vpre/FMData.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://buildstats.info/nuget/fmdata)](https://www.nuget.org/packages/FMData/) |
+| FMData.Rest | ![FMData.Rest Build Status](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml/badge.svg)  | [![MyGet Pre Release](https://img.shields.io/myget/filemaker/vpre/FMData.Rest.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest) | [![NuGet](https://buildstats.info/nuget/fmdata.rest)](https://www.nuget.org/packages/FMData.Rest/) |
+| FMData.Xml  | ![FMData.Xml Build Status](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml/badge.svg)  | [![FMData.Xml](https://img.shields.io/myget/filemaker/vpre/FMData.Xml.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Xml/) | [![NuGet](https://buildstats.info/nuget/fmdata.xml)](https://www.nuget.org/packages/FMData.Xml/) |
 
 There are plenty of ways to consume RESTful APIs from .NET, but the goal of this project is to provide a blended FileMaker-idiomatic and .NET-idiomatic experience for developers consuming data from FileMaker databases in .NET applications.
 
