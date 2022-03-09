@@ -1,5 +1,6 @@
 using RichardSzalay.MockHttp;
 using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace FMData.Xml.Tests
             var user = "unit";
             var pass = "test";
 
-            var productInfo = System.IO.File.ReadAllText("ResponseData\\ProductInfo.xml");
+            var productInfo = System.IO.File.ReadAllText(Path.Combine("ResponseData", "ProductInfo.xml"));
             mockHttp.When($"{server}/fmi/xml/fmresultset.xml")
                .Respond("application/xml", productInfo);
 
@@ -48,7 +49,7 @@ namespace FMData.Xml.Tests
             var user = "unit";
             var pass = "test";
 
-            var productInfo = System.IO.File.ReadAllText("ResponseData\\Databases.xml");
+            var productInfo = System.IO.File.ReadAllText(Path.Combine("ResponseData", "Databases.xml"));
             mockHttp.When($"{server}/fmi/xml/fmresultset.xml?-dbnames")
                .Respond("application/xml", productInfo);
 

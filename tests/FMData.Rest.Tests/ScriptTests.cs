@@ -1,4 +1,5 @@
 using RichardSzalay.MockHttp;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            var layoutData = System.IO.File.ReadAllText("ResponseData\\ScriptList.json");
+            var layoutData = System.IO.File.ReadAllText(Path.Combine("ResponseData", "ScriptList.json"));
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/scripts")
                .Respond("application/json", layoutData);
 
@@ -47,7 +48,7 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            var scriptResponse = System.IO.File.ReadAllText("ResponseData\\ScriptResponseOK.json");
+            var scriptResponse = System.IO.File.ReadAllText(Path.Combine("ResponseData", "ScriptResponseOK.json"));
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/script/*")
                .Respond("application/json", scriptResponse);
 

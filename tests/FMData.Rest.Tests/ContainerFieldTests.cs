@@ -1,6 +1,7 @@
 using FMData.Rest.Tests.TestModels;
 using RichardSzalay.MockHttp;
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -29,7 +30,7 @@ namespace FMData.Rest.Tests
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 
-            var b64String = System.IO.File.ReadAllText("ResponseData\\b64-string.dat");
+            var b64String = System.IO.File.ReadAllText(Path.Combine("ResponseData", "b64-string.dat"));
             var bytes = Convert.FromBase64String(b64String);
 
             var response = await fdc.UpdateContainerAsync(layout, 12, "field", "test.jpg", bytes);

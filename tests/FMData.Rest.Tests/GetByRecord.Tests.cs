@@ -59,7 +59,7 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
                            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            var b64String = System.IO.File.ReadAllText("ResponseData\\b64-string.dat");
+            var b64String = System.IO.File.ReadAllText(System.IO.Path.Combine("ResponseData", "b64-string.dat"));
             var bytes = Convert.FromBase64String(b64String);
             var b64 = new ByteArrayContent(bytes);
 

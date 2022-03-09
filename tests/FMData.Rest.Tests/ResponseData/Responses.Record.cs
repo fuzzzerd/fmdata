@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace FMData.Rest.Tests
 {
     public static partial class DataApiResponses
@@ -112,12 +114,12 @@ namespace FMData.Rest.Tests
 
         public static string SuccessfulFindWithPortal()
         {
-            return System.IO.File.ReadAllText("ResponseData\\fms-find-with-portal.json");
+            return System.IO.File.ReadAllText(Path.Combine("ResponseData", "fms-find-with-portal.json"));
         }
 
         public static string SuccessfulFindWithDataInfo()
         {
-            return System.IO.File.ReadAllText("ResponseData\\fms-find-with-datainfo.json");
+            return System.IO.File.ReadAllText(Path.Combine("ResponseData", "fms-find-with-datainfo.json"));
         }
     }
 }

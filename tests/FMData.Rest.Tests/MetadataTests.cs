@@ -1,5 +1,6 @@
 using RichardSzalay.MockHttp;
 using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace FMData.Rest.Tests
             var server = "http://localhost";
             var file = "test-file";
 
-            var productInfo = System.IO.File.ReadAllText("ResponseData\\ProductInfo.json");
+            var productInfo = System.IO.File.ReadAllText(Path.Combine("ResponseData", "ProductInfo.json"));
             mockHttp.When($"{server}/fmi/data/v1/productinfo")
                .Respond("application/json", productInfo);
 
@@ -39,7 +40,7 @@ namespace FMData.Rest.Tests
             var user = "unit";
             var pass = "test";
 
-            var databases = System.IO.File.ReadAllText("ResponseData\\Databases.json");
+            var databases = System.IO.File.ReadAllText(Path.Combine("ResponseData", "Databases.json"));
             mockHttp.When($"{server}/fmi/data/v1/databases")
                 .With(r => r.Headers.Authorization.Scheme.Equals("basic", StringComparison.CurrentCultureIgnoreCase))
                .Respond("application/json", databases);
@@ -65,7 +66,7 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            var layoutData = System.IO.File.ReadAllText("ResponseData\\LayoutList.json");
+            var layoutData = System.IO.File.ReadAllText(Path.Combine("ResponseData", "LayoutList.json"));
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/layouts")
                .Respond("application/json", layoutData);
 
@@ -90,7 +91,7 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            var layoutData = System.IO.File.ReadAllText("ResponseData\\SpecificLayout.json");
+            var layoutData = System.IO.File.ReadAllText(Path.Combine("ResponseData", "SpecificLayout.json"));
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/layouts/*")
                .Respond("application/json", layoutData);
 
@@ -117,7 +118,7 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            var layoutData = System.IO.File.ReadAllText("ResponseData\\SpecificLayout.json");
+            var layoutData = System.IO.File.ReadAllText(Path.Combine("ResponseData", "SpecificLayout.json"));
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/layouts/*")
                .Respond("application/json", layoutData);
 
