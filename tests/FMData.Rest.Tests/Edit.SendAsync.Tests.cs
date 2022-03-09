@@ -9,31 +9,31 @@ namespace FMData.Rest.Tests
 {
     public class EditRequestTests
     {
-        private static readonly string server = "http://localhost";
-        private static readonly string file = "test-file";
-        private static readonly string user = "unit";
-        private static readonly string pass = "test";
-        private static readonly string layout = "layout";
+        private static readonly string s_server = "http://localhost";
+        private static readonly string s_file = "test-file";
+        private static readonly string s_user = "unit";
+        private static readonly string s_pass = "test";
+        private static readonly string s_layout = "layout";
 
         private static FileMakerRestClient GenerateClient()
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
+            mockHttp.When($"{s_server}/fmi/data/v1/databases/{s_file}/sessions")
                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+            mockHttp.When(new HttpMethod("PATCH"), $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/{s_layout}/records*")
                 .WithPartialContent("fieldData")
                 .Respond("application/json", DataApiResponses.SuccessfulEdit());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = s_server, Database = s_file, Username = s_user, Password = s_pass });
             return fdc;
         }
 
-        [Fact(DisplayName ="With ID Edit Should Succeed")]
+        [Fact(DisplayName = "With ID Edit Should Succeed")]
         public async Task EditShould_UpdateRecord_WithId()
         {
-            FileMakerRestClient fdc = GenerateClient();
+            var fdc = GenerateClient();
 
             var req = new EditRequest<Dictionary<string, string>>()
             {
@@ -51,10 +51,10 @@ namespace FMData.Rest.Tests
             Assert.Contains(response.Messages, r => r.Message == "OK");
         }
 
-        [Fact(DisplayName ="New ModId Should Be Generated")]
+        [Fact(DisplayName = "New ModId Should Be Generated")]
         public async Task Edit_ShouldReturn_NewModId()
         {
-            FileMakerRestClient fdc = GenerateClient();
+            var fdc = GenerateClient();
 
             var req = new EditRequest<Dictionary<string, string>>()
             {

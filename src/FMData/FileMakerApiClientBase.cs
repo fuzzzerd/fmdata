@@ -18,7 +18,7 @@ namespace FMData
         /// <summary>
         /// Make a new instance of the Create Request class for Type T.
         /// </summary>
-        public ICreateRequest<T> GenerateCreateRequest<T>() => _createFactory<T>();
+        public ICreateRequest<T> GenerateCreateRequest<T>() => CreateFactory<T>();
 
         /// <summary>
         /// Generates a new create request for the input data.
@@ -34,7 +34,7 @@ namespace FMData
         /// <summary>
         /// Factory to get a new Create Request of the correct type.
         /// </summary>
-        protected abstract ICreateRequest<T> _createFactory<T>();
+        protected abstract ICreateRequest<T> CreateFactory<T>();
 
         /// <summary>
         /// Generates a new edit request for the input object.
@@ -50,12 +50,12 @@ namespace FMData
         /// <summary>
         /// Make a new instance of the Edit Request class for Type T.
         /// </summary>
-        public IEditRequest<T> GenerateEditRequest<T>() => _editFactory<T>();
+        public IEditRequest<T> GenerateEditRequest<T>() => EditFactory<T>();
 
         /// <summary>
         /// Factory to get a new Edit Request of the correct type.
         /// </summary>
-        protected abstract IEditRequest<T> _editFactory<T>();
+        protected abstract IEditRequest<T> EditFactory<T>();
 
         /// <summary>
         /// Generates a new find request with an initial find query instance, specifying the layout via the model's DataContract attribute.
@@ -71,21 +71,21 @@ namespace FMData
         /// <summary>
         /// Make a new instance of the Find Request for Type T.
         /// </summary>
-        public IFindRequest<T> GenerateFindRequest<T>() => _findFactory<T>();
+        public IFindRequest<T> GenerateFindRequest<T>() => FindFactory<T>();
 
         /// <summary>
         /// Factory to get a new Find Request of the correct type.
         /// </summary>
-        protected abstract IFindRequest<T> _findFactory<T>();
+        protected abstract IFindRequest<T> FindFactory<T>();
 
         /// <summary>
         /// Make a new instance of the Delete Request.
         /// </summary>
-        public IDeleteRequest GenerateDeleteRequest() => _deleteFactory();
+        public IDeleteRequest GenerateDeleteRequest() => DeleteFactory();
         /// <summary>
         /// Factory to get a new Delete Request of the correct type.
         /// </summary>
-        protected abstract IDeleteRequest _deleteFactory();
+        protected abstract IDeleteRequest DeleteFactory();
         #endregion
 
         /// <summary>
@@ -832,6 +832,7 @@ namespace FMData
         /// </summary>
         /// <param name="instance"></param>
         /// <returns>The specified in the Table Attribute</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "IDE0060", Justification = "Used for generic parameter.")]
         public static string GetLayoutName<T>(T instance)
         {
             string lay;

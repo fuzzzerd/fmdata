@@ -17,7 +17,7 @@ namespace FMData.Rest
         public override void WriteJson(
             JsonWriter writer, object value, JsonSerializer serializer)
         {
-            int number = (int)value;
+            var number = (int)value;
             writer.WriteValue(number.ToString(CultureInfo.InvariantCulture));
         }
 

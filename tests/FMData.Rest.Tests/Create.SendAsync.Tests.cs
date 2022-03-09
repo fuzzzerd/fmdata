@@ -14,11 +14,11 @@ namespace FMData.Rest.Tests
     /// </summary>
     public class CreateSendAsyncTests
     {
-        private static readonly string server = "http://localhost";
-        private static readonly string file = "test-file";
-        private static readonly string user = "unit";
-        private static readonly string pass = "test";
-        private static readonly string layout = "layout";
+        private static readonly string s_server = "http://localhost";
+        private static readonly string s_file = "test-file";
+        private static readonly string s_user = "unit";
+        private static readonly string s_pass = "test";
+        private static readonly string s_layout = "layout";
 
         private static IFileMakerApiClient GetDataClientWithMockedHandler(MockHttpMessageHandler mockHttp = null)
         {
@@ -27,73 +27,73 @@ namespace FMData.Rest.Tests
                 // new up a default set of responses (none were provided)
                 mockHttp = new MockHttpMessageHandler();
 
-                mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+                mockHttp.When(HttpMethod.Post, $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/{s_layout}/records*")
                 .WithPartialContent("fieldData") // make sure that the body content contains the 'data' object expected by fms
                 .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
-                mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/Somelayout/records*")
+                mockHttp.When(HttpMethod.Post, $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/Somelayout/records*")
                     .WithPartialContent("fieldData") // make sure that the body content contains the 'data' object expected by fms
                     .Respond("application/json", DataApiResponses.SuccessfulCreate());
             }
 
             // always add the authentication setup
-            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
+            mockHttp.When($"{s_server}/fmi/data/v1/databases/{s_file}/sessions")
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = s_server, Database = s_file, Username = s_user, Password = s_pass });
             return fdc;
         }
 
-        private readonly ICreateRequest<Dictionary<string, string>> reqWithoutLayout = new CreateRequest<Dictionary<string, string>>()
+        private readonly ICreateRequest<Dictionary<string, string>> _reqWithoutLayout = new CreateRequest<Dictionary<string, string>>()
         {
             Data = new Dictionary<string, string>()
                 {
                     { "Name", "Fuzzerd" },
-                    { "AnotherField", "Another Valuee" }
+                    { "AnotherField", "Another Value" }
                 }
         };
 
-        private readonly ICreateRequest<Dictionary<string, string>> reqWithLayout = new CreateRequest<Dictionary<string, string>>()
+        private readonly ICreateRequest<Dictionary<string, string>> _reqWithLayout = new CreateRequest<Dictionary<string, string>>()
         {
-            Layout = layout,
+            Layout = s_layout,
             Data = new Dictionary<string, string>()
                 {
                     { "Name", "Fuzzerd" },
-                    { "AnotherField", "Another Valuee" }
+                    { "AnotherField", "Another Value" }
                 }
         };
 
         [Fact(DisplayName = "Without Layout Create Record Should Throw")]
         public async Task Create_WithoutLayout_ThrowsArgumentException_SendAsync()
         {
-            IFileMakerApiClient fdc = GetDataClientWithMockedHandler();
+            var fdc = GetDataClientWithMockedHandler();
 
-            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.SendAsync(reqWithoutLayout));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.SendAsync(_reqWithoutLayout));
         }
 
-        [Fact(DisplayName ="With Layout Create Should Succeed")]
+        [Fact(DisplayName = "With Layout Create Should Succeed")]
         public async Task CreateFromDictionaryStringString_ShouldReturnOK_FromSendAsync()
         {
-            IFileMakerApiClient fdc = GetDataClientWithMockedHandler();
+            var fdc = GetDataClientWithMockedHandler();
 
-            var response = await fdc.SendAsync(reqWithLayout);
+            var response = await fdc.SendAsync(_reqWithLayout);
 
             Assert.NotNull(response);
             Assert.Contains(response.Messages, r => r.Message == "OK");
         }
 
-        [Fact(DisplayName ="Script Should Be In JSON")]
+        [Fact(DisplayName = "Script Should Be In JSON")]
         public async Task CreateWithScript_RequiresScriptSet()
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+            mockHttp.When(HttpMethod.Post, $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/{s_layout}/records*")
                 .WithPartialContent("fieldData")
                 .WithPartialContent("script") // ensure the body contains the script parameter we're sending
                 .WithPartialContent("run_this_script")
                 .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
-            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+            var fdc = GetDataClientWithMockedHandler(mockHttp);
 
             var req = new CreateRequest<User>()
             {
@@ -113,13 +113,13 @@ namespace FMData.Rest.Tests
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+            mockHttp.When(HttpMethod.Post, $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/{s_layout}/records*")
                 .WithPartialContent("fieldData")
                 .WithPartialContent("script.prerequest") // ensure the body contains the script parameter we're sending
                 .WithPartialContent("run_this_script")
                 .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
-            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+            var fdc = GetDataClientWithMockedHandler(mockHttp);
 
             var req = new CreateRequest<User>()
             {
@@ -139,13 +139,13 @@ namespace FMData.Rest.Tests
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+            mockHttp.When(HttpMethod.Post, $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/{s_layout}/records*")
                 .WithPartialContent("fieldData")
                 .WithPartialContent("script.presort") // ensure the body contains the script parameter we're sending
                 .WithPartialContent("run_this_script")
                 .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
-            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+            var fdc = GetDataClientWithMockedHandler(mockHttp);
 
             var req = new CreateRequest<User>()
             {
@@ -165,7 +165,7 @@ namespace FMData.Rest.Tests
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+            mockHttp.When(HttpMethod.Post, $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/{s_layout}/records*")
                 .WithPartialContent("fieldData")
                 .WithPartialContent("script.presort") // ensure the body contains the script parameter we're sending
                 .WithPartialContent("run_this_script_psort")
@@ -175,7 +175,7 @@ namespace FMData.Rest.Tests
                 .WithPartialContent("run_this_script_reg")
                 .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
-            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+            var fdc = GetDataClientWithMockedHandler(mockHttp);
 
             var req = new CreateRequest<User>()
             {
@@ -201,11 +201,11 @@ namespace FMData.Rest.Tests
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/globals")
+            mockHttp.When(new HttpMethod("PATCH"), $"{s_server}/fmi/data/v1/databases/{s_file}/globals")
                 .WithPartialContent("{\"globalFields\":{\"Table::Field\":\"Value\\nValue\"}}") // ensure newline is properly escaped
                 .Respond("application/json", DataApiResponses.SetGlobalSuccess());
 
-            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+            var fdc = GetDataClientWithMockedHandler(mockHttp);
 
             var globalResponse = await fdc.SetGlobalFieldAsync("Table", "Field", "Value\nValue");
 
@@ -222,11 +222,11 @@ namespace FMData.Rest.Tests
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/globals")
+            mockHttp.When(new HttpMethod("PATCH"), $"{s_server}/fmi/data/v1/databases/{s_file}/globals")
                 .WithPartialContent("{\"globalFields\":{\"Table::Field\":\"Value\"}}")
                 .Respond("application/json", DataApiResponses.SetGlobalSuccess());
 
-            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+            var fdc = GetDataClientWithMockedHandler(mockHttp);
 
             var globalResponse = await fdc.SetGlobalFieldAsync("Table", "Field", "Value");
 
@@ -243,11 +243,11 @@ namespace FMData.Rest.Tests
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/globals")
+            mockHttp.When(new HttpMethod("PATCH"), $"{s_server}/fmi/data/v1/databases/{s_file}/globals")
                 .WithPartialContent("{\"globalFields\":{\"Table::Field\":\"Value\"}}")
                 .Respond("application/json", DataApiResponses.SetGlobalSuccess());
 
-            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+            var fdc = GetDataClientWithMockedHandler(mockHttp);
 
             var globalResponse = await fdc.SetGlobalFieldAsync("Table", "Field", "Value");
 
@@ -264,11 +264,11 @@ namespace FMData.Rest.Tests
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/globals")
+            mockHttp.When(new HttpMethod("PATCH"), $"{s_server}/fmi/data/v1/databases/{s_file}/globals")
                 .WithPartialContent("globalFields")
                 .Respond("application/json", DataApiResponses.SetGlobalSuccess());
 
-            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+            var fdc = GetDataClientWithMockedHandler(mockHttp);
 
             await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.SetGlobalFieldAsync(null, "Field", "Value"));
         }
@@ -282,11 +282,11 @@ namespace FMData.Rest.Tests
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/globals")
+            mockHttp.When(new HttpMethod("PATCH"), $"{s_server}/fmi/data/v1/databases/{s_file}/globals")
                 .WithPartialContent("globalFields")
                 .Respond("application/json", DataApiResponses.SetGlobalSuccess());
 
-            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+            var fdc = GetDataClientWithMockedHandler(mockHttp);
 
             await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.SetGlobalFieldAsync("Table", null, "Value"));
         }
@@ -300,11 +300,11 @@ namespace FMData.Rest.Tests
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/globals")
+            mockHttp.When(new HttpMethod("PATCH"), $"{s_server}/fmi/data/v1/databases/{s_file}/globals")
                 .WithPartialContent("globalFields")
                 .Respond("application/json", DataApiResponses.SetGlobalSuccess());
 
-            IFileMakerApiClient fdc = GetDataClientWithMockedHandler(mockHttp);
+            var fdc = GetDataClientWithMockedHandler(mockHttp);
 
             await Assert.ThrowsAsync<ArgumentNullException>(async () => await fdc.SetGlobalFieldAsync("Table", "Field", null));
         }

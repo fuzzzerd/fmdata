@@ -2,17 +2,27 @@
     "dotnet-test-explorer.enableTelemetry": false,
     "dotnet-test-explorer.testProjectPath": "**/*.Tests.csproj",
     "cSpell.words": [
-        "FMPXMLLAYOUT",
-        "Myget",
-        "Nuget",
-        "Szalay",
-        "Xunit",
+        "cref",
         "dbnames",
         "fmdata",
+        "FMID",
+        "FMPXMLLAYOUT",
         "fmresultset",
+        "Fuzzerd",
         "fuzzzerd",
+        "Giverny",
+        "Myget",
         "newed",
-        "stringly"
+        "Nuget",
+        "preq",
+        "psort",
+        "recid",
+        "stringly",
+        "Szalay",
+        "Xunit"
     ],
-    "git.enableCommitSigning": true
+    "git.enableCommitSigning": true,
+    "omnisharp.useModernNet": true,
+    "omnisharp.enableEditorConfigSupport": true,
+    "omnisharp.enableRoslynAnalyzers": true
 }

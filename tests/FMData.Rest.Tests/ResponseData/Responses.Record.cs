@@ -51,7 +51,7 @@ namespace FMData.Rest.Tests
     ""messages"":[{{""code"":""0"",""message"":""OK""}}]
 }}";
 
-public static string SuccessfulGetByIdWithContainer(int id, string containerPath) => $@"{{
+        public static string SuccessfulGetByIdWithContainer(int id, string containerPath) => $@"{{
     ""response"": {{
         ""data"": [
             {{

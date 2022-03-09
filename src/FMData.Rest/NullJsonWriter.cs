@@ -15,7 +15,7 @@ namespace FMData.Rest
 
         public override void WriteNull()
         {
-            this.WriteValue(String.Empty);
+            this.WriteValue(string.Empty);
         }
     }
 }

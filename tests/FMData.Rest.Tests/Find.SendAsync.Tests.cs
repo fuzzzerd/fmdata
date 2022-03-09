@@ -90,7 +90,7 @@ namespace FMData.Rest.Tests
             // act
             var response = await fdc.SendAsync(FindTestsHelpers.FindUserReqWithLayoutOverride(), null, (u, i) => u.FileMakerModId = i);
 
-            // assert (any becuase our data is mixed and has both)
+            // assert (any because our data is mixed and has both)
             var responseDataContainsResult = response.Any(r => r.FileMakerModId != 0);
             Assert.True(responseDataContainsResult);
         }
@@ -101,10 +101,10 @@ namespace FMData.Rest.Tests
             // arrange
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/sessions")
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/sessions")
                            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/layouts/*")
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/layouts/*")
                 .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.LayoutNotFound());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
@@ -122,10 +122,10 @@ namespace FMData.Rest.Tests
 
             var layout = FileMakerRestClient.GetLayoutName(new User());
 
-            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/sessions")
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/sessions")
                            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/layouts/{layout}/_find")
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/layouts/{layout}/_find")
                 .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.FindNotFound());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
@@ -148,10 +148,10 @@ namespace FMData.Rest.Tests
 
             var layout = FileMakerRestClient.GetLayoutName(new User());
 
-            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/sessions")
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/sessions")
                            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/layouts/{layout}/_find")
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/layouts/{layout}/_find")
                 .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.FindNotFound());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
@@ -173,10 +173,10 @@ namespace FMData.Rest.Tests
 
             var layout = "the-layout";
 
-            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/sessions")
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/sessions")
                            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/layouts/{layout}/_find")
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/layouts/{layout}/_find")
                 .Respond(HttpStatusCode.OK, "application/json", DataApiResponses.SuccessfulFindWithPortal());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
@@ -202,10 +202,10 @@ namespace FMData.Rest.Tests
 
             var layout = "the-layout";
 
-            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/sessions")
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/sessions")
                            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/layouts/{layout}/_find")
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/layouts/{layout}/_find")
                 .Respond(HttpStatusCode.OK, "application/json", DataApiResponses.SuccessfulFindWithDataInfo());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
@@ -230,10 +230,10 @@ namespace FMData.Rest.Tests
             var mockHttp = new MockHttpMessageHandler();
             var layout = "the-layout";
 
-            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/sessions")
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/sessions")
                            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.server}/fmi/data/v1/databases/{FindTestsHelpers.file}/layouts/*")
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/layouts/*")
                 .WithPartialContent("omit")
                 .Respond(HttpStatusCode.OK, "application/json", DataApiResponses.SuccessfulFind());
 
@@ -247,7 +247,7 @@ namespace FMData.Rest.Tests
             // assert
             // since we're not really talking to fms, we know our 
             // response data has 4, so we know if we had an 'omit'
-            // in our request and a 4 in our resposne things worked as expected.
+            // in our request and a 4 in our response things worked as expected.
             Assert.Contains(response, c => c.Id == 4);
         }
     }

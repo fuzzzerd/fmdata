@@ -24,31 +24,31 @@ namespace FMData.Rest
         /// <summary>
         /// Factory to get a new Create Request of the correct type.
         /// </summary>
-        protected override ICreateRequest<T> _createFactory<T>() => new CreateRequest<T>();
+        protected override ICreateRequest<T> CreateFactory<T>() => new CreateRequest<T>();
         /// <summary>
         /// Factory to get a new Edit Request of the correct type.
         /// </summary>
-        protected override IEditRequest<T> _editFactory<T>() => new EditRequest<T>();
+        protected override IEditRequest<T> EditFactory<T>() => new EditRequest<T>();
         /// <summary>
         /// Factory to get a new Find Request of the correct type.
         /// </summary>
-        protected override IFindRequest<T> _findFactory<T>() => new FindRequest<T>();
+        protected override IFindRequest<T> FindFactory<T>() => new FindRequest<T>();
         /// <summary>
         /// Factory to get a new Delete Request of the correct type.
         /// </summary>
-        protected override IDeleteRequest _deleteFactory() => new DeleteRequest();
+        protected override IDeleteRequest DeleteFactory() => new DeleteRequest();
         #endregion
 
         /// <summary>
         /// Indicates that the client is authenticated and has a token within the refresh window.
         /// </summary>
-        public bool IsAuthenticated => !string.IsNullOrEmpty(dataToken) && DateTime.UtcNow.Subtract(dataTokenLastUse).TotalMinutes <= tokenExpiration;
+        public bool IsAuthenticated => !string.IsNullOrEmpty(_dataToken) && DateTime.UtcNow.Subtract(_dataTokenLastUse).TotalMinutes <= _tokenExpiration;
 
         #region FM DATA SPECIFIC
-        internal readonly int tokenExpiration = 15;
-        private string dataToken;
+        private readonly int _tokenExpiration = 15;
+        private string _dataToken;
         private AuthenticationHeaderValue _authHeader;
-        private DateTime dataTokenLastUse = DateTime.MinValue;
+        private DateTime _dataTokenLastUse = DateTime.MinValue;
 
         #region Constructors
         /// <summary>
@@ -88,27 +88,27 @@ namespace FMData.Rest
         /// <summary>
         /// Note we assume _fmsUri has no trailing slash as its cut off in the constructor.
         /// </summary>
-        private string _baseEndPoint => $"{_fmsUri}/fmi/data/v1/databases/{_fileName}";
+        private string BaseEndPoint => $"{_fmsUri}/fmi/data/v1/databases/{_fileName}";
 
         /// <summary>
         /// Generate the appropriate Authentication endpoint uri for this instance of the data client.
         /// </summary>
         /// <returns>The FileMaker Data API Endpoint for Authentication Requests.</returns>
-        public string AuthEndpoint() => $"{_baseEndPoint}/sessions";
+        public string AuthEndpoint() => $"{BaseEndPoint}/sessions";
 
         /// <summary>
         /// Generate the appropriate Find endpoint uri for this instance of the data client.
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <returns>The FileMaker Data API Endpoint for Find requests.</returns>
-        public string FindEndpoint(string layout) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/_find";
+        public string FindEndpoint(string layout) => $"{BaseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/_find";
 
         /// <summary>
         /// Generate the appropriate Create endpoint uri for this instance of the data client.
         /// </summary>
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <returns>The FileMaker Data API Endpoint for Create requests.</returns>
-        public string CreateEndpoint(string layout) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records";
+        public string CreateEndpoint(string layout) => $"{BaseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records";
 
         /// <summary>
         /// Generate the appropriate Get Records endpoint.
@@ -116,7 +116,7 @@ namespace FMData.Rest
         /// <param name="layout">The layout to use as the context for the response.</param>
         /// <param name="recordId">The FileMaker record Id for this request.</param>
         /// <returns>The FileMaker Data API Endpoint for Get Records requests.</returns>
-        public string GetRecordEndpoint(string layout, int recordId) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordId}";
+        public string GetRecordEndpoint(string layout, int recordId) => $"{BaseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordId}";
 
         /// <summary>
         /// Generate the appropriate Get Records endpoint.
@@ -125,7 +125,7 @@ namespace FMData.Rest
         /// <param name="limit">The number of records to return.</param>
         /// <param name="offset">The offset number of records to skip before starting to return records.</param>
         /// <returns>The FileMaker Data API Endpoint for Get Records requests.</returns>
-        public string GetRecordsEndpoint(string layout, int limit, int offset) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records?_limit={limit}&_offset={offset}";
+        public string GetRecordsEndpoint(string layout, int limit, int offset) => $"{BaseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records?_limit={limit}&_offset={offset}";
 
         /// <summary>
         /// Generate the appropriate Edit/Update endpoint uri for this instance of the data client.
@@ -133,7 +133,7 @@ namespace FMData.Rest
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <param name="recordId">The record ID of the record to edit.</param>
         /// <returns>The FileMaker Data API Endpoint for Update/Edit requests.</returns>
-        public string UpdateEndpoint(string layout, object recordId) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordId}";
+        public string UpdateEndpoint(string layout, object recordId) => $"{BaseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordId}";
 
         /// <summary>
         /// Generate the appropriate Delete endpoint uri for this instance of the data client.
@@ -141,7 +141,7 @@ namespace FMData.Rest
         /// <param name="layout">The name of the layout to use as the context for creating the record.</param>
         /// <param name="recordId">The record ID of the record to edit.</param>
         /// <returns>The FileMaker Data API Endpoint for Delete requests.</returns>
-        public string DeleteEndpoint(string layout, object recordId) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordId}";
+        public string DeleteEndpoint(string layout, object recordId) => $"{BaseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordId}";
 
         /// <summary>
         /// Generate the appropriate Container field endpoint.
@@ -151,7 +151,7 @@ namespace FMData.Rest
         /// <param name="fieldName">The name of the container field.</param>
         /// <param name="repetition">Field repetition number.</param>
         /// <returns></returns>
-        public string ContainerEndpoint(string layout, object recordId, string fieldName, int repetition = 1) => $"{_baseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordId}/containers/{Uri.EscapeDataString(fieldName)}/{repetition}";
+        public string ContainerEndpoint(string layout, object recordId, string fieldName, int repetition = 1) => $"{BaseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records/{recordId}/containers/{Uri.EscapeDataString(fieldName)}/{repetition}";
         #endregion
 
         #region FM Data Token Management
@@ -162,7 +162,7 @@ namespace FMData.Rest
         private async Task UpdateTokenDateAsync()
         {
             if (!IsAuthenticated) { await RefreshTokenAsync(_userName, _password); }
-            dataTokenLastUse = DateTime.UtcNow;
+            _dataTokenLastUse = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -195,12 +195,12 @@ namespace FMData.Rest
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<AuthResponse>(responseJson);
-                this.dataToken = responseObject.Response.Token;
+                this._dataToken = responseObject.Response.Token;
 
                 // got a new token, so update our timestamp
-                this.dataTokenLastUse = DateTime.UtcNow;
+                this._dataTokenLastUse = DateTime.UtcNow;
                 // setup the token as an auth bearer header.
-                _authHeader = new AuthenticationHeaderValue("Bearer", this.dataToken);
+                _authHeader = new AuthenticationHeaderValue("Bearer", this._dataToken);
 
                 return responseObject;
             }
@@ -229,7 +229,7 @@ namespace FMData.Rest
             }
 
             // remove our token from the data api
-            var response = await _client.DeleteAsync(AuthEndpoint() + $"/{this.dataToken}");
+            var response = await _client.DeleteAsync(AuthEndpoint() + $"/{this._dataToken}");
 
             // process the response
             if (response.StatusCode == HttpStatusCode.OK)
@@ -363,17 +363,17 @@ namespace FMData.Rest
 
             var responseJson = await response.Content.ReadAsStringAsync();
 
-            JObject joResponse = JObject.Parse(responseJson);
+            var joResponse = JObject.Parse(responseJson);
 
             // get JSON result objects into a list
             IList<JToken> results = joResponse["response"]["data"].Children().ToList();
 
             // serialize JSON results into .NET objects
             IList<T> searchResults = new List<T>();
-            foreach (JToken result in results)
+            foreach (var result in results)
             {
                 // JToken.ToObject is a helper method that uses JsonSerializer internally
-                T searchResult = ConvertJTokenToInstance(fmId, modId, result);
+                var searchResult = ConvertJTokenToInstance(fmId, modId, result);
 
                 // container handling
                 await ProcessContainer(searchResult);
@@ -423,7 +423,7 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (req.RecordId <= 0) throw new ArgumentException("RecordId is required on the request and non negative.");
 
-            HttpResponseMessage response = await ExecuteRequestAsync(req);
+            var response = await ExecuteRequestAsync(req);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -507,7 +507,7 @@ namespace FMData.Rest
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
 
-                JObject joResponse = JObject.Parse(responseJson);
+                var joResponse = JObject.Parse(responseJson);
 
                 // get JSON result objects into a list
                 IList<JToken> results = joResponse["response"]["data"].Children().ToList();
@@ -521,9 +521,9 @@ namespace FMData.Rest
 
                 // serialize JSON results into .NET objects
                 IList<T> searchResults = new List<T>();
-                foreach (JToken result in results)
+                foreach (var result in results)
                 {
-                    T searchResult = ConvertJTokenToInstance(fmId, modId, result);
+                    var searchResult = ConvertJTokenToInstance(fmId, modId, result);
 
                     // add to response list
                     searchResults.Add(searchResult);
@@ -579,7 +579,7 @@ namespace FMData.Rest
         /// <param name="script">The name of the script to run.</param>
         /// <param name="scriptParameter">The parameter to pass to the script. Null or Empty is OK.</param>
         /// <returns>The script result when OK, or the error code if not OK.</returns>
-        public async override Task<string> RunScriptAsync(string layout, string script, string scriptParameter)
+        public override async Task<string> RunScriptAsync(string layout, string script, string scriptParameter)
         {
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
@@ -732,7 +732,7 @@ namespace FMData.Rest
 
             var method = new HttpMethod("PATCH");
 
-            var requestMessage = new HttpRequestMessage(method, $"{_baseEndPoint}/globals")
+            var requestMessage = new HttpRequestMessage(method, $"{BaseEndPoint}/globals")
             {
                 Content = new StringContent(json, Encoding.UTF8, "application/json")
             };
@@ -770,10 +770,10 @@ namespace FMData.Rest
         /// Get FileMaker Server Product Information.
         /// </summary>
         /// <returns>An instance of the FileMaker Product Info.</returns>
-        public async override Task<ProductInformation> GetProductInformationAsync()
+        public override async Task<ProductInformation> GetProductInformationAsync()
         {
             // generate request url
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_fmsUri}/fmi/data/v1/productinfo");         
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_fmsUri}/fmi/data/v1/productinfo");
 
             // run the patch action
             var response = await _client.SendAsync(requestMessage);
@@ -802,7 +802,7 @@ namespace FMData.Rest
         /// Get the databases the current instance is authorized to access.
         /// </summary>
         /// <returns>The names of the databases the current user is able to connect.</returns>
-        public async override Task<IReadOnlyCollection<string>> GetDatabasesAsync()
+        public override async Task<IReadOnlyCollection<string>> GetDatabasesAsync()
         {
             // don't need to refresh the token, because this is a basic authentication request
 
@@ -842,7 +842,7 @@ namespace FMData.Rest
         /// Gets all the layouts within a database
         /// </summary>
         /// <returns>The names of the layouts in the specified database.</returns>
-        public async override Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync()
+        public override async Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync()
         {
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
@@ -880,7 +880,7 @@ namespace FMData.Rest
         /// Gets all the scripts within the database.
         /// </summary>
         /// <returns>The names of the scripts in the specified database.</returns>
-        public async override Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync()
+        public override async Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync()
         {
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
@@ -920,7 +920,7 @@ namespace FMData.Rest
         /// <param name="layout">The layout to get data about.</param>
         /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
         /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
-        public async override Task<LayoutMetadata> GetLayoutAsync(string layout, int? recordId = null)
+        public override async Task<LayoutMetadata> GetLayoutAsync(string layout, int? recordId = null)
         {
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
@@ -1072,7 +1072,7 @@ namespace FMData.Rest
                     var namedPortal = portalDataAttr.NamedPortalInstance;
                     var portalInstanceType = portal.PropertyType.GetTypeInfo().GenericTypeArguments[0];
                     var pt = portal.PropertyType;
-                    JToken portalJ = input["portalData"][namedPortal];
+                    var portalJ = input["portalData"][namedPortal];
 
                     // if the portal json is null, but the model expects it throw argument null exception.
                     if (portalJ == null)
@@ -1086,7 +1086,7 @@ namespace FMData.Rest
                     // https://stackoverflow.com/a/604843/86860 - solution
                     foreach (JObject jo in portalJ.ToList())
                     {
-                        foreach (JProperty jp in jo.Properties().ToList())
+                        foreach (var jp in jo.Properties().ToList())
                         {
                             if (jp.Name.Contains(portalDataAttr.TablePrefixFieldNames + "::"))
                             {
@@ -1106,11 +1106,11 @@ namespace FMData.Rest
             }
 
             // recordId
-            int fileMakerId = input["recordId"].ToObject<int>();
+            var fileMakerId = input["recordId"].ToObject<int>();
             fmId?.Invoke(searchResult, fileMakerId);
 
             // modId
-            int fmModId = input["modId"].ToObject<int>();
+            var fmModId = input["modId"].ToObject<int>();
             modId?.Invoke(searchResult, fmModId);
 
             return searchResult;

@@ -15,7 +15,7 @@ namespace FMData.Rest.Tests
             var mockHttp = new MockHttpMessageHandler();
 
             var server = "http://localhost";
-            var file = "test-file";                        
+            var file = "test-file";
 
             var productInfo = System.IO.File.ReadAllText("ResponseData\\ProductInfo.json");
             mockHttp.When($"{server}/fmi/data/v1/productinfo")

@@ -11,10 +11,10 @@ namespace FMData.Xml.Tests
 {
     public class FindRequestTests
     {
-        string server = "http://localhost";
-        string file = "test-file";
-        string user = "unit";
-        string pass = "test";
+        readonly string _server = "http://localhost";
+        readonly string _file = "test-file";
+        readonly string _user = "unit";
+        readonly string _pass = "test";
 
         [Fact]
         public async Task FindRecord_Should_MatchName()
@@ -22,12 +22,12 @@ namespace FMData.Xml.Tests
             // arrange 
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/xml/fmresultset.xml")
+            mockHttp.When(HttpMethod.Post, $"{_server}/fmi/xml/fmresultset.xml")
                 .WithPartialContent("-find")
                 .WithPartialContent(Uri.EscapeDataString("Spring in Giverny 3"))
                 .Respond(HttpStatusCode.OK, "application/xml", XmlResponses.GrammarSample_fmresultset);
 
-            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), _server, _file, _user, _pass);
 
             var toFind = new Art()
             {
@@ -47,12 +47,12 @@ namespace FMData.Xml.Tests
             // arrange 
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/xml/fmresultset.xml")
+            mockHttp.When(HttpMethod.Post, $"{_server}/fmi/xml/fmresultset.xml")
                 .WithPartialContent("-find")
                 .WithPartialContent(Uri.EscapeDataString("Spring in Giverny 3"))
                 .Respond(HttpStatusCode.OK, "application/xml", XmlResponses.GrammarSample_fmresultset);
 
-            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), _server, _file, _user, _pass);
 
             var findRequest = new Art()
             {
@@ -63,7 +63,7 @@ namespace FMData.Xml.Tests
 
             Assert.NotEmpty(response);
             var first = response.First();
-            Assert.Equal(19, first.length);
+            Assert.Equal(19, first.Length);
         }
 
         [Fact]
@@ -72,12 +72,12 @@ namespace FMData.Xml.Tests
             // arrange 
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/xml/fmresultset.xml")
+            mockHttp.When(HttpMethod.Post, $"{_server}/fmi/xml/fmresultset.xml")
                 .WithPartialContent("-find")
                 .WithPartialContent(Uri.EscapeDataString("Spring in Giverny 3"))
                 .Respond(HttpStatusCode.OK, "application/xml", XmlResponses.GrammarSample_fmresultset);
 
-            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), _server, _file, _user, _pass);
 
             var findRequest = new ArtWithPortal()
             {
@@ -88,7 +88,7 @@ namespace FMData.Xml.Tests
 
             Assert.NotEmpty(response);
             var first = response.First();
-            Assert.Equal(19, first.length);
+            Assert.Equal(19, first.Length);
             Assert.Equal("Chicago", first.Locations.First().Location);
         }
     }

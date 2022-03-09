@@ -39,17 +39,18 @@ namespace FMData.Xml
             foreach (var item in source)
             {
                 // match member name or data member attribute name if supplied
-                Func<PropertyInfo, bool> picker = k => {
-                    var cadm = k.GetCustomAttribute<DataMemberAttribute>();
+                bool Picker(PropertyInfo k)
+                {
+                    var dataAttribute = k.GetCustomAttribute<DataMemberAttribute>();
                     return k.Name.Equals(item.Key, StringComparison.CurrentCultureIgnoreCase)
-                        || (cadm != null 
-                            && cadm.Name != null 
-                            && cadm.Name.Equals(item.Key, StringComparison.CurrentCultureIgnoreCase));
-                };
+                        || (dataAttribute != null
+                            && dataAttribute.Name != null
+                            && dataAttribute.Name.Equals(item.Key, StringComparison.CurrentCultureIgnoreCase));
+                }
 
                 someObjectType
                     .DeclaredProperties
-                    .FirstOrDefault(picker)
+                    .FirstOrDefault(Picker)
                     ?.SetValue(someObject, item.Value, null);
             }
 
@@ -69,10 +70,10 @@ namespace FMData.Xml
 
             if (!includeNulls)
             {
+                // need a way to exclude 'default' values for ints, dates, etc
                 props = props
                     .Where(p => p.GetValue(source, null) != null)
-                    // need a way to exclude 'default' values for ints, dates, etc
-                    .Where(p 
+                    .Where(p
                         => !(p.PropertyType.GetTypeInfo().IsValueType == true
                         && p.GetValue(source, null) != Activator.CreateInstance(p.PropertyType))
                     );

@@ -14,29 +14,29 @@ namespace FMData.Rest.Tests
     /// </summary>
     public class CreateAsyncTests
     {
-        private static readonly string server = "http://localhost";
-        private static readonly string file = "test-file";
-        private static readonly string user = "unit";
-        private static readonly string pass = "test";
-        private static readonly string layout = "layout";
+        private static readonly string s_server = "http://localhost";
+        private static readonly string s_file = "test-file";
+        private static readonly string s_user = "unit";
+        private static readonly string s_pass = "test";
+        private static readonly string s_layout = "layout";
 
         private static IFileMakerApiClient GetDataClientWithMockedHandler(MockHttpMessageHandler mockHttp = null)
         {
-            if(mockHttp == null)
+            if (mockHttp == null)
             {
                 // new up a default set of responses (none were provided)
                 mockHttp = new MockHttpMessageHandler();
 
-                mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records*")
+                mockHttp.When(HttpMethod.Post, $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/{s_layout}/records*")
                     .WithPartialContent("fieldData") // make sure that the body content contains the 'data' object expected by fms
                     .Respond("application/json", DataApiResponses.SuccessfulCreate());
             }
 
             // always add the authentication setup
-            mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
+            mockHttp.When($"{s_server}/fmi/data/v1/databases/{s_file}/sessions")
                 .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = s_server, Database = s_file, Username = s_user, Password = s_pass });
             return fdc;
         }
 
@@ -46,9 +46,9 @@ namespace FMData.Rest.Tests
             var mockHttp = new MockHttpMessageHandler();
 
             // since we know 'ModelWithLayout' uses 'Somelayout' as its layout we need to ensure a response for that endpoint
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/Somelayout/records*")
+            mockHttp.When(HttpMethod.Post, $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/Somelayout/records*")
                 .WithPartialContent("fieldData") // make sure that the body content contains the 'data' object expected by fms
-                .Respond("application/json", DataApiResponses.SuccessfulCreate()); 
+                .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
             var fdc = GetDataClientWithMockedHandler(mockHttp);
 
@@ -61,10 +61,10 @@ namespace FMData.Rest.Tests
             var response = await fdc.CreateAsync(newModel);
 
             Assert.NotNull(response);
-            Assert.Contains(response.Messages, r=> r.Message == "OK");
+            Assert.Contains(response.Messages, r => r.Message == "OK");
         }
 
-        [Fact(DisplayName ="Layout Parameter Should Allow Creation For Models w/out Attribute")]
+        [Fact(DisplayName = "Layout Parameter Should Allow Creation For Models w/out Attribute")]
         public async Task CreateWithExplicitLayout_ShouldReturnOK()
         {
             var fdc = GetDataClientWithMockedHandler();
@@ -75,22 +75,24 @@ namespace FMData.Rest.Tests
                 AnotherField = "Different Value"
             };
 
-            var request = new CreateRequest<ModelWithoutLayout>();
-            request.Data = newModel;
-            request.Layout = layout;
+            var request = new CreateRequest<ModelWithoutLayout>
+            {
+                Data = newModel,
+                Layout = s_layout
+            };
             var response = await fdc.SendAsync(request);
 
             Assert.NotNull(response);
             Assert.Contains(response.Messages, r => r.Message == "OK");
         }
 
-        [Fact(DisplayName ="Should Return RecordId Of Created Row")]
+        [Fact(DisplayName = "Should Return RecordId Of Created Row")]
         public async Task Create_ShouldReturn_RecordId()
         {
             var mockHttp = new MockHttpMessageHandler();
 
             // since we know 'ModelWithLayout' uses 'Somelayout' as its layout we need to ensure a response for that endpoint
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/Somelayout/records*")
+            mockHttp.When(HttpMethod.Post, $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/Somelayout/records*")
                 .WithPartialContent("fieldData") // make sure that the body content contains the 'data' object expected by fms
                 .Respond("application/json", DataApiResponses.SuccessfulCreate());
 
@@ -109,8 +111,8 @@ namespace FMData.Rest.Tests
             Assert.Contains(response.Messages, r => r.Message == "OK");
         }
 
-        [Fact(DisplayName ="Model Without Layout and No Layout Parameter Should Throw")]
-        public async Task CreateWithoutTableAttirbute_ShouldThrow_WithoutExplicitLayout()
+        [Fact(DisplayName = "Model Without Layout and No Layout Parameter Should Throw")]
+        public async Task CreateWithoutTableAttribute_ShouldThrow_WithoutExplicitLayout()
         {
             var fdc = GetDataClientWithMockedHandler();
 

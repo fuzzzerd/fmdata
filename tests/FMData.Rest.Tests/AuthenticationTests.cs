@@ -19,25 +19,21 @@ namespace FMData.Rest.Tests
         [Fact(DisplayName = "Client is Unauthenticated Until Action Is Invoked")]
         public void DoesNotGetTokenOnConstructor()
         {
-            using (var mockHttp = new MockHttpMessageHandler())
-            {
-                var server = "http://localhost/";
-                var file = "test-file";
-                var user = "unit";
-                var pass = "test";
+            using var mockHttp = new MockHttpMessageHandler();
+            var server = "http://localhost/";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
 
-                // note the lack of slash here vs other tests to ensure the actual auth endpoint is correctly mocked/hit
-                mockHttp.When($"{server}fmi/data/v1/databases/{file}/sessions")
-                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+            // note the lack of slash here vs other tests to ensure the actual auth endpoint is correctly mocked/hit
+            mockHttp.When($"{server}fmi/data/v1/databases/{file}/sessions")
+            .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
-                mockHttp.When(HttpMethod.Delete, $"{server}fmi/data/v1/databases/{file}/sessions*")
-                .Respond(HttpStatusCode.OK, "application/json", "");
+            mockHttp.When(HttpMethod.Delete, $"{server}fmi/data/v1/databases/{file}/sessions*")
+            .Respond(HttpStatusCode.OK, "application/json", "");
 
-                using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass }))
-                {
-                    Assert.False(fdc.IsAuthenticated);
-                }
-            }
+            using var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
+            Assert.False(fdc.IsAuthenticated);
         }
 
         [Fact(DisplayName = "FMS 401 Should Result In Unauthorized Client")]
@@ -56,10 +52,8 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/sessions*")
                 .Respond(HttpStatusCode.OK, "application/json", "");
 
-            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass }))
-            {
-                Assert.False(fdc.IsAuthenticated);
-            }
+            using var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
+            Assert.False(fdc.IsAuthenticated);
         }
 
         [Fact(DisplayName = "Refresh Token Should Generate New Token")]
@@ -78,11 +72,9 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/sessions*")
                 .Respond(HttpStatusCode.OK, "application/json", "");
 
-            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass }))
-            {
-                var response = await fdc.RefreshTokenAsync("integration", "test");
-                Assert.Equal("someOtherToken", response.Response.Token);
-            }
+            using var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
+            var response = await fdc.RefreshTokenAsync("integration", "test");
+            Assert.Equal("someOtherToken", response.Response.Token);
         }
 
         [Theory(DisplayName = "Refresh Token Requires Username and Password")]
@@ -102,10 +94,8 @@ namespace FMData.Rest.Tests
                 .Respond(HttpStatusCode.OK, "application/json", "");
 
             // pass in actual values here since we DON'T want this to blow up on constructor 
-            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass }))
-            {
-                await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.RefreshTokenAsync(user, pass));
-            }
+            using var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
+            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.RefreshTokenAsync(user, pass));
         }
 
         [Fact(DisplayName = "User-Agent Should Match Version Of Assembly")]
@@ -129,11 +119,9 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/sessions*")
                 .Respond(HttpStatusCode.OK, "application/json", "");
 
-            using (var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass }))
-            {
-                await fdc.RefreshTokenAsync(user, pass);
-                Assert.True(fdc.IsAuthenticated);
-            }
+            using var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
+            await fdc.RefreshTokenAsync(user, pass);
+            Assert.True(fdc.IsAuthenticated);
         }
     }
 }

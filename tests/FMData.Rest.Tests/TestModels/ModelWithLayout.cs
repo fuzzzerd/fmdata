@@ -2,7 +2,7 @@
 
 namespace FMData.Rest.Tests.TestModels
 {
-    [DataContract(Name ="Somelayout")]
+    [DataContract(Name = "Somelayout")]
     public class ModelWithLayout
     {
         public string Name { get; set; }

@@ -9,7 +9,7 @@ namespace FMData.Rest.Tests
 {
     public class ContainerFieldTests
     {
-        [Fact(DisplayName ="Container Field Update Should Post Upload")]
+        [Fact(DisplayName = "Container Field Update Should Post Upload")]
         public async Task EditContainer_Should_PostUpload()
         {
             var mockHttp = new MockHttpMessageHandler();

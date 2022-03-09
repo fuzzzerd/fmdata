@@ -8,10 +8,10 @@ namespace FMData.Xml.Tests
 {
     public class CreateRequestTests
     {
-        string server = "http://localhost";
-        string file = "test-file";
-        string user = "unit";
-        string pass = "test";
+        readonly string _server = "http://localhost";
+        readonly string _file = "test-file";
+        readonly string _user = "unit";
+        readonly string _pass = "test";
 
         [Fact]
         public async Task CreateRecord_ShouldMatch_SentData()
@@ -21,13 +21,13 @@ namespace FMData.Xml.Tests
 
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When($"{server}/fmi/xml/fmresultset.xml")
+            mockHttp.When($"{_server}/fmi/xml/fmresultset.xml")
                 .WithPartialContent($"-new")
-                .WithPartialContent($"-db={file}")
+                .WithPartialContent($"-db={_file}")
                 .WithPartialContent(nameToMatch)
                 .Respond(HttpStatusCode.OK, "application/json", "");
 
-            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), _server, _file, _user, _pass);
 
             var mtoCreate = new User()
             {

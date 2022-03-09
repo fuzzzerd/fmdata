@@ -11,6 +11,6 @@ namespace FMData.Xml.Tests.TestModels
         public string Title { get; set; }
         public string Artist { get; set; }
         public string Style { get; set; }
-        public int length { get; set; }
+        public int Length { get; set; }
     }
 }

@@ -24,6 +24,6 @@ namespace FMData
         /// <summary>
         /// The data contained in the response.
         /// </summary>
-        public IEnumerable<RecordBase<T, Dictionary<string, IEnumerable<Dictionary<string,string>>>>> Data { get; set; }
+        public IEnumerable<RecordBase<T, Dictionary<string, IEnumerable<Dictionary<string, string>>>>> Data { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace FMData.Rest.Tests
         public async Task GetByRecordId_ShouldReturnMatchingRecordId()
         {
             // arrange
-            object FMrecordIdMapper(User o, int id) => o.FileMakerRecordId = id;
+            static object FMrecordIdMapper(User o, int id) => o.FileMakerRecordId = id;
             var mockHttp = new MockHttpMessageHandler();
 
             var server = "http://localhost";
@@ -46,7 +46,7 @@ namespace FMData.Rest.Tests
         public async Task GetByRecordId_ShouldHaveContainerWithContainerDataFor()
         {
             // arrange
-            object FMrecordIdMapper(ContainerFieldTestModel o, int id) => o.FileMakerRecordId = id;
+            static object FMrecordIdMapper(ContainerFieldTestModel o, int id) => o.FileMakerRecordId = id;
             var mockHttp = new MockHttpMessageHandler();
 
             var server = "http://localhost";

@@ -8,7 +8,7 @@ namespace FMData.Rest.Tests
 {
     public class EditAsyncTests
     {
-        [Fact(DisplayName ="Script In Edit Should Show In JSON")]
+        [Fact(DisplayName = "Script In Edit Should Show In JSON")]
         public async Task Edit_WithScript_ShouldHaveScript()
         {
             var mockHttp = new MockHttpMessageHandler();

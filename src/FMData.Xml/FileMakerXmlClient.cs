@@ -21,24 +21,24 @@ namespace FMData.Xml
         /// <summary>
         /// Factory to get a new Create Request of the correct type.
         /// </summary>
-        protected override ICreateRequest<T> _createFactory<T>() => new CreateRequest<T>();
+        protected override ICreateRequest<T> CreateFactory<T>() => new CreateRequest<T>();
         /// <summary>
         /// Factory to get a new Edit Request of the correct type.
         /// </summary>
-        protected override IEditRequest<T> _editFactory<T>() => new EditRequest<T>();
+        protected override IEditRequest<T> EditFactory<T>() => new EditRequest<T>();
         /// <summary>
         /// Factory to get a new Find Request of the correct type.
         /// </summary>
-        protected override IFindRequest<T> _findFactory<T>() => new FindRequest<T>();
+        protected override IFindRequest<T> FindFactory<T>() => new FindRequest<T>();
         /// <summary>
         /// Factory to get a new Delete Request of the correct type.
         /// </summary>
-        protected override IDeleteRequest _deleteFactory() => new DeleteRequest();
+        protected override IDeleteRequest DeleteFactory() => new DeleteRequest();
         #endregion
 
         private readonly XNamespace _ns = "http://www.filemaker.com/xml/fmresultset";
 
-        private List<string> _globalsToAdd = new List<string>();
+        private readonly List<string> _globalsToAdd = new List<string>();
 
         #region Constructors
         /// <summary>
@@ -120,9 +120,9 @@ namespace FMData.Xml
         /// <typeparam name="T">The projected type to be created.</typeparam>
         /// <param name="req">The request record command.</param>
         /// <returns>A response containing the results of the operation.</returns>
-        public async override Task<ICreateResponse> SendAsync<T>(ICreateRequest<T> req)
+        public override async Task<ICreateResponse> SendAsync<T>(ICreateRequest<T> req)
         {
-            HttpResponseMessage response = await ExecuteRequestAsync(req);
+            var response = await ExecuteRequestAsync(req);
 
             if (response.IsSuccessStatusCode)
             {
@@ -142,7 +142,7 @@ namespace FMData.Xml
         /// </summary>
         public override async Task<IResponse> SendAsync(IDeleteRequest req)
         {
-            HttpResponseMessage response = await ExecuteRequestAsync(req);
+            var response = await ExecuteRequestAsync(req);
 
             if (response.IsSuccessStatusCode)
             {
@@ -162,7 +162,7 @@ namespace FMData.Xml
         /// </summary>
         public override async Task<IEditResponse> SendAsync<T>(IEditRequest<T> req)
         {
-            HttpResponseMessage response = await ExecuteRequestAsync(req);
+            var response = await ExecuteRequestAsync(req);
 
             if (response.IsSuccessStatusCode)
             {
@@ -192,7 +192,7 @@ namespace FMData.Xml
             Func<T, int, object> fmId = null,
             Func<T, int, object> modId = null)
         {
-            HttpResponseMessage response = await ExecuteRequestAsync(req);
+            var response = await ExecuteRequestAsync(req);
 
             if (response.IsSuccessStatusCode)
             {
@@ -390,7 +390,7 @@ namespace FMData.Xml
         /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
         public override Task<LayoutMetadata> GetLayoutAsync(string layout, int? recordId = null)
         {
-            var url = $"{_fmsUri}/fmi/xml/FMPXMLLAYOUT.xml?-db={_fileName}&-lay={layout}&-view";
+            // var url = $"{_fmsUri}/fmi/xml/FMPXMLLAYOUT.xml?-db={_fileName}&-lay={layout}&-view";
 
             throw new NotImplementedException();
         }

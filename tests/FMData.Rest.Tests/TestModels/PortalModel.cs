@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FMData.Rest.Tests.TestModels
 {
-    [DataContract(Name ="the-layout")]
+    [DataContract(Name = "the-layout")]
     public class PortalModel
     {
         public string ES_ONE { get; set; }

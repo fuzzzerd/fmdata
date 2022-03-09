@@ -9,10 +9,10 @@ namespace FMData.Xml.Tests
 {
     public class EditRequestTests
     {
-        string server = "http://localhost";
-        string file = "test-file";
-        string user = "unit";
-        string pass = "test";
+        readonly string _server = "http://localhost";
+        readonly string _file = "test-file";
+        readonly string _user = "unit";
+        readonly string _pass = "test";
 
         [Fact]
         public async Task EditRecord_ShouldMatch_SentData()
@@ -22,12 +22,12 @@ namespace FMData.Xml.Tests
 
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When(HttpMethod.Post, $"{server}/fmi/xml/fmresultset.xml")
+            mockHttp.When(HttpMethod.Post, $"{_server}/fmi/xml/fmresultset.xml")
                 .WithPartialContent($"-edit")
                 .WithPartialContent(nameToMatch)
                 .Respond(HttpStatusCode.OK, "application/xml", "");
 
-            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), server, file, user, pass);
+            var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), _server, _file, _user, _pass);
 
             var mtoEdit = new User()
             {

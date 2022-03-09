@@ -14,7 +14,7 @@ namespace FMData.Rest.Requests
         [JsonProperty("query")]
         public IEnumerable<RequestQueryInstance<TRequestType>> Query { get { return _query; } }
 
-        private List<RequestQueryInstance<TRequestType>> _query = new List<RequestQueryInstance<TRequestType>>();
+        private readonly List<RequestQueryInstance<TRequestType>> _query = new List<RequestQueryInstance<TRequestType>>();
 
         /// <summary>
         /// Maximum number of records to return for this request.
@@ -56,10 +56,10 @@ namespace FMData.Rest.Requests
             {
                 NullValueHandling = IncludeNullValuesInSerializedOutput ? NullValueHandling.Include : NullValueHandling.Ignore,
                 DefaultValueHandling = IncludeDefaultValuesInSerializedOutput ? DefaultValueHandling.Include : DefaultValueHandling.Ignore,
-                Converters = 
-                { 
-                    new FormatNumbersAsTextConverter(), 
-                    new RequestQueryInstanceConverter<TRequestType>(this) 
+                Converters =
+                {
+                    new FormatNumbersAsTextConverter(),
+                    new RequestQueryInstanceConverter<TRequestType>(this)
                 }
             });
 

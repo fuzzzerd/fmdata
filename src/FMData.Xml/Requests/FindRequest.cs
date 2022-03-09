@@ -14,7 +14,7 @@ namespace FMData.Xml.Requests
         /// The query values to provide to FMS.
         /// </summary>
         public IEnumerable<RequestQueryInstance<T>> Query { get { return _query; } }
-        private List<RequestQueryInstance<T>> _query = new List<RequestQueryInstance<T>>();
+        private readonly List<RequestQueryInstance<T>> _query = new List<RequestQueryInstance<T>>();
 
         /// <summary>
         /// Offset amount (skip)

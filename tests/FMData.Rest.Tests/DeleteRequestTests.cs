@@ -61,7 +61,7 @@ namespace FMData.Rest.Tests
             Assert.Contains(response.Messages, r => r.Message == "OK");
         }
 
-        [Fact(DisplayName ="Layout and ID Should Delete OK")]
+        [Fact(DisplayName = "Layout and ID Should Delete OK")]
         public async Task DeleteByIdandLayout_Should_ReturnOK()
         {
             var fdc = GetMockedClient();
@@ -72,7 +72,7 @@ namespace FMData.Rest.Tests
             Assert.Contains(response.Messages, r => r.Message == "OK");
         }
 
-        [Fact(DisplayName ="Invalid Layout Should Return 404")]
+        [Fact(DisplayName = "Invalid Layout Should Return 404")]
         public async Task DeleteByWrongLayout_Should_ReturnFourOhFour()
         {
             // arrange 
@@ -91,7 +91,7 @@ namespace FMData.Rest.Tests
         // Send Async
         //==//
 
-        [Fact(DisplayName ="By Delete Request Should Return OK")]
+        [Fact(DisplayName = "By Delete Request Should Return OK")]
         public async Task DeleteShould_ReturnOK()
         {
             var fdc = GetMockedClient();

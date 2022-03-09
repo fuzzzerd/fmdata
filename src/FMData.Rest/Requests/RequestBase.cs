@@ -74,13 +74,13 @@ namespace FMData.Rest
         /// </summary>
         public virtual string SerializeRequest()
         {
-            StringBuilder sb = new StringBuilder();
-            using (StringWriter sw = new StringWriter(sb))
-            using (NullJsonWriter njw = new NullJsonWriter(sw))
+            var sb = new StringBuilder();
+            using (var sw = new StringWriter(sb))
+            using (var njw = new NullJsonWriter(sw))
             {
                 // use our custom NullJsonWriter (that writes empty string for null values)
                 // while still respecting the above configured Null and Default value handle flags.
-                JsonSerializer ser = new JsonSerializer
+                var ser = new JsonSerializer
                 {
                     DefaultValueHandling = IncludeDefaultValuesInSerializedOutput ? DefaultValueHandling.Include : DefaultValueHandling.Ignore,
                     NullValueHandling = IncludeNullValuesInSerializedOutput ? NullValueHandling.Include : NullValueHandling.Ignore,
