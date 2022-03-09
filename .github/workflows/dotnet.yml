@@ -1,4 +1,4 @@
-name: .NET CI Build for MyGet
+name: .NET CI Build
 
 on:
   push:
