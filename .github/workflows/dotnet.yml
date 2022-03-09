@@ -30,8 +30,8 @@ jobs:
       run: dotnet test --no-build --verbosity normal
 
     - name: Push to MyGet
-        env:
-          API_KEY: ${{ secrets.MYGET_FILEMAKER_FEED_API_TOKEN }}
-        if: ${{ env.API_KEY != '' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')) }}
-        run: |
-          dotnet nuget push FMData/**/*.nupkg --source https://www.myget.org/F/filemaker/api/v2/package --api-key ${{ env.API_KEY }}
+      env:
+        API_KEY: ${{ secrets.MYGET_FILEMAKER_FEED_API_TOKEN }}
+      if: ${{ env.API_KEY != '' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')) }}
+      run: |
+        dotnet nuget push FMData/**/*.nupkg --source https://www.myget.org/F/filemaker/api/v2/package --api-key ${{ env.API_KEY }}
