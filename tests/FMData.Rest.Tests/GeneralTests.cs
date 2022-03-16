@@ -13,7 +13,7 @@ namespace FMData.Rest.Tests
 {
     public class GeneralTests
     {
-        private FindRequest<User> FindReq()
+        private static FindRequest<User> FindReq()
         {
             var r = new FindRequest<User>() { Layout = "layout" };
             r.AddQuery(new User() { Id = 1 }, false);

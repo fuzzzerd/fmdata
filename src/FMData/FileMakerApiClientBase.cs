@@ -91,23 +91,23 @@ namespace FMData
         /// <summary>
         /// HttpClient for connecting to FMS. Injected or newed up for each instance of the client.
         /// </summary>
-        protected readonly HttpClient _client;
+        protected readonly HttpClient Client;
         /// <summary>
         /// Uri to FileMaker Server
         /// </summary>
-        protected readonly string _fmsUri;
+        protected readonly string FmsUri;
         /// <summary>
         /// Database/FileMaker File we're connected/ing to.
         /// </summary>
-        protected readonly string _fileName;
+        protected readonly string FileName;
         /// <summary>
         /// Username for connections.
         /// </summary>
-        protected readonly string _userName;
+        protected readonly string UserName;
         /// <summary>
         /// Password for connections.
         /// </summary>
-        protected readonly string _password;
+        protected readonly string Password;
 
         #region Constructors
         /// <summary>
@@ -117,18 +117,18 @@ namespace FMData
         /// <param name="conn">The connection information for FMS.</param>
         public FileMakerApiClientBase(HttpClient client, ConnectionInfo conn)
         {
-            _client = client;
+            Client = client;
 
-            _fmsUri = conn.FmsUri;
+            FmsUri = conn.FmsUri;
             // trim out the trailing slash if they included it
-            if (_fmsUri.EndsWith("/", StringComparison.CurrentCultureIgnoreCase))
+            if (FmsUri.EndsWith("/", StringComparison.CurrentCultureIgnoreCase))
             {
-                _fmsUri = conn.FmsUri.Substring(0, conn.FmsUri.Length - 1);
+                FmsUri = conn.FmsUri.Substring(0, conn.FmsUri.Length - 1);
             }
-            _fileName = Uri.EscapeDataString(conn.Database);
+            FileName = Uri.EscapeDataString(conn.Database);
 
-            _userName = conn.Username;
-            _password = conn.Password;
+            UserName = conn.Username;
+            Password = conn.Password;
         }
         #endregion
 
@@ -270,7 +270,7 @@ namespace FMData
         [Obsolete]
         public Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync(string database)
         {
-            if (database != _fileName)
+            if (database != FileName)
             {
                 throw new ArgumentOutOfRangeException("database", database, "Name of the database must match the file used in the constructor.");
             }
@@ -291,7 +291,7 @@ namespace FMData
         [Obsolete]
         public Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync(string database)
         {
-            if (database != _fileName)
+            if (database != FileName)
             {
                 throw new ArgumentOutOfRangeException("database", database, "Name of the database must match the file used in the constructor.");
             }
@@ -314,7 +314,7 @@ namespace FMData
         [Obsolete]
         public Task<LayoutMetadata> GetLayoutAsync(string database, string layout, int? recordId = null)
         {
-            if (database != _fileName)
+            if (database != FileName)
             {
                 throw new ArgumentOutOfRangeException("database", database, "Name of the database must match the file used in the constructor.");
             }
@@ -646,7 +646,7 @@ namespace FMData
         /// <summary>
         /// Send a Find Record request to the FileMaker API.
         /// </summary>
-        public async virtual Task<IEnumerable<T>> SendAsync<T>(
+        public virtual async Task<IEnumerable<T>> SendAsync<T>(
             IFindRequest<T> req,
             Func<T, int, object> fmId,
             Func<T, int, object> modId) where T : class, new()
@@ -779,7 +779,7 @@ namespace FMData
         /// <param name="instances">Collection of objects that have container data with the ContainerDataForAttribute.</param>
         public virtual Task ProcessContainers<T>(IEnumerable<T> instances)
         {
-            List<Task> instanceTasks = new List<Task>();
+            var instanceTasks = new List<Task>();
 
             foreach (var instance in instances)
             {

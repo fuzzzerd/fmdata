@@ -6,7 +6,7 @@ namespace FMData.Xml.Tests
 {
     public static class XmlResponses
     {
-        public static string GrammarSample_fmresultset = @"<fmresultset xmlns=""http://www.filemaker.com/xml/fmresultset"" version=""1.0"">
+        public const string GrammarSample_fmresultset = @"<fmresultset xmlns=""http://www.filemaker.com/xml/fmresultset"" version=""1.0"">
 <error code=""0""/>
 <product build=""03/29/2017"" name=""FileMaker Web Publishing Engine"" version=""16.0.1.0""/>
 <datasource database=""art"" date-format=""MM/dd/yyyy"" layout=""web3"" table=""art"" time-format=""HH:mm:ss"" timestamp-format=""MM/dd/yyyy HH:mm:ss"" total-count=""12""/>

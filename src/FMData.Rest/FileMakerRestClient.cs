@@ -80,7 +80,7 @@ namespace FMData.Rest
             var header = new System.Net.Http.Headers.ProductHeaderValue(assembly.GetName().Name, version);
             var userAgent = new System.Net.Http.Headers.ProductInfoHeaderValue(header);
 #endif
-            _client.DefaultRequestHeaders.UserAgent.Add(userAgent);
+            Client.DefaultRequestHeaders.UserAgent.Add(userAgent);
         }
         #endregion
 
@@ -88,7 +88,7 @@ namespace FMData.Rest
         /// <summary>
         /// Note we assume _fmsUri has no trailing slash as its cut off in the constructor.
         /// </summary>
-        private string BaseEndPoint => $"{_fmsUri}/fmi/data/v1/databases/{_fileName}";
+        private string BaseEndPoint => $"{FmsUri}/fmi/data/v1/databases/{FileName}";
 
         /// <summary>
         /// Generate the appropriate Authentication endpoint uri for this instance of the data client.
@@ -161,7 +161,7 @@ namespace FMData.Rest
         /// </summary>
         private async Task UpdateTokenDateAsync()
         {
-            if (!IsAuthenticated) { await RefreshTokenAsync(_userName, _password); }
+            if (!IsAuthenticated) { await RefreshTokenAsync(UserName, Password); }
             _dataTokenLastUse = DateTime.UtcNow;
         }
 
@@ -188,7 +188,7 @@ namespace FMData.Rest
             requestMessage.Content.Headers.ContentType.CharSet = null;
 
             // run the post action
-            var response = await _client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage);
 
             // process the response even a 401 returns a FMS error to be passed back.
             if (response.StatusCode == HttpStatusCode.OK)
@@ -229,7 +229,7 @@ namespace FMData.Rest
             }
 
             // remove our token from the data api
-            var response = await _client.DeleteAsync(AuthEndpoint() + $"/{this._dataToken}");
+            var response = await Client.DeleteAsync(AuthEndpoint() + $"/{this._dataToken}");
 
             // process the response
             if (response.StatusCode == HttpStatusCode.OK)
@@ -584,7 +584,7 @@ namespace FMData.Rest
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
             // generate request url{
-            var uri = $"{_fmsUri}/fmi/data/v1/databases/{_fileName}/layouts/{layout}/script/{script}";
+            var uri = $"{FmsUri}/fmi/data/v1/databases/{FileName}/layouts/{layout}/script/{script}";
             if (!string.IsNullOrEmpty(scriptParameter))
             {
                 uri += $"?script.param={scriptParameter}";
@@ -595,7 +595,7 @@ namespace FMData.Rest
             requestMessage.Headers.Authorization = _authHeader;
 
             // run the patch action
-            var response = await _client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -674,7 +674,7 @@ namespace FMData.Rest
             httpRequest.Headers.Authorization = _authHeader;
 
             // run and return the action
-            var response = await _client.SendAsync(httpRequest);
+            var response = await Client.SendAsync(httpRequest);
             return response;
         }
 
@@ -746,7 +746,7 @@ namespace FMData.Rest
             requestMessage.Content.Headers.ContentType.CharSet = null;
 
             // run the patch action
-            var response = await _client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -773,10 +773,10 @@ namespace FMData.Rest
         public override async Task<ProductInformation> GetProductInformationAsync()
         {
             // generate request url
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_fmsUri}/fmi/data/v1/productinfo");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{FmsUri}/fmi/data/v1/productinfo");
 
             // run the patch action
-            var response = await _client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -807,16 +807,16 @@ namespace FMData.Rest
             // don't need to refresh the token, because this is a basic authentication request
 
             // generate request url
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_fmsUri}/fmi/data/v1/databases");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{FmsUri}/fmi/data/v1/databases");
 
             // special non-token auth to list databases
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("basic", Convert.ToBase64String(
-                    Encoding.UTF8.GetBytes($"{_userName}:{_password}")
+                    Encoding.UTF8.GetBytes($"{UserName}:{Password}")
                 )
             );
 
             // run the patch action
-            var response = await _client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -847,14 +847,14 @@ namespace FMData.Rest
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
             // generate request url{
-            var uri = $"{_fmsUri}/fmi/data/v1/databases/{_fileName}/layouts";
+            var uri = $"{FmsUri}/fmi/data/v1/databases/{FileName}/layouts";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
             // include auth token
             requestMessage.Headers.Authorization = _authHeader;
 
             // run the patch action
-            var response = await _client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -885,14 +885,14 @@ namespace FMData.Rest
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
             // generate request url{
-            var uri = $"{_fmsUri}/fmi/data/v1/databases/{_fileName}/scripts";
+            var uri = $"{FmsUri}/fmi/data/v1/databases/{FileName}/scripts";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
             // include auth token
             requestMessage.Headers.Authorization = _authHeader;
 
             // run the patch action
-            var response = await _client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -925,7 +925,7 @@ namespace FMData.Rest
             await UpdateTokenDateAsync(); // we're about to use the token so update date used
 
             // generate request url
-            var uri = $"{_fmsUri}/fmi/data/v1/databases/{_fileName}/layouts/{layout}";
+            var uri = $"{FmsUri}/fmi/data/v1/databases/{FileName}/layouts/{layout}";
             if (recordId.HasValue)
             {
                 uri += $"?recordId={recordId}";
@@ -936,7 +936,7 @@ namespace FMData.Rest
             requestMessage.Headers.Authorization = _authHeader;
 
             // run the patch action
-            var response = await _client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -999,7 +999,7 @@ namespace FMData.Rest
             // include auth token
             requestMessage.Headers.Authorization = _authHeader;
 
-            var response = await _client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -1034,7 +1034,7 @@ namespace FMData.Rest
             requestMessage.Headers.Authorization = _authHeader;
 
             // send the request out
-            var data = await _client.SendAsync(requestMessage);
+            var data = await Client.SendAsync(requestMessage);
             // read the bytes as a stream
             var dataBytes = await data.Content.ReadAsByteArrayAsync();
             return dataBytes;
@@ -1123,7 +1123,7 @@ namespace FMData.Rest
         /// </summary>
         public override void Dispose()
         {
-            if (_client != null)
+            if (Client != null)
             {
                 try
                 {
