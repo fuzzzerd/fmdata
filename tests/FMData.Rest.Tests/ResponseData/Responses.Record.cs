@@ -83,6 +83,11 @@ namespace FMData.Rest.Tests
     ""messages"":[{""code"":""401"",""message"":""No records match the request""}]
 }";
 
+        public static string FieldNotFound() => @"{
+    ""response"": {},
+    ""messages"":[{""code"":""102"",""message"":""Field missing""}]
+}";
+
         public static string SuccessfulCreate(int createdId = 254) => $@"{{
     ""response"": {{""recordId"":{createdId}}},
     ""messages"":[{{""code"":""0"",""message"":""OK""}}]

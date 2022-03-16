@@ -111,7 +111,7 @@ namespace FMData.Rest.Tests
 
             // act
             // assert
-            await Assert.ThrowsAsync<Exception>(async () => await fdc.SendAsync(FindTestsHelpers.FindUserReqWithLayoutOverride()));
+            await Assert.ThrowsAsync<FMDataException>(async () => await fdc.SendAsync(FindTestsHelpers.FindUserReqWithLayoutOverride()));
         }
 
         [Fact]

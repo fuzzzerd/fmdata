@@ -3,6 +3,7 @@ using FMData.Rest.Tests.TestModels;
 using RichardSzalay.MockHttp;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -190,6 +191,30 @@ namespace FMData.Rest.Tests
 
             Assert.NotNull(response);
             Assert.Contains(response.Messages, r => r.Message == "OK");
+        }
+
+        [Fact(DisplayName = "Create Request should throw FMDataException for InternalServerError")]
+        public async Task CreateRequest_Should_Throw_FMDataException_For_InternalServerError()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            mockHttp.When(HttpMethod.Post, $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/{s_layout}/records*")
+                .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.FieldNotFound());
+
+            var fdc = GetDataClientWithMockedHandler(mockHttp);
+
+            var req = new CreateRequest<User>()
+            {
+                Layout = "layout",
+                Data = new User { Name = "test name" },
+                Script = "run_this_script_reg",
+                PreRequestScript = "run_this_script_preq",
+                PreSortScript = "run_this_script_psort"
+            };
+
+            // act
+            // assert
+            await Assert.ThrowsAsync<FMDataException>(async () => await fdc.SendAsync(req));
         }
 
         /// <summary>

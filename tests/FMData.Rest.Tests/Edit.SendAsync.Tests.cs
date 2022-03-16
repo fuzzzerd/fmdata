@@ -1,6 +1,7 @@
 using FMData.Rest.Requests;
 using RichardSzalay.MockHttp;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -71,6 +72,37 @@ namespace FMData.Rest.Tests
             Assert.NotNull(response);
             Assert.Equal(3, response.Response.ModId);
             Assert.Contains(response.Messages, r => r.Message == "OK");
+        }
+
+        [Fact]
+        public async Task EditAsync_Should_Throw_FMDataException_For_InternalServerError()
+        {
+            // arrange
+            var mockHttp = new MockHttpMessageHandler();
+
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(new HttpMethod("PATCH"), $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/{s_layout}/records*")
+                .WithPartialContent("fieldData")
+                .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.FieldNotFound());
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
+
+            var req = new EditRequest<Dictionary<string, string>>()
+            {
+                Layout = s_layout,
+                RecordId = 264,
+                Data = new Dictionary<string, string>()
+                    {
+                        { "Name", "Fuzzerd-Updated" },
+                        { "AnotherField", "Another-Updated" }
+                    }
+            };
+
+            // act
+            // assert
+            await Assert.ThrowsAsync<FMDataException>(async () => await fdc.SendAsync(req));
         }
     }
 }
