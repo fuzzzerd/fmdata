@@ -8,7 +8,7 @@ namespace FMData.Rest.Tests
 {
     public class DeleteRequestTests
     {
-        private IFileMakerApiClient GetMockedClient()
+        private static IFileMakerApiClient GetMockedClient()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -62,7 +62,7 @@ namespace FMData.Rest.Tests
         }
 
         [Fact(DisplayName = "Layout and ID Should Delete OK")]
-        public async Task DeleteByIdandLayout_Should_ReturnOK()
+        public async Task DeleteByIdAndLayout_Should_ReturnOK()
         {
             var fdc = GetMockedClient();
 

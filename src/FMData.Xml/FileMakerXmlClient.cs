@@ -84,7 +84,7 @@ namespace FMData.Xml
             var header = new System.Net.Http.Headers.ProductHeaderValue(assembly.GetName().Name, version);
             var userAgent = new System.Net.Http.Headers.ProductInfoHeaderValue(header);
 #endif
-            _client.DefaultRequestHeaders.UserAgent.Add(userAgent);
+            Client.DefaultRequestHeaders.UserAgent.Add(userAgent);
         }
         #endregion
 
@@ -327,9 +327,9 @@ namespace FMData.Xml
         /// <returns>An instance of the FileMaker Product Info.</returns>
         public override async Task<ProductInformation> GetProductInformationAsync()
         {
-            var url = _fmsUri + "/fmi/xml/fmresultset.xml";
+            var url = FmsUri + "/fmi/xml/fmresultset.xml";
 
-            var response = await _client.GetAsync(url);
+            var response = await Client.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
             {
@@ -359,9 +359,9 @@ namespace FMData.Xml
         /// <returns>The names of the databases the current user is able to connect.</returns>
         public override async Task<IReadOnlyCollection<string>> GetDatabasesAsync()
         {
-            var url = _fmsUri + "/fmi/xml/fmresultset.xml?-dbnames";
+            var url = FmsUri + "/fmi/xml/fmresultset.xml?-dbnames";
 
-            var response = await _client.GetAsync(url);
+            var response = await Client.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
             {
@@ -432,7 +432,7 @@ namespace FMData.Xml
         /// <returns>An array of bytes with the data from the container field.</returns>
         protected override async Task<byte[]> GetContainerOnClient(string containerEndPoint)
         {
-            var data = await _client.GetAsync(containerEndPoint);
+            var data = await Client.GetAsync(containerEndPoint);
             var dataBytes = await data.Content.ReadAsByteArrayAsync();
             return dataBytes;
         }
@@ -445,7 +445,7 @@ namespace FMData.Xml
         /// <returns>The HttpResponseMessage From The Request.</returns>
         private async Task<HttpResponseMessage> ExecuteRequestAsync(IFileMakerRequest req)
         {
-            var url = _fmsUri + "/fmi/xml/fmresultset.xml";
+            var url = FmsUri + "/fmi/xml/fmresultset.xml";
 
             var requestContent = req.SerializeRequest();
 
@@ -454,11 +454,11 @@ namespace FMData.Xml
 
             // append fileName to request since thats not represented in the request itself
             // append globals
-            var sContent = requestContent + globals + $"&-db={_fileName}";
+            var sContent = requestContent + globals + $"&-db={FileName}";
 
             var httpRequestContent = new StringContent(sContent);
 
-            var response = await _client.PostAsync(url, httpRequestContent);
+            var response = await Client.PostAsync(url, httpRequestContent);
             return response;
         }
 
@@ -497,10 +497,10 @@ namespace FMData.Xml
         /// </summary>
         public override void Dispose()
         {
-            if (_client != null)
+            if (Client != null)
             {
                 // dispose our injected http client
-                _client.Dispose();
+                Client.Dispose();
             }
         }
         #endregion

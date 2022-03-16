@@ -8,7 +8,7 @@ namespace FMData.Rest.Tests
 {
     public class FindTestsHelpers
     {
-        public static ConnectionInfo Connection => new ConnectionInfo { FmsUri = Server, Database = File, Username = User, Password = Pass };
+        public static ConnectionInfo Connection => new() { FmsUri = Server, Database = File, Username = User, Password = Pass };
         public static readonly string Server = "http://localhost";
         public static readonly string File = "test-file";
         public static readonly string User = "unit";
