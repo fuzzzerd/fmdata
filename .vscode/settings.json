@@ -17,8 +17,12 @@
         "preq",
         "psort",
         "recid",
+        "reserialize",
         "stringly",
         "Szalay",
+        "unencrypted",
+        "Xalan",
+        "Xerces",
         "Xunit"
     ],
     "git.enableCommitSigning": true,

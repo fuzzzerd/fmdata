@@ -354,7 +354,10 @@ namespace FMData.Rest
                         {
                             return null;
                         }
-                        throw new Exception(responseObject.Messages.First().Message);
+                        throw new FMDataException(
+                            int.Parse(responseObject.Messages.First().Code),
+                            responseObject.Messages.First().Message,
+                            null);
                     default:
                         // other error TODO: Improve handling
                         throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responded with {response.StatusCode}");
@@ -398,17 +401,32 @@ namespace FMData.Rest
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
-            var responseMessage = await ExecuteRequestAsync(req);
+            var response = await ExecuteRequestAsync(req);
+
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                // attempt to read response content
+                if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
+
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+
+                // throw FMDataException
+                throw new FMDataException(
+                        int.Parse(responseObject.Messages.First().Code),
+                        responseObject.Messages.First().Message,
+                        null);
+            }
 
             try
             {
-                var responseJson = await responseMessage.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<CreateResponse>(responseJson);
             }
             catch (Exception ex)
             {
-                // something bad happened. TODO: improve non-OK response handling
-                throw new Exception($"Non-OK Response: Status = {responseMessage.StatusCode}.", ex);
+                // something bad happened.
+                throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
             }
         }
 
@@ -430,6 +448,21 @@ namespace FMData.Rest
                 return new BaseResponse("404", "Error") as EditResponse;
             }
 
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                // attempt to read response content
+                if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
+
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+
+                // throw FMDataException
+                throw new FMDataException(
+                        int.Parse(responseObject.Messages.First().Code),
+                        responseObject.Messages.First().Message,
+                        null);
+            }
+
             try
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
@@ -439,7 +472,7 @@ namespace FMData.Rest
             }
             catch (Exception ex)
             {
-                // something bad happened. TODO: improve non-OK response handling
+                // something bad happened.
                 throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
             }
         }
@@ -461,6 +494,21 @@ namespace FMData.Rest
                 return new BaseResponse("404", "Error");
             }
 
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                // attempt to read response content
+                if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
+
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+
+                // throw FMDataException
+                throw new FMDataException(
+                        int.Parse(responseObject.Messages.First().Code),
+                        responseObject.Messages.First().Message,
+                        null);
+            }
+
             try
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
@@ -469,7 +517,7 @@ namespace FMData.Rest
             }
             catch (Exception ex)
             {
-                // something bad happened. TODO: improve non-OK response handling
+                // something bad happened.
                 throw new Exception($"Non-OK Response: Status = {response.StatusCode}.", ex);
             }
         }
@@ -540,25 +588,21 @@ namespace FMData.Rest
 
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
-                try
-                {
-                    // attempt to read response content
-                    if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
+                // attempt to read response content
+                if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
 
-                    var responseJson = await response.Content.ReadAsStringAsync();
-                    var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
-                    if (responseObject.Messages.Any(m => m.Code == "401"))
-                    {
-                        // filemaker no records match the find request => empty list.
-                        return (new List<T>(), new DataInfoModel());
-                    }
-
-                    throw new Exception(responseObject.Messages.First().Message);
-                }
-                catch (Exception ex)
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+                if (responseObject.Messages.Any(m => m.Code == "401"))
                 {
-                    throw new Exception("Could not read response from Data API.", ex);
+                    // filemaker no records match the find request => empty list.
+                    return (new List<T>(), new DataInfoModel());
                 }
+                // throw FMDataException for anything not a 401.
+                throw new FMDataException(
+                        int.Parse(responseObject.Messages.First().Code),
+                        responseObject.Messages.First().Message,
+                        null);
             }
 
             // not found, so return empty list
@@ -567,7 +611,7 @@ namespace FMData.Rest
                 return (new List<T>(), new DataInfoModel());
             }
 
-            // other error TODO: Improve handling
+            // other error
             throw new Exception($"Find Request Error. Request Uri: {response.RequestMessage.RequestUri} responded with {response.StatusCode}");
         }
         #endregion

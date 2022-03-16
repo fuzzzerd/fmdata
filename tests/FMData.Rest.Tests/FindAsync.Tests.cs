@@ -95,6 +95,29 @@ namespace FMData.Rest.Tests
         }
 
         [Fact]
+        public async Task Find_For_Missing_Field_Should_Throw_FMDataException()
+        {
+            // arrange
+            var mockHttp = new MockHttpMessageHandler();
+
+            var layout = FileMakerRestClient.GetLayoutName(new User());
+
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/sessions")
+                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+
+            mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/layouts/{layout}/_find")
+                .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.FieldNotFound());
+
+            var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
+
+            var toFind = new User() { Id = 35 };
+
+            // act
+            // assert
+            await Assert.ThrowsAsync<FMDataException>(async () => await fdc.FindAsync(toFind));
+        }
+
+        [Fact]
         public async Task FindAsync_WithPortals_ShouldHaveData()
         {
             // arrange
