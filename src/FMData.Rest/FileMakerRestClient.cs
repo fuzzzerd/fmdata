@@ -161,7 +161,7 @@ namespace FMData.Rest
         /// </summary>
         private async Task UpdateTokenDateAsync()
         {
-            if (!IsAuthenticated) { await RefreshTokenAsync(UserName, Password); }
+            if (!IsAuthenticated) { await RefreshTokenAsync(UserName, Password).ConfigureAwait(false); }
             _dataTokenLastUse = DateTime.UtcNow;
         }
 
@@ -188,12 +188,12 @@ namespace FMData.Rest
             requestMessage.Content.Headers.ContentType.CharSet = null;
 
             // run the post action
-            var response = await Client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
 
             // process the response even a 401 returns a FMS error to be passed back.
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<AuthResponse>(responseJson);
                 this._dataToken = responseObject.Response.Token;
 
@@ -207,7 +207,7 @@ namespace FMData.Rest
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<AuthResponse>(responseJson);
                 return responseObject;
             }
@@ -229,12 +229,12 @@ namespace FMData.Rest
             }
 
             // remove our token from the data api
-            var response = await Client.DeleteAsync(AuthEndpoint() + $"/{this._dataToken}");
+            var response = await Client.DeleteAsync(AuthEndpoint() + $"/{this._dataToken}").ConfigureAwait(false);
 
             // process the response
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
@@ -262,7 +262,7 @@ namespace FMData.Rest
 
             fmdataRequest.AddQuery(req, false);
 
-            var response = await ExecuteRequestAsync(HttpMethod.Post, FindEndpoint(layout), fmdataRequest);
+            var response = await ExecuteRequestAsync(HttpMethod.Post, FindEndpoint(layout), fmdataRequest).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -273,7 +273,7 @@ namespace FMData.Rest
 
             try
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<FindResponse<T>>(responseJson);
 
                 return responseObject.Response.Data.Select(d => d.FieldData);
@@ -295,7 +295,7 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
             var uri = FindEndpoint(req.Layout);
-            var response = await ExecuteRequestAsync(HttpMethod.Post, uri, req);
+            var response = await ExecuteRequestAsync(HttpMethod.Post, uri, req).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -306,7 +306,7 @@ namespace FMData.Rest
 
             try
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<FindResponse<Dictionary<string, string>>>(responseJson);
 
                 return responseObject;
@@ -337,7 +337,7 @@ namespace FMData.Rest
 
             // normally required, but internally we can route to the regular record request apis
             var uriEndpoint = GetRecordEndpoint(layout, fileMakerId);
-            var response = await ExecuteRequestAsync(HttpMethod.Get, uriEndpoint, new FindRequest<T>());
+            var response = await ExecuteRequestAsync(HttpMethod.Get, uriEndpoint, new FindRequest<T>()).ConfigureAwait(false);
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -348,7 +348,7 @@ namespace FMData.Rest
                     case HttpStatusCode.InternalServerError:
                         // attempt to read response content
                         if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
-                        var responseJsonEx = await response.Content.ReadAsStringAsync();
+                        var responseJsonEx = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                         var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJsonEx);
                         if (responseObject.Messages.Any(m => m.Code == "401"))
                         {
@@ -364,7 +364,7 @@ namespace FMData.Rest
                 }
             }
 
-            var responseJson = await response.Content.ReadAsStringAsync();
+            var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var joResponse = JObject.Parse(responseJson);
 
@@ -379,7 +379,7 @@ namespace FMData.Rest
                 var searchResult = ConvertJTokenToInstance(fmId, modId, result);
 
                 // container handling
-                await ProcessContainer(searchResult);
+                await ProcessContainer(searchResult).ConfigureAwait(false);
 
                 // add to response list
                 searchResults.Add(searchResult);
@@ -401,14 +401,14 @@ namespace FMData.Rest
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
 
-            var response = await ExecuteRequestAsync(req);
+            var response = await ExecuteRequestAsync(req).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 // attempt to read response content
                 if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
 
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
 
                 // throw FMDataException
@@ -420,7 +420,7 @@ namespace FMData.Rest
 
             try
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 return JsonConvert.DeserializeObject<CreateResponse>(responseJson);
             }
             catch (Exception ex)
@@ -441,7 +441,7 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (req.RecordId <= 0) throw new ArgumentException("RecordId is required on the request and non negative.");
 
-            var response = await ExecuteRequestAsync(req);
+            var response = await ExecuteRequestAsync(req).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -453,7 +453,7 @@ namespace FMData.Rest
                 // attempt to read response content
                 if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
 
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
 
                 // throw FMDataException
@@ -465,7 +465,7 @@ namespace FMData.Rest
 
             try
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<EditResponse>(responseJson);
 
                 return responseObject;
@@ -487,7 +487,7 @@ namespace FMData.Rest
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (req.RecordId == 0) throw new ArgumentException("RecordId is required on the request and must not be zero.");
 
-            var response = await ExecuteRequestAsync(req);
+            var response = await ExecuteRequestAsync(req).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -499,7 +499,7 @@ namespace FMData.Rest
                 // attempt to read response content
                 if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
 
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
 
                 // throw FMDataException
@@ -511,7 +511,7 @@ namespace FMData.Rest
 
             try
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
@@ -549,11 +549,11 @@ namespace FMData.Rest
                 method = HttpMethod.Get;
             }
 
-            var response = await ExecuteRequestAsync(method, uri, req);
+            var response = await ExecuteRequestAsync(method, uri, req).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 var joResponse = JObject.Parse(responseJson);
 
@@ -580,7 +580,7 @@ namespace FMData.Rest
                 // make container processing part of the request, IF specified in the original request.
                 if (req.LoadContainerData)
                 {
-                    await ProcessContainers(searchResults);
+                    await ProcessContainers(searchResults).ConfigureAwait(false);
                 }
 
                 return (searchResults, dataInfo);
@@ -591,7 +591,7 @@ namespace FMData.Rest
                 // attempt to read response content
                 if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
 
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 if (responseObject.Messages.Any(m => m.Code == "401"))
                 {
@@ -625,7 +625,7 @@ namespace FMData.Rest
         /// <returns>The script result when OK, or the error code if not OK.</returns>
         public override async Task<string> RunScriptAsync(string layout, string script, string scriptParameter)
         {
-            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+            await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // generate request url{
             var uri = $"{FmsUri}/fmi/data/v1/databases/{FileName}/layouts/{layout}/script/{script}";
@@ -639,7 +639,7 @@ namespace FMData.Rest
             requestMessage.Headers.Authorization = _authHeader;
 
             // run the patch action
-            var response = await Client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -653,7 +653,7 @@ namespace FMData.Rest
                     // attempt to read response content
                     if (response.Content == null) { throw new Exception("Could not read response from Data API."); }
 
-                    var responseJson = await response.Content.ReadAsStringAsync();
+                    var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                     var firstMessage = responseObject.Messages.First();
                     throw new Exception(firstMessage.Code + " - " + firstMessage.Message);
@@ -667,7 +667,7 @@ namespace FMData.Rest
             try
             {
                 // process json as JObject and only grab the part we're interested in (response.productInfo).
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseJObject = JObject.Parse(responseJson);
                 var responseObject = responseJObject["response"].ToObject<ActionResponse>();
 
@@ -699,7 +699,7 @@ namespace FMData.Rest
             IFileMakerRequest req)
         {
             // we're about to use the token so update date used, and refresh if needed.
-            await UpdateTokenDateAsync();
+            await UpdateTokenDateAsync().ConfigureAwait(false);
 
             var str = req.SerializeRequest();
             var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
@@ -718,7 +718,7 @@ namespace FMData.Rest
             httpRequest.Headers.Authorization = _authHeader;
 
             // run and return the action
-            var response = await Client.SendAsync(httpRequest);
+            var response = await Client.SendAsync(httpRequest).ConfigureAwait(false);
             return response;
         }
 
@@ -759,7 +759,7 @@ namespace FMData.Rest
             // target value is required, but can be empty or white space, just not null
             if (targetValue == null) throw new ArgumentNullException("targetValue cannot be null on set global.");
 
-            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+            await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // build the request for global fields manually
             var jsonWriter = new JTokenWriter();
@@ -790,7 +790,7 @@ namespace FMData.Rest
             requestMessage.Content.Headers.ContentType.CharSet = null;
 
             // run the patch action
-            var response = await Client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -799,7 +799,7 @@ namespace FMData.Rest
 
             try
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 return responseObject;
             }
@@ -820,7 +820,7 @@ namespace FMData.Rest
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{FmsUri}/fmi/data/v1/productinfo");
 
             // run the patch action
-            var response = await Client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -830,7 +830,7 @@ namespace FMData.Rest
             try
             {
                 // process json as JObject and only grab the part we're interested in (response.productInfo).
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseJObject = JObject.Parse(responseJson);
                 var responseObject = responseJObject["response"]["productInfo"].ToObject<ProductInformation>();
                 return responseObject;
@@ -860,7 +860,7 @@ namespace FMData.Rest
             );
 
             // run the patch action
-            var response = await Client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -870,7 +870,7 @@ namespace FMData.Rest
             try
             {
                 // process json as JObject and only grab the part we're interested in (response.productInfo).
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseJObject = JObject.Parse(responseJson);
                 var responseObject = responseJObject["response"]["databases"];
                 return responseObject.Select(t => t.Value<string>("name")).ToList();
@@ -888,7 +888,7 @@ namespace FMData.Rest
         /// <returns>The names of the layouts in the specified database.</returns>
         public override async Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync()
         {
-            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+            await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // generate request url{
             var uri = $"{FmsUri}/fmi/data/v1/databases/{FileName}/layouts";
@@ -898,7 +898,7 @@ namespace FMData.Rest
             requestMessage.Headers.Authorization = _authHeader;
 
             // run the patch action
-            var response = await Client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -908,7 +908,7 @@ namespace FMData.Rest
             try
             {
                 // process json as JObject and only grab the part we're interested in (response.productInfo).
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseJObject = JObject.Parse(responseJson);
                 var responseObject = responseJObject["response"]["layouts"].ToObject<IReadOnlyCollection<LayoutListItem>>();
                 return responseObject;
@@ -926,7 +926,7 @@ namespace FMData.Rest
         /// <returns>The names of the scripts in the specified database.</returns>
         public override async Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync()
         {
-            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+            await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // generate request url{
             var uri = $"{FmsUri}/fmi/data/v1/databases/{FileName}/scripts";
@@ -936,7 +936,7 @@ namespace FMData.Rest
             requestMessage.Headers.Authorization = _authHeader;
 
             // run the patch action
-            var response = await Client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -946,7 +946,7 @@ namespace FMData.Rest
             try
             {
                 // process json as JObject and only grab the part we're interested in (response.productInfo).
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseJObject = JObject.Parse(responseJson);
                 var responseObject = responseJObject["response"]["scripts"].ToObject<IReadOnlyCollection<ScriptListItem>>();
                 return responseObject;
@@ -966,7 +966,7 @@ namespace FMData.Rest
         /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
         public override async Task<LayoutMetadata> GetLayoutAsync(string layout, int? recordId = null)
         {
-            await UpdateTokenDateAsync(); // we're about to use the token so update date used
+            await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // generate request url
             var uri = $"{FmsUri}/fmi/data/v1/databases/{FileName}/layouts/{layout}";
@@ -980,7 +980,7 @@ namespace FMData.Rest
             requestMessage.Headers.Authorization = _authHeader;
 
             // run the patch action
-            var response = await Client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -990,7 +990,7 @@ namespace FMData.Rest
             try
             {
                 // process json as JObject and only grab the part we're interested in (response.productInfo).
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseJObject = JObject.Parse(responseJson);
                 var responseObject = responseJObject["response"].ToObject<LayoutMetadata>();
                 // set the layout name on this instance, since it doesn't come back from the api
@@ -1022,7 +1022,7 @@ namespace FMData.Rest
             int repetition,
             byte[] content)
         {
-            await UpdateTokenDateAsync(); // about to use token, so update
+            await UpdateTokenDateAsync().ConfigureAwait(false); // about to use token, so update
 
             var form = new MultipartFormDataContent();
 
@@ -1043,7 +1043,7 @@ namespace FMData.Rest
             // include auth token
             requestMessage.Headers.Authorization = _authHeader;
 
-            var response = await Client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -1052,7 +1052,7 @@ namespace FMData.Rest
 
             try
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<EditResponse>(responseJson);
 
                 return responseObject;
@@ -1078,9 +1078,9 @@ namespace FMData.Rest
             requestMessage.Headers.Authorization = _authHeader;
 
             // send the request out
-            var data = await Client.SendAsync(requestMessage);
+            var data = await Client.SendAsync(requestMessage).ConfigureAwait(false);
             // read the bytes as a stream
-            var dataBytes = await data.Content.ReadAsByteArrayAsync();
+            var dataBytes = await data.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             return dataBytes;
         }
 

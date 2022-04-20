@@ -651,7 +651,7 @@ namespace FMData
             Func<T, int, object> fmId,
             Func<T, int, object> modId) where T : class, new()
         {
-            var (data, info) = await SendAsync(req, false, fmId, modId);
+            var (data, info) = await SendAsync(req, false, fmId, modId).ConfigureAwait(false);
             return data;
         }
 
@@ -760,7 +760,7 @@ namespace FMData
                     continue;
                 }
 
-                var dataBytes = await GetContainerOnClient(containerEndPoint);
+                var dataBytes = await GetContainerOnClient(containerEndPoint).ConfigureAwait(false);
                 prop.SetValue(instance, dataBytes);
             }
         }
