@@ -1,0 +1,3 @@
+[*.cs]
+# configure await: https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2007?view=vs-2019
+dotnet_diagnostic.CA2007.severity = silent

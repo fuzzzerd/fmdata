@@ -122,7 +122,7 @@ namespace FMData.Xml
         /// <returns>A response containing the results of the operation.</returns>
         public override async Task<ICreateResponse> SendAsync<T>(ICreateRequest<T> req)
         {
-            var response = await ExecuteRequestAsync(req);
+            var response = await ExecuteRequestAsync(req).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
             {
@@ -142,7 +142,7 @@ namespace FMData.Xml
         /// </summary>
         public override async Task<IResponse> SendAsync(IDeleteRequest req)
         {
-            var response = await ExecuteRequestAsync(req);
+            var response = await ExecuteRequestAsync(req).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
             {
@@ -162,7 +162,7 @@ namespace FMData.Xml
         /// </summary>
         public override async Task<IEditResponse> SendAsync<T>(IEditRequest<T> req)
         {
-            var response = await ExecuteRequestAsync(req);
+            var response = await ExecuteRequestAsync(req).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
             {
@@ -192,12 +192,12 @@ namespace FMData.Xml
             Func<T, int, object> fmId = null,
             Func<T, int, object> modId = null)
         {
-            var response = await ExecuteRequestAsync(req);
+            var response = await ExecuteRequestAsync(req).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
             {
                 // process response data return OK
-                var xDocument = XDocument.Load(await response.Content.ReadAsStreamAsync());
+                var xDocument = XDocument.Load(await response.Content.ReadAsStreamAsync().ConfigureAwait(false));
 
                 // act
                 var metadata = xDocument
@@ -289,7 +289,7 @@ namespace FMData.Xml
                 // make container processing part of the request, IF specified in the original request.
                 if (req.LoadContainerData)
                 {
-                    await ProcessContainers(results);
+                    await ProcessContainers(results).ConfigureAwait(false);
                 }
 
                 return (results, new DataInfoModel());
@@ -329,12 +329,12 @@ namespace FMData.Xml
         {
             var url = FmsUri + "/fmi/xml/fmresultset.xml";
 
-            var response = await Client.GetAsync(url);
+            var response = await Client.GetAsync(url).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
             {
                 // process response data return OK
-                var xDocument = XDocument.Load(await response.Content.ReadAsStreamAsync());
+                var xDocument = XDocument.Load(await response.Content.ReadAsStreamAsync().ConfigureAwait(false));
 
                 // act
                 var metadata = xDocument
@@ -361,12 +361,12 @@ namespace FMData.Xml
         {
             var url = FmsUri + "/fmi/xml/fmresultset.xml?-dbnames";
 
-            var response = await Client.GetAsync(url);
+            var response = await Client.GetAsync(url).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
             {
                 // process response data return OK
-                var xDocument = XDocument.Load(await response.Content.ReadAsStreamAsync());
+                var xDocument = XDocument.Load(await response.Content.ReadAsStreamAsync().ConfigureAwait(false));
 
                 // act
                 var metadata = xDocument
@@ -432,8 +432,8 @@ namespace FMData.Xml
         /// <returns>An array of bytes with the data from the container field.</returns>
         protected override async Task<byte[]> GetContainerOnClient(string containerEndPoint)
         {
-            var data = await Client.GetAsync(containerEndPoint);
-            var dataBytes = await data.Content.ReadAsByteArrayAsync();
+            var data = await Client.GetAsync(containerEndPoint).ConfigureAwait(false);
+            var dataBytes = await data.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             return dataBytes;
         }
 
@@ -458,7 +458,7 @@ namespace FMData.Xml
 
             var httpRequestContent = new StringContent(sContent);
 
-            var response = await Client.PostAsync(url, httpRequestContent);
+            var response = await Client.PostAsync(url, httpRequestContent).ConfigureAwait(false);
             return response;
         }
 

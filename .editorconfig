@@ -162,6 +162,9 @@ dotnet_diagnostic.IDE0044.severity = warning
 # RS0016: Only enable if API files are present
 dotnet_public_api_analyzer.require_api_files = true
 
+# configure await: https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2007?view=vs-2019
+dotnet_diagnostic.CA2007.severity = error
+
 # CSharp code style settings:
 [*.cs]
 # Newline settings
