@@ -1144,10 +1144,23 @@ namespace FMData.Rest
                     {
                         foreach (var jp in jo.Properties().ToList())
                         {
-                            if (jp.Name.Contains(portalDataAttr.TablePrefixFieldNames + "::"))
+                            if (portalDataAttr.SkipPrefix)
                             {
-                                jo.Add(jp.Name.Replace(portalDataAttr.TablePrefixFieldNames + "::", ""), jp.Value);
-                                jo.Remove(jp.Name);
+                                int index;
+                                if (jp.Name.Contains("::"))
+                                {
+                                    index = jp.Name.IndexOf(':') + 2;
+                                    jo.Add(jp.Name.Replace(jp.Name.Substring(0, index), ""), jp.Value);
+                                    jo.Remove(jp.Name);
+                                }
+                            }
+                            else
+                            {
+                                if (jp.Name.Contains(portalDataAttr.TablePrefixFieldNames + "::"))
+                                {
+                                    jo.Add(jp.Name.Replace(portalDataAttr.TablePrefixFieldNames + "::", ""), jp.Value);
+                                    jo.Remove(jp.Name);
+                                }
                             }
                         }
                     }
