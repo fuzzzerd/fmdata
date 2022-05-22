@@ -17,14 +17,14 @@
         public string TablePrefixFieldNames { get; set; }
 
         /// <summary>
+        /// Allow to control the source of each field in the portal individually
+        /// </summary>
+        public bool SkipPrefix { get; set; }
+
+        /// <summary>
         /// Constructor for Attribute
         /// </summary>
         /// <param name="namedPortal">The name of the portal on the layout.</param>
-
-        /// <summary>
-        /// Allow to control the source of each field in the portal individually
-        /// </summary>
-        public boolean SkipPrefix { get; set; }
         public PortalDataAttribute(string namedPortal)
         {
             NamedPortalInstance = namedPortal;
