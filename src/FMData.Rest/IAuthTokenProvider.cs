@@ -4,10 +4,14 @@ using System.Threading.Tasks;
 namespace FMData.Rest
 {
     /// <summary>
-    /// FileMaker REST Client Auth Provider.
+    /// FileMaker REST Client Auth Provider Interface.
     /// </summary>
     public interface IAuthTokenProvider
     {
+        /// <summary>
+        /// Connection config values
+        /// </summary>
+        ConnectionInfo Conn { get; }
 
         /// <summary>
         /// Provide the AuthenticationHeaderValue

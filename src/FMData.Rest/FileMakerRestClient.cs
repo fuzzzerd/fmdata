@@ -70,17 +70,16 @@ namespace FMData.Rest
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="conn">The connection information for FMS.</param>
         public FileMakerRestClient(HttpClient client, ConnectionInfo conn)
-            : this(client, conn, new DefaultAuthTokenProvider(conn.Username, conn.Password))
+            : this(client, new DefaultAuthTokenProvider(conn))
         { }
 
         /// <summary>
         /// FM Data Constructor with HttpClient, ConnectionInfo and an authentication provider. Useful for Dependency Injection situations.
         /// </summary>
         /// <param name="client">The HttpClient instance to use.</param>
-        /// <param name="conn">The connection information for FMS.</param>
         /// <param name="authTokenProvider">Authentication provider</param>
-        public FileMakerRestClient(HttpClient client, ConnectionInfo conn, IAuthTokenProvider authTokenProvider)
-            : base(client, conn)
+        public FileMakerRestClient(HttpClient client, IAuthTokenProvider authTokenProvider)
+            : base(client, authTokenProvider.Conn)
         {
             _authTokenProvider = authTokenProvider;
 #if NETSTANDARD1_3

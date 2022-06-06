@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.Http.Headers;
-using System.Text;
+﻿using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Extensions.CognitoAuthentication;
@@ -13,30 +11,30 @@ namespace FMData.Rest
     /// </summary>
     public class FileMakerCloudAuthTokenProvider : IAuthTokenProvider
     {
-        /// <summary>
-        /// Username for connections.
-        /// </summary>
-        protected readonly ConnectionInfo Conn;
+        private readonly ConnectionInfo _conn;
 
         /// <summary>
         /// Constructor 
         /// </summary>
-        /// <param name="conn">ConnectionInfo</param>
+        /// <param name="conn">Connection config values</param>
         public FileMakerCloudAuthTokenProvider(ConnectionInfo conn)
         {
-            Conn = conn;
+            _conn = conn;
         }
 
         /// <summary>
-        /// Get base64 encoded AuthenticationHeaderValue
+        /// Connection config values
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="System.NotImplementedException"></exception>
+        public ConnectionInfo Conn { get => _conn; }
+
+        /// <summary>
+        /// Gets the AuthenticationHeaderValue
+        /// </summary>
+        /// <returns>AuthenticationHeaderValue</returns>
         public async Task<AuthenticationHeaderValue> GetAuthenticationHeaderValue()
         {
-            //we need an AWS cognito Id token for authentication
             string token = await GetToken().ConfigureAwait(false);
-            return new AuthenticationHeaderValue("Authorization", "FMID " + token);
+            return AuthenticationHeaderValue.Parse("FMID " + token);
         }
 
         /// <summary>
