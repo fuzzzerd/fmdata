@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FMData.Xml", "src\FMData.Xm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FMData.Xml.Tests", "tests\FMData.Xml.Tests\FMData.Xml.Tests.csproj", "{36143397-0EED-4CA4-9D25-C60A8C93B1FA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FMData.Rest.Auth.FileMakerCloud", "src\FMData.Rest.Auth.Cloud\FMData.Rest.Auth.FileMakerCloud.csproj", "{36772074-2B2B-4FB5-8A48-7F4EA1FB1233}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,18 @@ Global
 		{36143397-0EED-4CA4-9D25-C60A8C93B1FA}.Release|x64.Build.0 = Release|Any CPU
 		{36143397-0EED-4CA4-9D25-C60A8C93B1FA}.Release|x86.ActiveCfg = Release|Any CPU
 		{36143397-0EED-4CA4-9D25-C60A8C93B1FA}.Release|x86.Build.0 = Release|Any CPU
+		{36772074-2B2B-4FB5-8A48-7F4EA1FB1233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36772074-2B2B-4FB5-8A48-7F4EA1FB1233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36772074-2B2B-4FB5-8A48-7F4EA1FB1233}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{36772074-2B2B-4FB5-8A48-7F4EA1FB1233}.Debug|x64.Build.0 = Debug|Any CPU
+		{36772074-2B2B-4FB5-8A48-7F4EA1FB1233}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{36772074-2B2B-4FB5-8A48-7F4EA1FB1233}.Debug|x86.Build.0 = Debug|Any CPU
+		{36772074-2B2B-4FB5-8A48-7F4EA1FB1233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36772074-2B2B-4FB5-8A48-7F4EA1FB1233}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36772074-2B2B-4FB5-8A48-7F4EA1FB1233}.Release|x64.ActiveCfg = Release|Any CPU
+		{36772074-2B2B-4FB5-8A48-7F4EA1FB1233}.Release|x64.Build.0 = Release|Any CPU
+		{36772074-2B2B-4FB5-8A48-7F4EA1FB1233}.Release|x86.ActiveCfg = Release|Any CPU
+		{36772074-2B2B-4FB5-8A48-7F4EA1FB1233}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,6 +119,7 @@ Global
 		{DF7C8CD9-D26F-4A66-A3C4-95A6E7EF269E} = {6926CF2C-9411-467D-AC6F-06B18C3A41B6}
 		{2CB7F5C1-7D49-4ADE-B137-831D5653958B} = {6926CF2C-9411-467D-AC6F-06B18C3A41B6}
 		{36143397-0EED-4CA4-9D25-C60A8C93B1FA} = {FC1158B5-9752-46DE-B885-B8B553E252B2}
+		{36772074-2B2B-4FB5-8A48-7F4EA1FB1233} = {6926CF2C-9411-467D-AC6F-06B18C3A41B6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {13001953-EB62-4CE6-82B1-3795390B514E}

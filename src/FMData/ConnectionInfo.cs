@@ -1,4 +1,4 @@
-namespace FMData
+﻿namespace FMData
 {
     /// <summary>
     /// Represents the connection information for FMS.
@@ -21,5 +21,13 @@ namespace FMData
         /// Password to use when making the connection.
         /// </summary>
         public string Password { get; set; }
+        /// <summary>
+        /// AWS Cognito UserPoolID
+        /// </summary>
+        public string CognitoUserPoolID { get; set; } = "us-west-2_NqkuZcXQY";
+        /// <summary>
+        /// AWS Cognito ClientID
+        /// </summary>
+        public string CognitoClientID { get; set; } = "4l9rvl4mv5es1eep1qe97cautn";
     }
 }

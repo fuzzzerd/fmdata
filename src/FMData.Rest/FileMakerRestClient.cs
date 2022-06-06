@@ -1,4 +1,4 @@
-using FMData.Rest.Requests;
+﻿using FMData.Rest.Requests;
 using FMData.Rest.Responses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -18,7 +18,7 @@ namespace FMData.Rest
     /// <summary>
     /// FileMaker Data API Client Implementation.
     /// </summary>
-    public class FileMakerRestClient : FileMakerApiClientBase, IFileMakerApiClient
+    public class FileMakerRestClient : FileMakerApiClientBase, IFileMakerRestClient
     {
         #region Request Factories
         /// <summary>
@@ -50,6 +50,8 @@ namespace FMData.Rest
         private AuthenticationHeaderValue _authHeader;
         private DateTime _dataTokenLastUse = DateTime.MinValue;
 
+        private readonly IAuthTokenProvider _authTokenProvider;
+
         #region Constructors
         /// <summary>
         /// Create a FileMakerRestClient with a new instance of HttpClient.
@@ -68,9 +70,19 @@ namespace FMData.Rest
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="conn">The connection information for FMS.</param>
         public FileMakerRestClient(HttpClient client, ConnectionInfo conn)
+            : this(client, conn, new DefaultAuthTokenProvider(conn.Username, conn.Password))
+        { }
+
+        /// <summary>
+        /// FM Data Constructor with HttpClient, ConnectionInfo and an authentication provider. Useful for Dependency Injection situations.
+        /// </summary>
+        /// <param name="client">The HttpClient instance to use.</param>
+        /// <param name="conn">The connection information for FMS.</param>
+        /// <param name="authTokenProvider">Authentication provider</param>
+        public FileMakerRestClient(HttpClient client, ConnectionInfo conn, IAuthTokenProvider authTokenProvider)
             : base(client, conn)
         {
-
+            _authTokenProvider = authTokenProvider;
 #if NETSTANDARD1_3
             var header = new System.Net.Http.Headers.ProductHeaderValue("FMData.Rest", "4");
             var userAgent = new System.Net.Http.Headers.ProductInfoHeaderValue(header);
@@ -82,6 +94,7 @@ namespace FMData.Rest
 #endif
             Client.DefaultRequestHeaders.UserAgent.Add(userAgent);
         }
+
         #endregion
 
         #region API Endpoint Functions
@@ -161,23 +174,18 @@ namespace FMData.Rest
         /// </summary>
         private async Task UpdateTokenDateAsync()
         {
-            if (!IsAuthenticated) { await RefreshTokenAsync(UserName, Password).ConfigureAwait(false); }
+            if (!IsAuthenticated) { await RefreshTokenAsync().ConfigureAwait(false); }
             _dataTokenLastUse = DateTime.UtcNow;
         }
 
         /// <summary>
         /// Refreshes the internally stored authentication token from filemaker server.
         /// </summary>
-        /// <param name="username">Username of the account to authenticate.</param>
-        /// <param name="password">Password of the account to authenticate.</param>
         /// <returns>An AuthResponse from deserialized from FileMaker Server json response.</returns>
-        public async Task<AuthResponse> RefreshTokenAsync(string username, string password)
+        public async Task<AuthResponse> RefreshTokenAsync()
         {
-            // parameter checks
-            if (string.IsNullOrEmpty(username)) throw new ArgumentException("Username is a required parameter.");
-            if (string.IsNullOrEmpty(password)) throw new ArgumentException("Password is a required parameter.");
+            var authHeader = await _authTokenProvider.GetAuthenticationHeaderValue().ConfigureAwait(false);
 
-            var authHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}")));
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, AuthEndpoint());
             requestMessage.Headers.Authorization = authHeader;
             requestMessage.Content = new StringContent("{ }", Encoding.UTF8, "application/json");
@@ -854,10 +862,7 @@ namespace FMData.Rest
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{FmsUri}/fmi/data/v1/databases");
 
             // special non-token auth to list databases
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("basic", Convert.ToBase64String(
-                    Encoding.UTF8.GetBytes($"{UserName}:{Password}")
-                )
-            );
+            requestMessage.Headers.Authorization = await _authTokenProvider.GetAuthenticationHeaderValue().ConfigureAwait(false);
 
             // run the patch action
             var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
