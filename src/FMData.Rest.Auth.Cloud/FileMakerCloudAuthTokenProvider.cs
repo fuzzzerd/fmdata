@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Extensions.CognitoAuthentication;
 using Amazon.Runtime;
+using Amazon;
 
 namespace FMData.Rest
 {
@@ -25,7 +26,7 @@ namespace FMData.Rest
         /// <summary>
         /// Connection config values
         /// </summary>
-        public ConnectionInfo Conn { get => _conn; }
+        public ConnectionInfo ConnectionInfo { get => _conn; }
 
         /// <summary>
         /// Gets the AuthenticationHeaderValue
@@ -33,20 +34,23 @@ namespace FMData.Rest
         /// <returns>AuthenticationHeaderValue</returns>
         public async Task<AuthenticationHeaderValue> GetAuthenticationHeaderValue()
         {
-            string token = await GetToken().ConfigureAwait(false);
+            var region = RegionEndpoint.GetBySystemName(_conn.RegionEndpoint);
+            var identityProviderClient = new AmazonCognitoIdentityProviderClient(new AnonymousAWSCredentials(), region);
+            string token = await GetToken(identityProviderClient).ConfigureAwait(false);
             return AuthenticationHeaderValue.Parse("FMID " + token);
         }
 
         /// <summary>
         /// Provide an AWS Cognito Identiy Token
         /// </summary>
-        private async Task<string> GetToken()
+        /// <param name="identityProviderClient"><see href="https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/CognitoIdentityProvider/TCognitoIdentityProviderClient.html">AmazonCognitoIdentityProviderClient</see></param>
+        /// <returns>returns the IdToken of the AuthenticationResult</returns>
+        private async Task<string> GetToken(AmazonCognitoIdentityProviderClient identityProviderClient)
         {
-            var provider = new AmazonCognitoIdentityProviderClient(new AnonymousAWSCredentials(), Amazon.RegionEndpoint.USWest2);
-            var userpool = new CognitoUserPool(Conn.CognitoUserPoolID, Conn.CognitoClientID, provider);
-            var user = new CognitoUser(Conn.Username, Conn.CognitoClientID, userpool, provider);
-            var initiateSrpAuthRequest = new InitiateSrpAuthRequest();
-            initiateSrpAuthRequest.Password = Conn.Password;
+            var userpool = new CognitoUserPool(ConnectionInfo.CognitoUserPoolID, ConnectionInfo.CognitoClientID, identityProviderClient);
+            var user = new CognitoUser(ConnectionInfo.Username, ConnectionInfo.CognitoClientID, userpool, identityProviderClient);
+            var initiateSrpAuthRequest = new InitiateSrpAuthRequest(); //SRP means Secure Remote Password
+            initiateSrpAuthRequest.Password = ConnectionInfo.Password;
 
             var response = await user.StartWithSrpAuthAsync(initiateSrpAuthRequest).ConfigureAwait(false);
             return response.AuthenticationResult.IdToken;

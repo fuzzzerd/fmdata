@@ -24,18 +24,18 @@ namespace FMData.Rest
         /// <summary>
         /// Connection config values
         /// </summary>
-        public ConnectionInfo Conn { get => _conn; }
+        public ConnectionInfo ConnectionInfo { get => _conn; }
 
         /// <summary>
         /// Get base64 encoded AuthenticationHeaderValue
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="System.NotImplementedException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public Task<AuthenticationHeaderValue> GetAuthenticationHeaderValue()
         {
-            if (string.IsNullOrEmpty(Conn.Username)) throw new ArgumentException("Username is a required parameter.");
-            if (string.IsNullOrEmpty(Conn.Password)) throw new ArgumentException("Password is a required parameter.");
-            var header = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{Conn.Username}:{Conn.Password}")));
+            if (string.IsNullOrEmpty(_conn.Username)) throw new ArgumentException("Username is a required parameter.");
+            if (string.IsNullOrEmpty(_conn.Password)) throw new ArgumentException("Password is a required parameter.");
+            var header = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_conn.Username}:{_conn.Password}")));
             return Task.FromResult(header);
         }
     }

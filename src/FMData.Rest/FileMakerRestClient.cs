@@ -79,7 +79,7 @@ namespace FMData.Rest
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="authTokenProvider">Authentication provider</param>
         public FileMakerRestClient(HttpClient client, IAuthTokenProvider authTokenProvider)
-            : base(client, authTokenProvider.Conn)
+            : base(client, authTokenProvider.ConnectionInfo)
         {
             _authTokenProvider = authTokenProvider;
 #if NETSTANDARD1_3

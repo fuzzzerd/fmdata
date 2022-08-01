@@ -11,7 +11,7 @@ namespace FMData.Rest
         /// <summary>
         /// Connection config values
         /// </summary>
-        ConnectionInfo Conn { get; }
+        ConnectionInfo ConnectionInfo { get; }
 
         /// <summary>
         /// Provide the AuthenticationHeaderValue
