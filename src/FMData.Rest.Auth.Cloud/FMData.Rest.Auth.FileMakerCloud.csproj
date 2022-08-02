@@ -57,7 +57,7 @@
       <Version>2.2.2</Version>
     </PackageReference>
     <PackageReference Include="AWSSDK.CognitoIdentityProvider">
-      <Version>3.7.4</Version>
+      <Version>3.7.4.20</Version>
     </PackageReference>
   </ItemGroup>
 
@@ -66,13 +66,13 @@
       <Version>2.2.2</Version>
     </PackageReference>
     <PackageReference Include="AWSSDK.CognitoIdentityProvider">
-      <Version>3.7.4</Version>
+      <Version>3.7.4.20</Version>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
     <PackageReference Include="AWSSDK.CognitoIdentityProvider">
-      <Version>3.7.4</Version>
+      <Version>3.7.4.20</Version>
     </PackageReference>
   </ItemGroup>
 
