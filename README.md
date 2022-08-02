@@ -1,9 +1,15 @@
-[![logo](https://raw.githubusercontent.com/fuzzzerd/fmdata/master/images/color-cropped.png)](https://github.com/fuzzzerd/fmdata)
+# FMData
 
-| Package | Build Status |  MyGet | Nuget |
+|[![FMData repository/commit activity the past year](https://img.shields.io/github/commit-activity/y/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)|[![FMData issues](https://img.shields.io/github/issues/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/issues)|[![Code size in bytes](https://img.shields.io/github/languages/code-size/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)|[![Language Count](https://img.shields.io/github/languages/count/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)|[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE)|
+|---|---|---|---|---|
+
+[![fmdata logo a C# client for FIleMaker](https://raw.githubusercontent.com/fuzzzerd/fmdata/master/images/color-cropped.png)](https://github.com/fuzzzerd/fmdata)
+
+| Package | Build Status | MyGet | Nuget |
 |---|---|---|---|
 | FMData | [![.NET CI Build](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml/badge.svg)](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml)| [![Myget](https://img.shields.io/myget/filemaker/vpre/FMData.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData) | [![NuGet](https://buildstats.info/nuget/fmdata)](https://www.nuget.org/packages/FMData/) |
 | FMData.Rest | [![.NET CI Build](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml/badge.svg)](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml) | [![MyGet Pre Release](https://img.shields.io/myget/filemaker/vpre/FMData.Rest.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest) | [![NuGet](https://buildstats.info/nuget/fmdata.rest)](https://www.nuget.org/packages/FMData.Rest/) |
+| FMData.Rest.Auth.FileMakerCloud  | [![.NET CI Build](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml/badge.svg)](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml) | [![FMData.Rest.Auth.FileMakerCloud](https://img.shields.io/myget/filemaker/vpre/FMData.Rest.Auth.FileMakerCloud.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Rest.Auth.FileMakerCloud) | [![NuGet](https://buildstats.info/nuget/fmdata.rest.auth.filemakercloud)](https://www.nuget.org/packages/FMData.Rest.Auth.FileMakerCloud/) |
 | FMData.Xml  | [![.NET CI Build](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml/badge.svg)](https://github.com/fuzzzerd/fmdata/actions/workflows/dotnet.yml) | [![FMData.Xml](https://img.shields.io/myget/filemaker/vpre/FMData.Xml.svg)](https://www.myget.org/feed/filemaker/package/nuget/FMData.Xml/) | [![NuGet](https://buildstats.info/nuget/fmdata.xml)](https://www.nuget.org/packages/FMData.Xml/) |
 
 There are plenty of ways to consume RESTful APIs from .NET, but the goal of this project is to provide a blended FileMaker-idiomatic and .NET-idiomatic experience for developers consuming data from FileMaker databases in .NET applications.
@@ -12,6 +18,7 @@ The project is organized as three packages.
 
 - `FMData` is the core and it contains the base and abstract classes utilized by the other implementations.
 - `FMData.Rest` is for the Data API and
+  - `FMData.Rest.Auth.FileMakerCloud` is used for authentication to the Data API hosted by FileMaker Cloud
 - `FMData.Xml` is for consuming the legacy Xml/CWP API.
 
 > *Note: Xml support is experimental, if you need full cwp/xml coverage [check out fmDotNet](https://github.com/fuzzzerd/fmdotnet).*
@@ -22,9 +29,11 @@ If you've found a bug, please submit a bug report. If you have a feature idea, o
 | ---- | ---- | ---- |
 | [![CodeFactor](https://www.codefactor.io/repository/github/fuzzzerd/fmdata/badge)](https://www.codefactor.io/repository/github/fuzzzerd/fmdata) | [![FMData repository/commit activity](https://img.shields.io/github/commit-activity/w/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)|[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE) |
 
------
+## Breaking changes
+
+> *Version 5 has breaking changes. Please [review the changes](https://github.com/fuzzzerd/fmdata/milestone/7?closed=1) prior to updating your project.*
+
 > *Version 4 has several breaking changes. Please [review the changes](https://github.com/fuzzzerd/fmdata/milestone/5?closed=1) prior to updating your project.*
------
 
 ## Installation
 
@@ -33,8 +42,6 @@ Install via `dotnet add` or nuget. Stable releases are on NuGet and CI builds ar
 ```ps
 dotnet add package FMData.Rest
 ```
-
------
 
 ## Example Usage
 
@@ -102,9 +109,30 @@ services.AddSingleton<IFileMakerApiClient, FileMakerRestClient>(s => {
     return new FileMakerRestClient(hcf.CreateClient(), ci);
 });
 ```
-Behind the scenes, the injected `HttpClient` is kept alive for the lifetime of the FMData client (rest/xml) and reused throughout. This is useful to manage the lifetime of `IFileMakerApiClient` as a singleton, since it stores data about FileMaker Data API tokens and reuses them as much as possible.  Simply using `services.AddHttpClient<IFileMakerApiClient, FileMakerRestClient>();` keeps the lifetime of our similar to that of a 'managed `HttpClient`' which works for simple scenarios. 
+
+Behind the scenes, the injected `HttpClient` is kept alive for the lifetime of the FMData client (rest/xml) and reused throughout. This is useful to manage the lifetime of `IFileMakerApiClient` as a singleton, since it stores data about FileMaker Data API tokens and reuses them as much as possible.  Simply using `services.AddHttpClient<IFileMakerApiClient, FileMakerRestClient>();` keeps the lifetime of our similar to that of a 'managed `HttpClient`' which works for simple scenarios.
 
 Test both approaches in your solution and use what works.
+
+### Authentication with FileMaker Cloud
+
+We can use the `FileMakerRestClient`, when the setup is done. Just create a new `ConnectionInfo` object and set the required properties:
+
+```cs
+var conn = new ConnectionInfo();
+conn.FmsUri = "https://{NAME}.account.filemaker-cloud.com";
+conn.Username = "user@domain.com";
+conn.Password = "********";
+conn.Database = "Reporting";
+```
+
+Then instantiate the `FileMakerRestClient` with a `FileMakerCloudAuthTokenProvider` as follows:
+
+```cs
+var fm = new FileMakerRestClient(new HttpClient(), new FileMakerCloudAuthTokenProvider(conn));
+```
+
+For a full description of using FileMaker Data API with FileMaker Cloud, [see this comment](https://github.com/fuzzzerd/fmdata/issues/217#issuecomment-1203202293).
 
 ### Performing a Find
 
@@ -176,8 +204,6 @@ _client.UpdateContainerAsync(
 
 > *Note: In order to create a record with container data two calls must be made. One that creates the actual record ( see above) and one that updates the container field contents.*
 
------
-
 ## FileMaker Documentation
 
 Latest Versions
@@ -194,8 +220,6 @@ Older Versions
 - [FileMaker Server 16 Web Publishing Guide](https://fmhelp.filemaker.com/docs/16/en/fms16_cwp_guide.pdf)
 - [FileMaker Server 15 Web Publishing Guide](https://fmhelp.filemaker.com/docs/15/en/fms15_cwp_guide.pdf)
 
------
-
 ## Versioning
 
 We use [Semantic Versioning](http://semver.org/). Using the Major.Minor.Patch syntax, we attempt to follow the basic rules
@@ -203,19 +227,3 @@ We use [Semantic Versioning](http://semver.org/). Using the Major.Minor.Patch sy
  1. MAJOR version when you make incompatible API changes,
  2. MINOR version when you add functionality in a backwards-compatible manner, and
  3. PATCH version when you make backwards-compatible bug fixes.
-
------
-
-## Repository Statistics
-
-[![FMData repository/commit activity the past year](https://img.shields.io/github/commit-activity/y/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)
-
-[![FMData issues](https://img.shields.io/github/issues/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/issues)
-
-[![Code size in bytes](https://img.shields.io/github/languages/code-size/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)
-
-[![Language Count](https://img.shields.io/github/languages/count/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)
-
-[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE)
-
------
