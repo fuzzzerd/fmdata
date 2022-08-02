@@ -114,6 +114,26 @@ Behind the scenes, the injected `HttpClient` is kept alive for the lifetime of t
 
 Test both approaches in your solution and use what works.
 
+### Authentication with FileMaker Cloud
+
+We can use the `FileMakerRestClient`, when the setup is done. Just create a new `ConnectionInfo` object and set the required properties:
+
+```cs
+var conn = new ConnectionInfo();
+conn.FmsUri = "https://{NAME}.account.filemaker-cloud.com";
+conn.Username = "user@domain.com";
+conn.Password = "********";
+conn.Database = "Reporting";
+```
+
+Then instantiate the `FileMakerRestClient` with a `FileMakerCloudAuthTokenProvider` as follows:
+
+```cs
+var fm = new FileMakerRestClient(new HttpClient(), new FileMakerCloudAuthTokenProvider(conn));
+```
+
+For a full description of using FileMaker Data API with FileMaker Cloud, [see this comment](https://github.com/fuzzzerd/fmdata/issues/217#issuecomment-1203202293).
+
 ### Performing a Find
 
 ```csharp
