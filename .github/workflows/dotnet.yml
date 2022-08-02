@@ -52,3 +52,11 @@ jobs:
       if: ${{ matrix.job.push && env.API_KEY != '' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')) }}
       run: |
         dotnet nuget push src/**/*.nupkg --source https://www.myget.org/F/filemaker/api/v2/package --api-key ${{ env.API_KEY }}
+        
+    - name: Tag to Nuget
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_PUSH_API_KEY }}
+      if: ${{ matrix.job.push && env.NUGET_API_KEY != '' && startsWith(github.ref, 'refs/tags/') }}
+      run: |
+        dotnet nuget push src/**/*.nupkg --api-key ${{ env.NUGET_API_KEY }}
+
