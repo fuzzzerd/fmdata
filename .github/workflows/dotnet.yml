@@ -2,10 +2,13 @@ name: .NET CI Build
 
 on:
   push:
-    branches: [ master ]
+    branches: 
+     - master
+    tags: 
+     - v*
   pull_request:
-    branches: [ master ]
-
+    branches:
+     - master
 env:
   DOTNET_NOLOGO: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
