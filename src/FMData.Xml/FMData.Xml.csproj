@@ -23,8 +23,8 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(CI)' == 'true'">
-   <EmbeddedFiles Include="$(GeneratedAssemblyInfoFile)"/>
- </ItemGroup>
+    <EmbeddedFiles Include="$(GeneratedAssemblyInfoFile)"/>
+  </ItemGroup>
 
   <PropertyGroup>
     <MinVerMinimumMajorMinor>4.3</MinVerMinimumMajorMinor>
@@ -63,12 +63,4 @@
   <ItemGroup Condition="$(TargetFramework) == 'net45'">
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
-
-  <Target Name="MyTarget" AfterTargets="MinVer" Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">
-    <PropertyGroup>
-      <PackageVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)-pr.$(APPVEYOR_PULL_REQUEST_NUMBER).build-id.$(APPVEYOR_BUILD_ID).$(MinVerPreRelease)</PackageVersion>
-      <PackageVersion Condition="'$(MinVerBuildMetadata)' != ''">$(PackageVersion)+$(MinVerBuildMetadata)</PackageVersion>
-      <Version>$(PackageVersion)</Version>
-    </PropertyGroup>
-  </Target>
 </Project>

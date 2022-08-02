@@ -23,8 +23,8 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(CI)' == 'true'">
-   <EmbeddedFiles Include="$(GeneratedAssemblyInfoFile)" />
- </ItemGroup>
+    <EmbeddedFiles Include="$(GeneratedAssemblyInfoFile)" />
+  </ItemGroup>
 
   <PropertyGroup>
     <MinVerMinimumMajorMinor>4.3</MinVerMinimumMajorMinor>
@@ -43,44 +43,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FMData\FMData.csproj" />
-  <ProjectReference Include="..\FMData.Rest\FMData.Rest.csproj" />
+    <ProjectReference Include="..\FMData.Rest\FMData.Rest.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
     <PackageReference Include="MinVer" Version="3.1.0" PrivateAssets="All" />
+    <PackageReference Include="Amazon.Extensions.CognitoAuthentication" Version="2.2.2" />
+    <PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="3.7.4.20" />
   </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Amazon.Extensions.CognitoAuthentication">
-      <Version>2.2.2</Version>
-    </PackageReference>
-    <PackageReference Include="AWSSDK.CognitoIdentityProvider">
-      <Version>3.7.4.20</Version>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Amazon.Extensions.CognitoAuthentication">
-      <Version>2.2.2</Version>
-    </PackageReference>
-    <PackageReference Include="AWSSDK.CognitoIdentityProvider">
-      <Version>3.7.4.20</Version>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
-    <PackageReference Include="AWSSDK.CognitoIdentityProvider">
-      <Version>3.7.4.20</Version>
-    </PackageReference>
-  </ItemGroup>
-
-  <Target Name="MyTarget" AfterTargets="MinVer" Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">
-    <PropertyGroup>
-      <PackageVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)-pr.$(APPVEYOR_PULL_REQUEST_NUMBER).build-id.$(APPVEYOR_BUILD_ID).$(MinVerPreRelease)</PackageVersion>
-      <PackageVersion Condition="'$(MinVerBuildMetadata)' != ''">$(PackageVersion)+$(MinVerBuildMetadata)</PackageVersion>
-      <Version>$(PackageVersion)</Version>
-    </PropertyGroup>
-  </Target>
 </Project>
