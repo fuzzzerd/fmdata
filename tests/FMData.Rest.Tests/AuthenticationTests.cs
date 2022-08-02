@@ -1,4 +1,4 @@
-using RichardSzalay.MockHttp;
+﻿using RichardSzalay.MockHttp;
 using System;
 using System.Linq;
 using System.Net;
@@ -73,7 +73,7 @@ namespace FMData.Rest.Tests
                 .Respond(HttpStatusCode.OK, "application/json", "");
 
             using var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
-            var response = await fdc.RefreshTokenAsync("integration", "test");
+            var response = await fdc.RefreshTokenAsync();
             Assert.Equal("someOtherToken", response.Response.Token);
         }
 
@@ -95,7 +95,7 @@ namespace FMData.Rest.Tests
 
             // pass in actual values here since we DON'T want this to blow up on constructor 
             using var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
-            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.RefreshTokenAsync(user, pass));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await fdc.RefreshTokenAsync());
         }
 
         [Fact(DisplayName = "User-Agent Should Match Version Of Assembly")]
@@ -120,7 +120,7 @@ namespace FMData.Rest.Tests
                 .Respond(HttpStatusCode.OK, "application/json", "");
 
             using var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
-            await fdc.RefreshTokenAsync(user, pass);
+            await fdc.RefreshTokenAsync();
             Assert.True(fdc.IsAuthenticated);
         }
     }

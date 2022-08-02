@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
@@ -191,7 +192,7 @@ namespace FMData.Rest.Tests
             });
 
             // assert
-            var responseDataContainsResult = response.Any(r => r.Created == DateTime.Parse("03/29/2018 15:22:09"));
+            var responseDataContainsResult = response.Any(r => r.Created == DateTime.ParseExact("03/29/2018 15:22:09", "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture));
             Assert.True(responseDataContainsResult);
         }
     }

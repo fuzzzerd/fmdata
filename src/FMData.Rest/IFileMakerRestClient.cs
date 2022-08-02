@@ -13,12 +13,8 @@ namespace FMData.Rest
         /// <summary>
         /// Refreshes the internally stored authentication token from filemaker server.
         /// </summary>
-        /// <param name="username">Username of the account to authenticate.</param>
-        /// <param name="password">Password of the account to authenticate.</param>
         /// <returns>An AuthResponse from deserialized from FileMaker Server json response.</returns>
-        Task<AuthResponse> RefreshTokenAsync(
-            string username,
-            string password);
+        Task<AuthResponse> RefreshTokenAsync();
 
         /// <summary>
         /// Logs the user out and nullifies the token.

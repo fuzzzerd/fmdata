@@ -1,0 +1,86 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyTitle>FMData.Rest.Auth.FileMakerCloud</AssemblyTitle>
+    <AssemblyName>FMData.Rest.Auth.FileMakerCloud</AssemblyName>
+    <Description>FileMaker Data API Authentication for FileMaker Cloud.</Description>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageLicense>https://github.com/fuzzzerd/fmdata/blob/master/LICENSE</PackageLicense>
+    <PackageProjectUrl>https://fmdata.io/</PackageProjectUrl>
+    <PackageIcon>nuget.png</PackageIcon>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/fuzzzerd/fmdata</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <Authors>Nate Bross</Authors>
+    <Company />
+    <PackageTags>data-api filemaker dataapi dapi-client data dapi api filemaker-rest filemaker-api netstandard json dotnet-standard</PackageTags>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <DebugType>Embedded</DebugType>
+    <IncludeUntrackedSources>true</IncludeUntrackedSources>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(CI)' == 'true'">
+   <EmbeddedFiles Include="$(GeneratedAssemblyInfoFile)" />
+ </ItemGroup>
+
+  <PropertyGroup>
+    <MinVerMinimumMajorMinor>4.3</MinVerMinimumMajorMinor>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+    <MinVerDefaultPreReleasePhase>beta</MinVerDefaultPreReleasePhase>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\images\nuget.png" Pack="true" PackagePath="\" />
+    <None Include="..\..\readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FMData\FMData.csproj" />
+  <ProjectReference Include="..\FMData.Rest\FMData.Rest.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="MinVer" Version="3.1.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Amazon.Extensions.CognitoAuthentication">
+      <Version>2.2.2</Version>
+    </PackageReference>
+    <PackageReference Include="AWSSDK.CognitoIdentityProvider">
+      <Version>3.7.4</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="Amazon.Extensions.CognitoAuthentication">
+      <Version>2.2.2</Version>
+    </PackageReference>
+    <PackageReference Include="AWSSDK.CognitoIdentityProvider">
+      <Version>3.7.4</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <PackageReference Include="AWSSDK.CognitoIdentityProvider">
+      <Version>3.7.4</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <Target Name="MyTarget" AfterTargets="MinVer" Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">
+    <PropertyGroup>
+      <PackageVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)-pr.$(APPVEYOR_PULL_REQUEST_NUMBER).build-id.$(APPVEYOR_BUILD_ID).$(MinVerPreRelease)</PackageVersion>
+      <PackageVersion Condition="'$(MinVerBuildMetadata)' != ''">$(PackageVersion)+$(MinVerBuildMetadata)</PackageVersion>
+      <Version>$(PackageVersion)</Version>
+    </PropertyGroup>
+  </Target>
+</Project>
