@@ -20,14 +20,16 @@ namespace FMData.Xml.Requests
         /// Offset amount (skip)
         /// </summary>
         public int Offset { get; set; }
+
         /// <summary>
         /// Limit amount (take)
         /// </summary>
         public int Limit { get; set; }
+
         /// <summary>
         /// Sort options for the results.
         /// </summary>
-        public IEnumerable<ISort> Sort { get; set; }
+        public ICollection<ISort> Sort { get; set; }
 
         /// <summary>
         /// Determines if container data attributes are processed and loaded.
@@ -52,5 +54,15 @@ namespace FMData.Xml.Requests
         /// <param name="query">The object to add to the query.</param>
         /// <param name="omit">Flag indicating if this instance represents a find or an omit.</param>
         public void AddQuery(T query, bool omit = false) => _query.Add(new RequestQueryInstance<T>(query, omit));
+
+        /// <summary>
+        /// Adds a sort field with a direction to the sort collection.
+        /// </summary>
+        /// <param name="fieldName">The field to sort by.</param>
+        /// <param name="sortDirection">The direction to sort.</param>
+        public void AddSort(string fieldName, string sortDirection)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
