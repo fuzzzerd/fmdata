@@ -75,9 +75,12 @@ namespace FMData.Rest.Tests
         public void Nullable_Model_Property_Should_Be_EmptyString_When_Serialized_With_NullValueHandling_Include()
         {
             //arrange 
-            var r = new EditRequest<User>() { Data = new User { Id = 94, ForeignKeyId = null } };
-            r.IncludeDefaultValuesInSerializedOutput = true;
-            r.IncludeNullValuesInSerializedOutput = true;
+            var r = new EditRequest<User>
+            {
+                Data = new User { Id = 94, ForeignKeyId = null },
+                IncludeDefaultValuesInSerializedOutput = true,
+                IncludeNullValuesInSerializedOutput = true
+            };
 
             // act
             var json = r.SerializeRequest();
