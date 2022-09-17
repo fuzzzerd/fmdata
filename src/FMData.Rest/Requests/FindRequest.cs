@@ -32,7 +32,7 @@ namespace FMData.Rest.Requests
         /// The sort fields and directions for this request.
         /// </summary>
         [JsonProperty("sort")]
-        public IEnumerable<ISort> Sort { get; set; }
+        public ICollection<ISort> Sort { get; set; }
 
         /// <summary>
         /// Determines if container data attributes are processed and loaded.
@@ -69,5 +69,19 @@ namespace FMData.Rest.Requests
         /// <param name="query">The object to add to the query.</param>
         /// <param name="omit">Flag indicating if this instance represents a find or an omit.</param>
         public void AddQuery(TRequestType query, bool omit = false) => _query.Add(new RequestQueryInstance<TRequestType>(query, omit));
+
+        /// <summary>
+        /// Adds a sort field with a direction to the sort collection.
+        /// </summary>
+        /// <param name="fieldName">The field to sort by.</param>
+        /// <param name="sortDirection">The direction to sort.</param>
+        public void AddSort(string fieldName, string sortDirection)
+        {
+            if (this.Sort == null)
+            {
+                Sort = new List<ISort>();
+            }
+            Sort.Add(new Sort { SortOrder = sortDirection, FieldName = fieldName });
+        }
     }
 }

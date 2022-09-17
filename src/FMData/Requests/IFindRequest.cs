@@ -25,7 +25,7 @@ namespace FMData
         /// <summary>
         /// The sort options for this request.
         /// </summary>
-        IEnumerable<ISort> Sort { get; set; }
+        ICollection<ISort> Sort { get; set; }
 
         /// <summary>
         /// Determines if container data attributes are processed and loaded.
@@ -36,5 +36,12 @@ namespace FMData
         /// Add query data to the find request.
         /// </summary>
         void AddQuery(TRequestType query, bool omit = false);
+
+        /// <summary>
+        /// Adds a sort field with a direction to the sort collection.
+        /// </summary>
+        /// <param name="fieldName">The field to sort by.</param>
+        /// <param name="sortDirection">The direction to sort.</param>
+        void AddSort(string fieldName, string sortDirection);
     }
 }
