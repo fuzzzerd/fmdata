@@ -77,7 +77,7 @@ namespace FMData.Rest.Requests
         /// <param name="sortDirection">The direction to sort.</param>
         public void AddSort(string fieldName, string sortDirection)
         {
-            if (this.Sort == null)
+            if (Sort == null)
             {
                 Sort = new List<ISort>();
             }

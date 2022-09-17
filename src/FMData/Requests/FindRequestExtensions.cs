@@ -20,6 +20,20 @@ namespace FMData
         }
 
         /// <summary>
+        /// Adds a sort field and direction to the find request.
+        /// </summary>
+        /// <typeparam name="T">The type used for the find request/response.</typeparam>
+        /// <param name="request">The request. This is the 'this' parameter.</param>
+        /// <param name="field">The field to sort on.</param>
+        /// <param name="direction">The direction to sort.</param>
+        /// <returns>The request instanced that was implicitly passed in which is useful for method chaining.</returns>
+        public static IFindRequest<T> AddSortFieldDirection<T>(this IFindRequest<T> request, string field, string direction)
+        {
+            request.AddSort(field, direction);
+            return request;
+        }
+
+        /// <summary>
         /// Specify the limit of records to be returned.
         /// </summary>
         /// <param name="request">The request. This is the 'this' parameter.</param>
