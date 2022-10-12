@@ -624,7 +624,7 @@ namespace FMData.Rest
         #endregion
 
         /// <summary>
-        /// Runs a script with the specified layout context and with an optional (null/empty OK) paramater.
+        /// Runs a script with the specified layout context and with an optional (null/empty OK) parameter.
         /// </summary>
         /// <param name="layout">The layout to use for the context of the script.</param>
         /// <param name="script">The name of the script to run.</param>
@@ -634,11 +634,15 @@ namespace FMData.Rest
         {
             await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
-            // generate request url{
-            var uri = $"{FmsUri}/fmi/data/v1/databases/{FileName}/layouts/{layout}/script/{script}";
+            // generate request url
+            var uri = $"{FmsUri}/fmi/data/v1"
+                    + $"/databases/{Uri.EscapeDataString(FileName)}"
+                    + $"/layouts/{Uri.EscapeDataString(layout)}"
+                    + $"/script/{Uri.EscapeDataString(script)}";
+
             if (!string.IsNullOrEmpty(scriptParameter))
             {
-                uri += $"?script.param={scriptParameter}";
+                uri += $"?script.param={Uri.EscapeDataString(scriptParameter)}";
             }
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
@@ -894,8 +898,9 @@ namespace FMData.Rest
         {
             await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
-            // generate request url{
-            var uri = $"{FmsUri}/fmi/data/v1/databases/{FileName}/layouts";
+            // generate request url
+            var uri = $"{FmsUri}/fmi/data/v1/"
+                    + $"databases/{Uri.EscapeDataString(FileName)}/layouts";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
             // include auth token
@@ -932,8 +937,9 @@ namespace FMData.Rest
         {
             await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
-            // generate request url{
-            var uri = $"{FmsUri}/fmi/data/v1/databases/{FileName}/scripts";
+            // generate request url
+            var uri = $"{FmsUri}/fmi/data/v1"
+                    + $"/databases/{Uri.EscapeDataString(FileName)}/scripts";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
             // include auth token
@@ -973,7 +979,9 @@ namespace FMData.Rest
             await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // generate request url
-            var uri = $"{FmsUri}/fmi/data/v1/databases/{FileName}/layouts/{layout}";
+            var uri = $"{FmsUri}/fmi/data/v1"
+                    + $"/databases/{Uri.EscapeDataString(FileName)}"
+                    + $"/layouts/{Uri.EscapeDataString(layout)}";
             if (recordId.HasValue)
             {
                 uri += $"?recordId={recordId}";
@@ -1069,7 +1077,7 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// Utility method that must be overridden in implementations. Takes a containerfield url and populates a byte array utilizing the instance's http client.
+        /// Utility method that must be overridden in implementations. Takes a container field url and populates a byte array utilizing the instance's http client.
         /// </summary>
         /// <param name="containerEndPoint">The container field to load.</param>
         /// <returns>An array of bytes with the data from the container field.</returns>
