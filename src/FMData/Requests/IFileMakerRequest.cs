@@ -34,7 +34,7 @@
         string PreRequestScriptParameter { get; set; }
 
         /// <summary>
-        /// /// Pre-sort request. Occurs after the pre-request and the api request but before the sort has occurred.
+        /// Pre-sort request. Occurs after the pre-request and the api request but before the sort has occurred.
         /// </summary>
         string PreSortScript { get; set; }
         /// <summary>
@@ -48,7 +48,7 @@
         bool IncludeNullValuesInSerializedOutput { get; set; }
 
         /// <summary>
-        /// When set to true, serialization will include null values.
+        /// When set to true, serialization will include default values.
         /// </summary>
         bool IncludeDefaultValuesInSerializedOutput { get; set; }
 
