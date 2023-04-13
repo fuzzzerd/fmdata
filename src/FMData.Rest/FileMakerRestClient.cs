@@ -178,7 +178,7 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// Refreshes the internally stored authentication token from filemaker server.
+        /// Refreshes the internally stored authentication token from FileMaker server.
         /// </summary>
         /// <returns>An AuthResponse from deserialized from FileMaker Server json response.</returns>
         public async Task<AuthResponse> RefreshTokenAsync()
@@ -602,7 +602,7 @@ namespace FMData.Rest
                 var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
                 if (responseObject.Messages.Any(m => m.Code == "401"))
                 {
-                    // filemaker no records match the find request => empty list.
+                    // FileMaker no records match the find request => empty list.
                     return (new List<T>(), new DataInfoModel());
                 }
                 // throw FMDataException for anything not a 401.
@@ -1140,7 +1140,7 @@ namespace FMData.Rest
                     // which allows for calling add/remove on the list ;) clever
                     // https://stackoverflow.com/a/26864676/86860 - explication 
                     // https://stackoverflow.com/a/604843/86860 - solution
-                    foreach (JObject jo in portalJ.ToList())
+                    foreach (var jo in portalJ.ToList().Cast<JObject>())
                     {
                         foreach (var jp in jo.Properties().ToList())
                         {

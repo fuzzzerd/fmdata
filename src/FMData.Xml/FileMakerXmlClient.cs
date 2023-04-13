@@ -414,7 +414,7 @@ namespace FMData.Xml
         }
 
         /// <summary>
-        /// Runs a script with the specified layout context and with an optional (null/empty OK) paramater.
+        /// Runs a script with the specified layout context and with an optional (null/empty OK) parameter.
         /// </summary>
         /// <param name="layout">The layout to use for the context of the script.</param>
         /// <param name="script">The name of the script to run.</param>
@@ -426,7 +426,7 @@ namespace FMData.Xml
         }
 
         /// <summary>
-        /// Utility method that must be overridden in implementations. Takes a containerfield url and populates a byte array utilizing the instance's http client.
+        /// Utility method that must be overridden in implementations. Takes a container field url and populates a byte array utilizing the instance's http client.
         /// </summary>
         /// <param name="containerEndPoint">The container field to load.</param>
         /// <returns>An array of bytes with the data from the container field.</returns>
@@ -497,11 +497,8 @@ namespace FMData.Xml
         /// </summary>
         public override void Dispose()
         {
-            if (Client != null)
-            {
-                // dispose our injected http client
-                Client.Dispose();
-            }
+            // dispose our injected http client
+            Client?.Dispose();
         }
         #endregion
     }
