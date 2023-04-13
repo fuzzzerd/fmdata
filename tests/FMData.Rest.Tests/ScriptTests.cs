@@ -1,8 +1,8 @@
-using RichardSzalay.MockHttp;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using RichardSzalay.MockHttp;
 using Xunit;
 
 namespace FMData.Rest.Tests
@@ -20,11 +20,11 @@ namespace FMData.Rest.Tests
             var pass = "test";
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
-               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             var layoutData = System.IO.File.ReadAllText(Path.Combine("ResponseData", "ScriptList.json"));
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/scripts")
-               .Respond("application/json", layoutData);
+                    .Respond("application/json", layoutData);
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 
@@ -46,11 +46,11 @@ namespace FMData.Rest.Tests
             var layout = "layout";
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
-               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             var scriptResponse = System.IO.File.ReadAllText(Path.Combine("ResponseData", "ScriptResponseOK.json"));
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/script/*")
-               .Respond("application/json", scriptResponse);
+                    .Respond("application/json", scriptResponse);
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 

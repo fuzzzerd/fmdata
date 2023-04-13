@@ -1,8 +1,8 @@
-using FMData.Xml.Tests.TestModels;
-using RichardSzalay.MockHttp;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FMData.Xml.Tests.TestModels;
+using RichardSzalay.MockHttp;
 using Xunit;
 
 namespace FMData.Xml.Tests

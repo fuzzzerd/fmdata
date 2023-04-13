@@ -402,10 +402,10 @@ namespace FMData
         /// <param name="fmIdFunc">Function to map the FileMaker RecordId to each instance T.</param>
         /// <returns></returns>
         public Task<IEnumerable<T>> FindAsync<T>(
-             T request,
-             string script,
-             string scriptParameter,
-             Func<T, int, object> fmIdFunc) where T : class, new()
+            T request,
+            string script,
+            string scriptParameter,
+            Func<T, int, object> fmIdFunc) where T : class, new()
         {
             var req = GenerateFindRequest(request)
                 .SetLimit(100)

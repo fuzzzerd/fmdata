@@ -1,9 +1,9 @@
-using FMData.Rest.Tests.TestModels;
-using RichardSzalay.MockHttp;
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FMData.Rest.Tests.TestModels;
+using RichardSzalay.MockHttp;
 using Xunit;
 
 namespace FMData.Rest.Tests
@@ -22,7 +22,7 @@ namespace FMData.Rest.Tests
             var layout = "layout";
 
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
-               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/*")
                 .WithPartialContent("upload")
@@ -56,7 +56,7 @@ namespace FMData.Rest.Tests
             var pass = "test";
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
-                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 

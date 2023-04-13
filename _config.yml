@@ -1,6 +1,6 @@
 plugins:
- - jekyll-seo-tag
- - jekyll-avatar
+  - jekyll-seo-tag
+  - jekyll-avatar
 theme: jekyll-theme-cayman
 title: A FileMaker Data API Client
 url: https://fmdata.io

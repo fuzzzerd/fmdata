@@ -1,4 +1,4 @@
-namespace FMData
+﻿namespace FMData
 {
     /// <summary>
     /// Extension (utility and helper) methods for IFindRequest.

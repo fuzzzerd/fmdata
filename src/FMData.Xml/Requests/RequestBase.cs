@@ -1,4 +1,4 @@
-namespace FMData.Xml
+﻿namespace FMData.Xml
 {
     /// <summary>
     /// Base Request Implementation

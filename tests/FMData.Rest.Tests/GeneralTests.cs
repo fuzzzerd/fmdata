@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
@@ -180,11 +179,11 @@ namespace FMData.Rest.Tests
             var layout = "Users";
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
-                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/_find")
-                .WithPartialContent("fuzzzerd") // ensure the request contains the expected content
-                .Respond("application/json", DataApiResponses.SuccessfulFind());
+                    .WithPartialContent("fuzzzerd") // ensure the request contains the expected content
+                    .Respond("application/json", DataApiResponses.SuccessfulFind());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 

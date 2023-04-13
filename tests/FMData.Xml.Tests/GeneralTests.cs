@@ -1,12 +1,12 @@
-using FMData.Xml.Tests.TestModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Xunit;
 using FMData.Xml;
 using FMData.Xml.Requests;
+using FMData.Xml.Tests.TestModels;
+using Xunit;
 
 namespace FMData.Xml.Tests
 {

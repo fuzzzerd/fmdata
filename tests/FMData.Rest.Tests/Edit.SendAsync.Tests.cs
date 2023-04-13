@@ -1,9 +1,9 @@
-using FMData.Rest.Requests;
-using RichardSzalay.MockHttp;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FMData.Rest.Requests;
+using RichardSzalay.MockHttp;
 using Xunit;
 
 namespace FMData.Rest.Tests
@@ -21,7 +21,7 @@ namespace FMData.Rest.Tests
             var mockHttp = new MockHttpMessageHandler();
 
             mockHttp.When($"{s_server}/fmi/data/v1/databases/{s_file}/sessions")
-               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             mockHttp.When(new HttpMethod("PATCH"), $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/{s_layout}/records*")
                 .WithPartialContent("fieldData")
@@ -81,11 +81,11 @@ namespace FMData.Rest.Tests
             var mockHttp = new MockHttpMessageHandler();
 
             mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/sessions")
-                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             mockHttp.When(new HttpMethod("PATCH"), $"{s_server}/fmi/data/v1/databases/{s_file}/layouts/{s_layout}/records*")
-                .WithPartialContent("fieldData")
-                .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.FieldNotFound());
+                    .WithPartialContent("fieldData")
+                    .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.FieldNotFound());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
 

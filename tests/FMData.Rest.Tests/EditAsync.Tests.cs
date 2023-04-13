@@ -1,7 +1,7 @@
+﻿using System.Net.Http;
+using System.Threading.Tasks;
 using FMData.Rest.Tests.TestModels;
 using RichardSzalay.MockHttp;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace FMData.Rest.Tests
@@ -21,11 +21,11 @@ namespace FMData.Rest.Tests
             var rid = 25;
 
             mockHttp.When($"{server}/fmi/data/v1/databases/{file}/sessions")
-               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             mockHttp.When(new HttpMethod("PATCH"), $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/{rid}")
-                .WithPartialContent("script").WithPartialContent("myscr_name")
-                .Respond("application/json", DataApiResponses.SuccessfulEdit());
+                    .WithPartialContent("script").WithPartialContent("myscr_name")
+                    .Respond("application/json", DataApiResponses.SuccessfulEdit());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 

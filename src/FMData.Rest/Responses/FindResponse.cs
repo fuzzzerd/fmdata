@@ -1,4 +1,4 @@
-namespace FMData.Rest.Responses
+﻿namespace FMData.Rest.Responses
 {
     /// <summary>
     /// Find Response

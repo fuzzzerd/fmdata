@@ -1,4 +1,4 @@
-namespace FMData.Xml.Requests
+﻿namespace FMData.Xml.Requests
 {
     /// <summary>
     /// Create Request Wrapper

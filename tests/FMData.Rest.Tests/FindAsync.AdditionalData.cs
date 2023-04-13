@@ -1,12 +1,12 @@
-using FMData.Rest.Requests;
-using FMData.Rest.Tests.TestModels;
-using RichardSzalay.MockHttp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FMData.Rest.Requests;
+using FMData.Rest.Tests.TestModels;
+using RichardSzalay.MockHttp;
 using Xunit;
 
 namespace FMData.Rest.Tests
@@ -22,12 +22,12 @@ namespace FMData.Rest.Tests
             var layout = "Users";
 
             mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/sessions")
-                           .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/layouts/{layout}/_find")
-                .WithPartialContent("limit") // ensure the request contains the expected content
-                .WithPartialContent("offset") // ensure the request contains the expected content
-                .Respond("application/json", DataApiResponses.SuccessfulFind());
+                    .WithPartialContent("limit") // ensure the request contains the expected content
+                    .WithPartialContent("offset") // ensure the request contains the expected content
+                    .Respond("application/json", DataApiResponses.SuccessfulFind());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), FindTestsHelpers.Connection);
 

@@ -1,9 +1,9 @@
-﻿using RichardSzalay.MockHttp;
-using System;
+﻿using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using RichardSzalay.MockHttp;
 using Xunit;
 
 // this is apparently necessary to work in appveyor / myget
@@ -114,7 +114,7 @@ namespace FMData.Rest.Tests
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
                 .WithHeaders("User-Agent", $"{fmrAssembly.Name}/{fmrVer}")
-               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/sessions*")
                 .Respond(HttpStatusCode.OK, "application/json", "");

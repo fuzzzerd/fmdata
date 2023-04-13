@@ -1,9 +1,9 @@
 ﻿using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Amazon;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Extensions.CognitoAuthentication;
 using Amazon.Runtime;
-using Amazon;
 
 namespace FMData.Rest
 {
@@ -36,12 +36,12 @@ namespace FMData.Rest
         {
             var region = RegionEndpoint.GetBySystemName(_conn.RegionEndpoint);
             var identityProviderClient = new AmazonCognitoIdentityProviderClient(new AnonymousAWSCredentials(), region);
-            string token = await GetToken(identityProviderClient).ConfigureAwait(false);
+            var token = await GetToken(identityProviderClient).ConfigureAwait(false);
             return AuthenticationHeaderValue.Parse("FMID " + token);
         }
 
         /// <summary>
-        /// Provide an AWS Cognito Identiy Token
+        /// Provide an AWS Cognito Identity Token
         /// </summary>
         /// <param name="identityProviderClient"><see href="https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/CognitoIdentityProvider/TCognitoIdentityProviderClient.html">AmazonCognitoIdentityProviderClient</see></param>
         /// <returns>returns the IdToken of the AuthenticationResult</returns>
@@ -49,8 +49,10 @@ namespace FMData.Rest
         {
             var userpool = new CognitoUserPool(ConnectionInfo.CognitoUserPoolID, ConnectionInfo.CognitoClientID, identityProviderClient);
             var user = new CognitoUser(ConnectionInfo.Username, ConnectionInfo.CognitoClientID, userpool, identityProviderClient);
-            var initiateSrpAuthRequest = new InitiateSrpAuthRequest(); //SRP means Secure Remote Password
-            initiateSrpAuthRequest.Password = ConnectionInfo.Password;
+            var initiateSrpAuthRequest = new InitiateSrpAuthRequest
+            {
+                Password = ConnectionInfo.Password
+            }; //SRP means Secure Remote Password
 
             var response = await user.StartWithSrpAuthAsync(initiateSrpAuthRequest).ConfigureAwait(false);
             return response.AuthenticationResult.IdToken;
