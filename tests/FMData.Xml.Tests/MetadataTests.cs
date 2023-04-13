@@ -22,7 +22,7 @@ namespace FMData.Xml.Tests
 
             var productInfo = System.IO.File.ReadAllText(Path.Combine("ResponseData", "ProductInfo.xml"));
             mockHttp.When($"{server}/fmi/xml/fmresultset.xml")
-               .Respond("application/xml", productInfo);
+                    .Respond("application/xml", productInfo);
 
             var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(),
                 new ConnectionInfo
@@ -51,7 +51,7 @@ namespace FMData.Xml.Tests
 
             var productInfo = System.IO.File.ReadAllText(Path.Combine("ResponseData", "Databases.xml"));
             mockHttp.When($"{server}/fmi/xml/fmresultset.xml?-dbnames")
-               .Respond("application/xml", productInfo);
+                    .Respond("application/xml", productInfo);
 
             var fdc = new FileMakerXmlClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 

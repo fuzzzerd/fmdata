@@ -114,7 +114,7 @@ namespace FMData.Rest.Tests
 
             mockHttp.When(HttpMethod.Post, $"{server}/fmi/data/v1/databases/{file}/sessions")
                 .WithHeaders("User-Agent", $"{fmrAssembly.Name}/{fmrVer}")
-               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/sessions*")
                 .Respond(HttpStatusCode.OK, "application/json", "");

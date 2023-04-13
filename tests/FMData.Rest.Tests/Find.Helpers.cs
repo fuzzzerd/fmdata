@@ -19,16 +19,16 @@ namespace FMData.Rest.Tests
             var mockHttp = new MockHttpMessageHandler();
 
             mockHttp.When(HttpMethod.Post, $"{Server}/fmi/data/v1/databases/{File}/sessions")
-               .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
+                    .Respond("application/json", DataApiResponses.SuccessfulAuthentication());
 
             mockHttp.When(HttpMethod.Get, $"{Server}/fmi/data/v1/databases/{File}/layout*")
-                .Respond("application/json", DataApiResponses.SuccessfulFind());
+                    .Respond("application/json", DataApiResponses.SuccessfulFind());
 
             mockHttp.When(HttpMethod.Post, $"{Server}/fmi/data/v1/databases/{File}/layouts/layout/_find")
-                .Respond("application/json", DataApiResponses.SuccessfulFind());
+                    .Respond("application/json", DataApiResponses.SuccessfulFind());
 
             mockHttp.When(HttpMethod.Post, $"{Server}/fmi/data/v1/databases/{File}/layouts/Users/_find")
-                .Respond("application/json", DataApiResponses.SuccessfulFind());
+                    .Respond("application/json", DataApiResponses.SuccessfulFind());
 
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = Server, Database = File, Username = User, Password = Pass });
             return fdc;

@@ -2,7 +2,7 @@
 {
     public static partial class DataApiResponses
     {
-        public const string TestToken = "16e798b286a78f6b64e234d8a6eeff7d71ba92f6c882b5ff328";
+        public const string TestToken = "{something-secret}";
         public const string TestLayout = "layout";
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "IDE0060", Justification = "Used for generic parameter.")]
         public static string SuccessfulAuthentication(
