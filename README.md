@@ -158,9 +158,9 @@ var results = await client.EditAsync(fileMakerRecordId, toCreate);
 //  results is an IEditResponse which indicates success (0/OK or Failure with FMS code/message)
 ```
 
-### Find with FileMaker Id Mapping
+### Find with FileMaker ID Mapping
 
-Note you need to add an int property to the Model `public int FileMakerRecordId { get; set; }` and provide the Func to the `FindAsync` method to tell FMData how to map the FileMaker Id returned from the API to your model.
+Note you need to add an int property to the Model `public int FileMakerRecordId { get; set; }` and provide the Func to the `FindAsync` method to tell FMData how to map the FileMaker ID returned from the API to your model.
 
 ```csharp
 Func<Model, int, object> FMRecordIdMapper = (o, id) => o.FileMakerRecordId = id;
@@ -222,4 +222,4 @@ We use [Semantic Versioning](http://semver.org/). Using the Major.Minor.Patch sy
 
  1. MAJOR version when you make incompatible API changes,
  2. MINOR version when you add functionality in a backwards-compatible manner, and
- 3. PATCH version when you make backwards-compatible bug fixes.
+ 3. PATCH version when you make backwards-compatible bugfixes.
