@@ -8,12 +8,9 @@ name: Lint Code Base
 #############################
 # Start the job on all push #
 #############################
-on:
-  push:
-    branches-ignore: [master, main]
-    # Remove the line above to run when pushing to master
+# https://github.com/adrienverge/yamllint/issues/430
+on:   # yamllint disable-line rule:truthy
   pull_request:
-    branches: [master]
 
 ###############
 # Set the Job #
@@ -46,6 +43,6 @@ jobs:
         uses: github/super-linter@v5.0.0
         env:
           VALIDATE_ALL_CODEBASE: true
-          FILTER_REGEX_EXCLUDE: \readme\.md$
+          FILTER_REGEX_EXCLUDE: (?i)(readme.md)
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

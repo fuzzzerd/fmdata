@@ -1,6 +1,7 @@
 name: .NET CI Build
 
-on:
+# https://github.com/adrienverge/yamllint/issues/430
+on:   # yamllint disable-line rule:truthy
   push:
     branches:
       - master
@@ -9,6 +10,7 @@ on:
   pull_request:
     branches:
       - master
+
 env:
   DOTNET_NOLOGO: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
