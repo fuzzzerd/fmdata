@@ -1,9 +1,9 @@
 ﻿using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Amazon;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Extensions.CognitoAuthentication;
 using Amazon.Runtime;
-using Amazon;
 
 namespace FMData.Rest
 {

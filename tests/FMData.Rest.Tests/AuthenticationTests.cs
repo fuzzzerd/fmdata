@@ -1,9 +1,9 @@
-﻿using RichardSzalay.MockHttp;
-using System;
+﻿using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using RichardSzalay.MockHttp;
 using Xunit;
 
 // this is apparently necessary to work in appveyor / myget

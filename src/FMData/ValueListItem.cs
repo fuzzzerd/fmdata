@@ -1,4 +1,4 @@
-namespace FMData
+﻿namespace FMData
 {
     /// <summary>
     /// A Value List Item

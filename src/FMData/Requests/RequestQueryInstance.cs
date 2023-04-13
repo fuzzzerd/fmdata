@@ -1,4 +1,4 @@
-namespace FMData
+﻿namespace FMData
 {
     /// <summary>
     /// Middle layer class used for custom JsonConvert. This class helps generate the necessary JSON for the Find request.

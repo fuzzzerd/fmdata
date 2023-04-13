@@ -1,8 +1,8 @@
+﻿using System.Collections.Generic;
+using System.Net.Http;
 using FMData.Rest.Requests;
 using FMData.Rest.Tests.TestModels;
 using RichardSzalay.MockHttp;
-using System.Collections.Generic;
-using System.Net.Http;
 
 namespace FMData.Rest.Tests
 {

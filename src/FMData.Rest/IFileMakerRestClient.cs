@@ -1,6 +1,6 @@
-﻿using FMData.Rest.Responses;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
+using FMData.Rest.Responses;
 
 namespace FMData.Rest
 {

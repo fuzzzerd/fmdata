@@ -1,7 +1,7 @@
+﻿using System.Net.Http;
+using System.Threading.Tasks;
 using FMData.Rest.Tests.TestModels;
 using RichardSzalay.MockHttp;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace FMData.Rest.Tests

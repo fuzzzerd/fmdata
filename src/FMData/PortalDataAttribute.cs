@@ -1,4 +1,4 @@
-namespace FMData
+﻿namespace FMData
 {
     /// <summary>
     /// Used to help map portal instances to properties on a model.
