@@ -9,4 +9,4 @@
 
 ## Reporting a Vulnerability
 
-For security related issues, please contact https://github.com/fuzzzerd directly with detailed information. If you have an associated change/fix, please include a description of it.
+For security related issues, please contact <https://github.com/fuzzzerd> directly with detailed information. If you have an associated change/fix, please include a description of it.
