@@ -29,7 +29,7 @@
   <PropertyGroup>
     <MinVerMinimumMajorMinor>4.3</MinVerMinimumMajorMinor>
     <MinVerTagPrefix>v</MinVerTagPrefix>
-    <MinVerDefaultPreReleasePhase>beta</MinVerDefaultPreReleasePhase>
+    <MinVerDefaultPreReleaseIdentifiers>beta.0</MinVerDefaultPreReleaseIdentifiers>
   </PropertyGroup>
 
   <PropertyGroup>
