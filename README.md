@@ -1,9 +1,8 @@
 # FMData
 
-|[![FMData repository/commit activity the past year](https://img.shields.io/github/commit-activity/y/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)|[![FMData issues](https://img.shields.io/github/issues/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/issues)|[![CodeFactor](https://www.codefactor.io/repository/github/fuzzzerd/fmdata/badge)](https://www.codefactor.io/repository/github/fuzzzerd/fmdata)|[![Code size in bytes](https://img.shields.io/github/languages/code-size/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)|[![Language Count](https://img.shields.io/github/languages/count/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)|[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE)|
-|---|---|---|---|---|---|
+[![fmdata logo, a C# client for FileMaker](https://raw.githubusercontent.com/fuzzzerd/fmdata/master/images/color-cropped.png)](https://github.com/fuzzzerd/fmdata)
 
-[![fmdata logo a C# client for FIleMaker](https://raw.githubusercontent.com/fuzzzerd/fmdata/master/images/color-cropped.png)](https://github.com/fuzzzerd/fmdata)
+## Packages
 
 | Package | Build Status | MyGet | Nuget |
 |---|---|---|---|
@@ -14,7 +13,7 @@
 
 There are plenty of ways to consume RESTful APIs from .NET, but the goal of this project is to provide a blended FileMaker-idiomatic and .NET-idiomatic experience for developers consuming data from FileMaker databases in .NET applications.
 
-The project is organized as three packages.
+The project is organized as three main packages, with a child Auth package for FileMaker Cloud:
 
 - `FMData` is the core and it contains the base and abstract classes utilized by the other implementations.
 - `FMData.Rest` is for the Data API and
@@ -24,6 +23,20 @@ The project is organized as three packages.
 > *Note: Xml support is experimental, if you need full cwp/xml coverage [check out fmDotNet](https://github.com/fuzzzerd/fmdotnet).*
 
 If you've found a bug, please submit a bug report. If you have a feature idea, open an issue and consider creating a pull request.
+
+## Repository Information
+
+[![FMData repository/commit activity the past year](https://img.shields.io/github/commit-activity/y/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)
+
+[![FMData issues](https://img.shields.io/github/issues/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/issues)
+
+[![CodeFactor](https://www.codefactor.io/repository/github/fuzzzerd/fmdata/badge)](https://www.codefactor.io/repository/github/fuzzzerd/fmdata)
+
+[![Code size in bytes](https://img.shields.io/github/languages/code-size/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)
+
+[![Language Count](https://img.shields.io/github/languages/count/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/commits/master)
+
+[![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE)
 
 ## Breaking changes
 
