@@ -720,10 +720,13 @@ namespace FMData.Rest
             // this hack is backward compatible for FMS17
             httpContent.Headers.ContentType.CharSet = null;
 
-            var httpRequest = new HttpRequestMessage(method, requestUri)
+            var httpRequest = new HttpRequestMessage(method, requestUri);
+
+            // don't include body content on requests for http get
+            if (method != HttpMethod.Get)
             {
-                Content = httpContent,
-            };
+                httpRequest.Content = httpContent;
+            }
 
             // include our authorization header
             httpRequest.Headers.Authorization = _authHeader;
