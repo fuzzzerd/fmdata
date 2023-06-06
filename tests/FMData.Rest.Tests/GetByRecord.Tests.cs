@@ -33,6 +33,10 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Get, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/{recordId}")
                     .Respond("application/json", DataApiResponses.SuccessfulGetById(recordId));
 
+            mockHttp.When(HttpMethod.Get, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/{recordId}")
+                .WithPartialContent("{\"query\":[],\"limit\":\"100\",\"offset\":\"1\"}")
+                .Throw(new Exception("Cannot include content with GET."));
+
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 
             // act
@@ -69,6 +73,10 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Get, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/{recordId}")
                     .Respond("application/json", DataApiResponses.SuccessfulGetByIdWithContainer(recordId, $"{server}/some-data-path"));
 
+            mockHttp.When(HttpMethod.Get, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/{recordId}")
+                .WithPartialContent("{\"query\":[],\"limit\":\"100\",\"offset\":\"1\"}")
+                .Throw(new Exception("Cannot include content with GET."));
+
             var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(), new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
 
             // act
@@ -97,6 +105,10 @@ namespace FMData.Rest.Tests
 
             mockHttp.When(HttpMethod.Get, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/{recordId}")
                     .Respond(HttpStatusCode.InternalServerError, "application/json", DataApiResponses.LayoutNotFound());
+
+            mockHttp.When(HttpMethod.Get, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/{recordId}")
+                .WithPartialContent("{\"query\":[],\"limit\":\"100\",\"offset\":\"1\"}")
+                .Throw(new Exception("Cannot include content with GET."));
 
             var fdc = new FileMakerRestClient(
                 mockHttp.ToHttpClient(),
