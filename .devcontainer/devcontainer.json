@@ -1,0 +1,16 @@
+{
+  "name": "C# (.NET)",
+
+  "image": "mcr.microsoft.com/devcontainers/dotnet:0-7.0",
+  "features": {},
+  "postCreateCommand": "dotnet restore",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "DavidAnson.vscode-markdownlint",
+        "editorconfig.editorconfig",
+        "ms-dotnettools.csharp"
+      ]
+    }
+  }
+}

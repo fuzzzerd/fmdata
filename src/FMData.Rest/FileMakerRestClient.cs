@@ -51,6 +51,7 @@ namespace FMData.Rest
         private DateTime _dataTokenLastUse = DateTime.MinValue;
 
         private readonly IAuthTokenProvider _authTokenProvider;
+        private readonly bool _useNewClientForContainers = false;
 
         #region Constructors
         /// <summary>
@@ -78,10 +79,25 @@ namespace FMData.Rest
         /// </summary>
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="authTokenProvider">Authentication provider</param>
-        public FileMakerRestClient(HttpClient client, IAuthTokenProvider authTokenProvider)
+        public FileMakerRestClient(
+            HttpClient client,
+            IAuthTokenProvider authTokenProvider) : this(client, authTokenProvider, false)
+        { }
+
+        /// <summary>
+        /// FM Data Constructor with HttpClient, ConnectionInfo and an authentication provider. Useful for Dependency Injection situations.
+        /// </summary>
+        /// <param name="client">The HttpClient instance to use.</param>
+        /// <param name="authTokenProvider">Authentication provider</param>
+        /// <param name="useNewClientForContainers">When set to true, will use a new http client to load container data that has isolated cookies and can work with ASP.NET Core DI/HttpClientFactory.</param>
+        public FileMakerRestClient(
+            HttpClient client,
+            IAuthTokenProvider authTokenProvider,
+            bool useNewClientForContainers)
             : base(client, authTokenProvider.ConnectionInfo)
         {
             _authTokenProvider = authTokenProvider;
+            _useNewClientForContainers = useNewClientForContainers;
 #if NETSTANDARD1_3
             var header = new System.Net.Http.Headers.ProductHeaderValue("FMData.Rest", "4");
             var userAgent = new System.Net.Http.Headers.ProductInfoHeaderValue(header);
@@ -1080,7 +1096,7 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// Utility method that must be overridden in implementations. Takes a container field url and populates a byte array utilizing the instance's http client.
+        /// Utility method that must be overridden in implementations. Takes a container field url and populates a byte array utilizing a new and cookie isolated <see href="HttpClient"/>.
         /// </summary>
         /// <param name="containerEndPoint">The container field to load.</param>
         /// <returns>An array of bytes with the data from the container field.</returns>
@@ -1089,11 +1105,21 @@ namespace FMData.Rest
             // build the request message
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, containerEndPoint);
 
-            // include auth token on the request
-            requestMessage.Headers.Authorization = _authHeader;
+            // if we're supposed to use new clients for processing containers or not
+            var client = _useNewClientForContainers ? new HttpClient(new HttpClientHandler()
+            {
+                CookieContainer = new CookieContainer()
+            }) : Client;
 
             // send the request out
-            var data = await Client.SendAsync(requestMessage).ConfigureAwait(false);
+            var data = await client.SendAsync(requestMessage).ConfigureAwait(false);
+
+            if (!data.IsSuccessStatusCode)
+            {
+                // try it again if we get a non-success
+                data = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, containerEndPoint)).ConfigureAwait(false);
+            }
+
             // read the bytes as a stream
             var dataBytes = await data.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             return dataBytes;
