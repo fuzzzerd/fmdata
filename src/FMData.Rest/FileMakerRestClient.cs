@@ -92,7 +92,7 @@ namespace FMData.Rest
         /// <param name="useNewClientForContainers">When set to true, will use a new http client to load container data that has isolated cookies and can work with ASP.NET Core DI/HttpClientFactory.</param>
         public FileMakerRestClient(
             HttpClient client,
-            IAuthTokenProvider authTokenProvider, 
+            IAuthTokenProvider authTokenProvider,
             bool useNewClientForContainers)
             : base(client, authTokenProvider.ConnectionInfo)
         {
