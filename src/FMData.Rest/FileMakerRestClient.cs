@@ -1080,7 +1080,7 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// Utility method that must be overridden in implementations. Takes a container field url and populates a byte array utilizing the instance's http client.
+        /// Utility method that must be overridden in implementations. Takes a container field url and populates a byte array utilizing a new and cookie isolated <see href="HttpClient"/>.
         /// </summary>
         /// <param name="containerEndPoint">The container field to load.</param>
         /// <returns>An array of bytes with the data from the container field.</returns>
@@ -1089,11 +1089,21 @@ namespace FMData.Rest
             // build the request message
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, containerEndPoint);
 
-            // include auth token on the request
-            requestMessage.Headers.Authorization = _authHeader;
-
+            var cookies = new CookieContainer();
+            var handler = new HttpClientHandler()
+            {
+                CookieContainer = cookies
+            };
+            var client = new HttpClient(handler);
             // send the request out
-            var data = await Client.SendAsync(requestMessage).ConfigureAwait(false);
+            var data = await client.SendAsync(requestMessage).ConfigureAwait(false);
+
+            if (!data.IsSuccessStatusCode)
+            {
+                // try it again if we get a non-success
+                data = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, containerEndPoint)).ConfigureAwait(false);
+            }
+
             // read the bytes as a stream
             var dataBytes = await data.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             return dataBytes;
