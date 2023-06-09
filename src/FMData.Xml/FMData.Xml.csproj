@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <MinVerMinimumMajorMinor>4.3</MinVerMinimumMajorMinor>
+    <MinVerMinimumMajorMinor>5.1</MinVerMinimumMajorMinor>
     <MinVerTagPrefix>v</MinVerTagPrefix>
     <MinVerDefaultPreReleaseIdentifiers>beta.0</MinVerDefaultPreReleaseIdentifiers>
   </PropertyGroup>
