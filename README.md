@@ -56,6 +56,8 @@ dotnet add package FMData.Rest
 
 The recommended way to consume this library is using a strongly typed model as follows.
 
+Please review the /tests/FMData.Rest.Tests/ project folder for expected usage flows.
+
 ### Setting up your model
 
 A model should roughly match a table in your solution. Its accessed via layout.
@@ -181,6 +183,15 @@ var client = new FileMakerRestClient("server", "fileName", "user", "pass"); // w
 var toFind = new Model { Name = "someName" };
 var results = await client.FindAsync(toFind, FMRecordIdMapper);
 // results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker FindRequest.
+```
+
+### Find with Data Info
+
+```csharp
+var toFind = new Model { Name = "someName" };
+var req = new FindRequest<Model>() { Layout = layout };
+req.AddQuery(toFind, false);
+var (data, info) = await fdc.SendAsync(req, true);
 ```
 
 Alternatively, if you create a calculated field `Get(RecordID)` and put it on your layout then map it the normal way.
