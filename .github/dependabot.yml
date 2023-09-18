@@ -5,7 +5,12 @@ updates:
     schedule:
       interval: daily
       timezone: America/Chicago
+    groups:
+      XUnit:
+        patterns:
+          - "xunit*" 
     open-pull-requests-limit: 10
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
