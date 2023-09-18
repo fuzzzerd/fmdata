@@ -8,7 +8,7 @@ updates:
     groups:
       XUnit:
         patterns:
-          - "xunit*" 
+          - "xunit*"
     open-pull-requests-limit: 10
 
   - package-ecosystem: "github-actions"
