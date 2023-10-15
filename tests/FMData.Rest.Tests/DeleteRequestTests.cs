@@ -25,6 +25,9 @@ namespace FMData.Rest.Tests
             mockHttp.When(HttpMethod.Delete, $"{server}/fmi/data/v1/databases/{file}/layouts/{layout}/records/*")
                 .Respond("application/json", DataApiResponses.SuccessfulDelete());
 
+            // specifically return all non-matched with 404 not found.
+            mockHttp.Fallback.Respond(HttpStatusCode.NotFound);
+
             var mockedClient = mockHttp.ToHttpClient();
 
             var fdc = new FileMakerRestClient(mockedClient, new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass });
