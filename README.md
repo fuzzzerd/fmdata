@@ -38,12 +38,6 @@ If you've found a bug, please submit a bug report. If you have a feature idea, o
 
 [![license](https://img.shields.io/github/license/fuzzzerd/fmdata.svg)](https://github.com/fuzzzerd/fmdata/blob/master/LICENSE)
 
-## Breaking changes
-
-> *Version 5 has breaking changes. Please [review the changes](https://github.com/fuzzzerd/fmdata/milestone/7?closed=1) prior to updating your project.*
----
-> *Version 4 has several breaking changes. Please [review the changes](https://github.com/fuzzzerd/fmdata/milestone/5?closed=1) prior to updating your project.*
-
 ## Installation
 
 Install via `dotnet add` or nuget. Stable releases are on NuGet and CI builds are on MyGet.
