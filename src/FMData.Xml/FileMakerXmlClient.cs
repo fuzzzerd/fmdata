@@ -104,10 +104,15 @@ namespace FMData.Xml
         {
             throw new NotImplementedException();
         }
-        /// <summary>
-        /// Finds records using a layout and a dictionary of strings as criteria.
-        /// </summary>
-        public override Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req)
+
+        /// <inheritdoc />
+        public override Task<IEnumerable<T>> FindAsync<T>(
+            string layout,
+            Dictionary<string, string> req,
+            int skip,
+            int take,
+            string script,
+            string scriptParameter)
         {
             throw new NotImplementedException();
         }

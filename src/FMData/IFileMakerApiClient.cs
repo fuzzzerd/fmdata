@@ -296,6 +296,27 @@ namespace FMData
         /// <param name="req"></param>
         /// <returns></returns>
         Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
+
+        /// <summary>
+        /// General purpose Find Request method. Supports additional syntaxes like the { "omit" : "true" } operation.
+        /// This method returns a strongly typed <see cref="IEnumerable{T}"/> but accepts a the more flexible <see cref="Dictionary{TKey, TValue}"/> request parameters.
+        /// </summary>
+        /// <typeparam name="T">the type of response objects to return.</typeparam>
+        /// <param name="layout">The layout to perform the find request on.</param>
+        /// <param name="req">The find request dictionary.</param>
+        /// <param name="skip">The number of records to skip.</param>
+        /// <param name="take">The number of records to return.</param>
+        /// <param name="script">The name of a script to run (or null)</param>
+        /// <param name="scriptParameter">The script parameter value (or null)</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
+        /// <remarks>Can't be a relay method, since we have to process the data specially to get our output</remarks>
+        Task<IEnumerable<T>> FindAsync<T>(
+            string layout,
+            Dictionary<string, string> req,
+            int skip,
+            int take,
+            string script,
+            string scriptParameter);
         #endregion
 
         #region Edit

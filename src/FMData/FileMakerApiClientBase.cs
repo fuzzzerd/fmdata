@@ -673,7 +673,23 @@ namespace FMData
         /// <param name="layout">The layout to perform the request on.</param>
         /// <param name="req">The dictionary of key/value pairs to find against.</param>
         /// <returns></returns>
-        public abstract Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
+        public virtual Task<IEnumerable<T>> FindAsync<T>(
+            string layout, Dictionary<string, string> req) => FindAsync<T>(
+                layout: layout,
+                req: req,
+                skip: 0,
+                take: 100,
+                script: null,
+                 scriptParameter: null);
+
+        /// <inheritdoc />
+        public abstract Task<IEnumerable<T>> FindAsync<T>(
+            string layout,
+            Dictionary<string, string> req,
+            int skip,
+            int take,
+            string script,
+            string scriptParameter);
 
         /// <summary>
         /// Get a single record by FileMaker RecordId
