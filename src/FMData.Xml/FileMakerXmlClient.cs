@@ -181,7 +181,7 @@ namespace FMData.Xml
         }
 
         /// <inheritdoc />
-        public override async Task<(IEnumerable<TResponse>, DataInfoModel)> SendAsync<TResponse, TRequest>(
+        public override async Task<(IEnumerable<TResponse>, DataInfoModel)> SendFindRequestAsync<TResponse, TRequest>(
             IFindRequest<TRequest> req,
             Func<TResponse, int, object> fmId = null,
             Func<TResponse, int, object> modId = null)

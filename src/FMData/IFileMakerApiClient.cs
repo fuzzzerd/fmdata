@@ -501,7 +501,7 @@ namespace FMData
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         /// <remarks>The data info portion of the response is always returned when correctly parsed.</remarks>
         /// <remarks>This method allows using separate Request and Response generics, which is useful when querying with dynamic input, but static output.</remarks>
-        Task<(IEnumerable<TResponse>, DataInfoModel)> SendAsync<TResponse, TRequest>(
+        Task<(IEnumerable<TResponse>, DataInfoModel)> SendFindRequestAsync<TResponse, TRequest>(
             IFindRequest<TRequest> req,
             Func<TResponse, int, object> fmId,
             Func<TResponse, int, object> modId) where TResponse : class, new();

@@ -55,7 +55,7 @@ namespace FMData.Rest.Tests
             Func<User, int, object> fMRecordIdMapper = (o, id) => o.FileMakerRecordId = id;
             Func<User, int, object> fMModIdMapper = (o, id) => o.FileMakerRecordId = id;
 
-            User response;
+            IEnumerable<User> response;
 
             response = await fdc.SendAsync(new FindRequest<User> { Layout = "layout" }, fMRecordIdMapper, fMModIdMapper);
 
@@ -334,7 +334,7 @@ namespace FMData.Rest.Tests
             req.AddQuery(toFind, false);
 
             // act
-            var (data, info) = await fdc.SendAsync<User, Dictionary<string, string>>(req, null, null);
+            var (data, info) = await fdc.SendFindRequestAsync<User, Dictionary<string, string>>(req, null, null);
 
             // assert
             Assert.NotEmpty(data);
@@ -365,7 +365,7 @@ namespace FMData.Rest.Tests
             req.AddQuery(toFind, false);
 
             // act
-            var (data, info) = await fdc.SendAsync<User, Dictionary<string, string>>(req, IdMap, null);
+            var (data, info) = await fdc.SendFindRequestAsync<User, Dictionary<string, string>>(req, IdMap, null);
 
             // assert
             Assert.NotEmpty(data);
@@ -396,7 +396,7 @@ namespace FMData.Rest.Tests
             req.AddQuery(toFind, false);
 
             // act
-            var (data, info) = await fdc.SendAsync<User, Dictionary<string, string>>(req, null, ModMap);
+            var (data, info) = await fdc.SendFindRequestAsync<User, Dictionary<string, string>>(req, null, ModMap);
 
             // assert
             Assert.NotEmpty(data);
@@ -427,7 +427,7 @@ namespace FMData.Rest.Tests
             req.AddQuery(toFind, false);
 
             // act
-            var (data, info) = await fdc.SendAsync<User, Dictionary<string, string>>(req, IdMap, ModMap);
+            var (data, info) = await fdc.SendFindRequestAsync<User, Dictionary<string, string>>(req, IdMap, ModMap);
 
             // assert
             Assert.NotEmpty(data);

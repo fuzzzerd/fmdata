@@ -652,7 +652,7 @@ namespace FMData
             Func<T, int, object> fmId,
             Func<T, int, object> modId) where T : class, new()
         {
-            var (data, _) = await SendAsync<T, T>(req, fmId, modId).ConfigureAwait(false);
+            var (data, _) = await SendFindRequestAsync(req, fmId, modId).ConfigureAwait(false);
             return data;
         }
 
@@ -663,11 +663,11 @@ namespace FMData
             Func<T, int, object> fmId = null,
             Func<T, int, object> modId = null) where T : class, new()
         {
-            return await SendAsync<T, T>(req, fmId, modId).ConfigureAwait(false);
+            return await SendFindRequestAsync(req, fmId, modId).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
-        public abstract Task<(IEnumerable<TResponse>, DataInfoModel)> SendAsync<TResponse, TRequest>(
+        public abstract Task<(IEnumerable<TResponse>, DataInfoModel)> SendFindRequestAsync<TResponse, TRequest>(
             IFindRequest<TRequest> req,
             Func<TResponse, int, object> fmId,
             Func<TResponse, int, object> modId) where TResponse : class, new();
