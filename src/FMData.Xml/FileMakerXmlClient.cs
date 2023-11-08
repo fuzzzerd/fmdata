@@ -243,7 +243,7 @@ namespace FMData.Xml
                     fmId?.Invoke(record.FieldData, record.RecordId);
                     modId?.Invoke(record.FieldData, record.ModId);
 
-                    update each record's FieldData instance with the contents of its PortalData
+                    // update each record's FieldData instance with the contents of its PortalData
                     var portals = typeof(TResponse).GetTypeInfo().DeclaredProperties.Where(p => p.GetCustomAttribute<PortalDataAttribute>() != null);
                     foreach (var portal in portals)
                     {
