@@ -271,21 +271,13 @@ namespace FMData.Rest
         /// <inheritdoc />
         public override async Task<IEnumerable<T>> FindAsync<T>(
             string layout,
-            Dictionary<string, string> req,
-            int skip,
-            int take,
-            string script,
-            string scriptParameter)
+            Dictionary<string, string> req)
         {
             if (string.IsNullOrEmpty(layout)) throw new ArgumentException("Layout is required on the request.");
 
             var fmdataRequest = new FindRequest<Dictionary<string, string>> { Layout = layout };
 
             fmdataRequest.AddQuery(req, false);
-
-            fmdataRequest.SetLimit(take).SetOffset(skip);
-
-            fmdataRequest.SetScript(scriptName: script, scriptParameter: scriptParameter);
 
             var response = await ExecuteRequestAsync(HttpMethod.Post, FindEndpoint(layout), fmdataRequest).ConfigureAwait(false);
 
@@ -299,6 +291,7 @@ namespace FMData.Rest
             try
             {
                 var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
                 var responseObject = JsonConvert.DeserializeObject<FindResponse<T>>(responseJson);
 
                 return responseObject.Response.Data.Select(d => d.FieldData);
@@ -547,20 +540,12 @@ namespace FMData.Rest
             }
         }
 
-        /// <summary>
-        /// Strongly typed find request.
-        /// </summary>
-        /// <typeparam name="T">The type of response objects to return.</typeparam>
-        /// <param name="req">The find request parameters.</param>
-        /// <param name="fmId">Function to assign the FileMaker RecordId to each instance of {T}.</param>
-        /// <param name="modId">Function to assign the FileMaker ModId to each instance of {T}.</param>
-        /// <param name="includeDataInfo">Indicates whether the data information portion should be parsed.</param>
-        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
-        public override async Task<(IEnumerable<T>, DataInfoModel)> SendAsync<T>(
-            IFindRequest<T> req,
+        /// <inheritdoc />
+        public override async Task<(IEnumerable<TResponse>, DataInfoModel)> SendAsync<TResponse, TRequest>(
+            IFindRequest<TRequest> req,
             bool includeDataInfo,
-            Func<T, int, object> fmId = null,
-            Func<T, int, object> modId = null)
+            Func<TResponse, int, object> fmId = null,
+            Func<TResponse, int, object> modId = null)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the find request.");
 
@@ -593,7 +578,7 @@ namespace FMData.Rest
                 }
 
                 // serialize JSON results into .NET objects
-                IList<T> searchResults = new List<T>();
+                IList<TResponse> searchResults = new List<TResponse>();
                 foreach (var result in results)
                 {
                     var searchResult = ConvertJTokenToInstance(fmId, modId, result);
@@ -621,7 +606,7 @@ namespace FMData.Rest
                 if (responseObject.Messages.Any(m => m.Code == "401"))
                 {
                     // FileMaker no records match the find request => empty list.
-                    return (new List<T>(), new DataInfoModel());
+                    return (new List<TResponse>(), new DataInfoModel());
                 }
                 // throw FMDataException for anything not a 401.
                 throw new FMDataException(
@@ -633,7 +618,7 @@ namespace FMData.Rest
             // not found, so return empty list
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                return (new List<T>(), new DataInfoModel());
+                return (new List<TResponse>(), new DataInfoModel());
             }
 
             // other error

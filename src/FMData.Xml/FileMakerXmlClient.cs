@@ -108,11 +108,7 @@ namespace FMData.Xml
         /// <inheritdoc />
         public override Task<IEnumerable<T>> FindAsync<T>(
             string layout,
-            Dictionary<string, string> req,
-            int skip,
-            int take,
-            string script,
-            string scriptParameter)
+            Dictionary<string, string> req)
         {
             throw new NotImplementedException();
         }
@@ -182,20 +178,12 @@ namespace FMData.Xml
             throw new Exception("Unable to complete request");
         }
 
-        /// <summary>
-        /// Executes a Find Request and returns the matching objects projected by the type parameter.
-        /// </summary>
-        /// <typeparam name="T">The type to project the results against.</typeparam>
-        /// <param name="req">The Find Request Command.</param>
-        /// <param name="includeDataInfo">Return the data info portion of the request.</param>
-        /// <param name="fmId">The function to map FileMaker Record Ids to an instance of T.</param>
-        /// <param name="modId">The function to map FileMaker modId to an instance of T</param>
-        /// <returns>The projected results matching the find request.</returns>
-        public override async Task<(IEnumerable<T>, DataInfoModel)> SendAsync<T>(
-            IFindRequest<T> req,
+        /// <inheritdoc />
+        public override async Task<(IEnumerable<TResponse>, DataInfoModel)> SendAsync<TResponse, TRequest>(
+            IFindRequest<TRequest> req,
             bool includeDataInfo,
-            Func<T, int, object> fmId = null,
-            Func<T, int, object> modId = null)
+            Func<TResponse, int, object> fmId = null,
+            Func<TResponse, int, object> modId = null)
         {
             var response = await ExecuteRequestAsync(req).ConfigureAwait(false);
 
@@ -230,11 +218,11 @@ namespace FMData.Xml
                 var records = xDocument
                     .Descendants(_ns + "resultset")
                     .Elements(_ns + "record")
-                    .Select(r => new RecordBase<T, Dictionary<string, IEnumerable<Dictionary<string, object>>>>
+                    .Select(r => new RecordBase<TResponse, Dictionary<string, IEnumerable<Dictionary<string, object>>>>
                     {
                         RecordId = Convert.ToInt32(r.Attribute("record-id").Value),
                         ModId = Convert.ToInt32(r.Attribute("mod-id").Value),
-                        FieldData = FieldDataToDictionary(metadata, r.Elements(_ns + "field")).ToObject<T>(),
+                        FieldData = FieldDataToDictionary(metadata, r.Elements(_ns + "field")).ToObject<TResponse>(),
                         PortalData = r.Elements(_ns + "relatedset")
                             .ToDictionary(
                                 k => k.Attribute("table").Value,
@@ -255,8 +243,8 @@ namespace FMData.Xml
                     fmId?.Invoke(record.FieldData, record.RecordId);
                     modId?.Invoke(record.FieldData, record.ModId);
 
-                    // TODO: update each record's FieldData instance with the contents of its PortalData
-                    var portals = typeof(T).GetTypeInfo().DeclaredProperties.Where(p => p.GetCustomAttribute<PortalDataAttribute>() != null);
+                    update each record's FieldData instance with the contents of its PortalData
+                    var portals = typeof(TResponse).GetTypeInfo().DeclaredProperties.Where(p => p.GetCustomAttribute<PortalDataAttribute>() != null);
                     foreach (var portal in portals)
                     {
                         var portalDataAttr = portal.GetCustomAttribute<PortalDataAttribute>();
@@ -319,7 +307,6 @@ namespace FMData.Xml
 
         /// <summary>
         /// Upload data to a container field.
-        /// TODO: Workaround with B64 encoding and container auto-enter?
         /// </summary>
         public override Task<IEditResponse> UpdateContainerAsync(string layout, int recordId, string fieldName, string fileName, int repetition, byte[] content)
         {
@@ -400,19 +387,13 @@ namespace FMData.Xml
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         public override Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync()
         {
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         public override Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync()
         {
             throw new NotImplementedException();
