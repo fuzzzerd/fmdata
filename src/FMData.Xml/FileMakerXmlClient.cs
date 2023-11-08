@@ -183,7 +183,6 @@ namespace FMData.Xml
         /// <inheritdoc />
         public override async Task<(IEnumerable<TResponse>, DataInfoModel)> SendAsync<TResponse, TRequest>(
             IFindRequest<TRequest> req,
-            bool includeDataInfo,
             Func<TResponse, int, object> fmId = null,
             Func<TResponse, int, object> modId = null)
         {
