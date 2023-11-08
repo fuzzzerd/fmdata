@@ -269,6 +269,7 @@ namespace FMData.Rest
 
         #region Special Implementations
         /// <inheritdoc />
+        [Obsolete("Use SendAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/326")]
         public override async Task<IEnumerable<T>> FindAsync<T>(
             string layout,
             Dictionary<string, string> req)
@@ -308,6 +309,7 @@ namespace FMData.Rest
         /// </summary>
         /// <param name="req">The find request field/value dictionary to pass into FileMaker server.</param>
         /// <returns>A <see cref="Dictionary{String,String}"/> wrapped in a FindResponse containing both record data and portal data.</returns>
+        [Obsolete("Use SendAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/326")]
         public override async Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
