@@ -100,14 +100,14 @@ namespace FMData.Xml
         /// <summary>
         /// Find a record using a dictionary of input parameters.
         /// </summary>
-        [Obsolete("Use SendAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/326")]
+        [Obsolete("Use SendFindRequestAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/328")]
         public override Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        [Obsolete("Use SendAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/326")]
+        [Obsolete("Use SendFindRequestAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/328")]
         public override Task<IEnumerable<T>> FindAsync<T>(
             string layout,
             Dictionary<string, string> req)
@@ -181,7 +181,7 @@ namespace FMData.Xml
         }
 
         /// <inheritdoc />
-        public override async Task<(IEnumerable<TResponse>, DataInfoModel)> SendAsync<TResponse, TRequest>(
+        public override async Task<(IEnumerable<TResponse>, DataInfoModel)> SendFindRequestAsync<TResponse, TRequest>(
             IFindRequest<TRequest> req,
             Func<TResponse, int, object> fmId = null,
             Func<TResponse, int, object> modId = null)

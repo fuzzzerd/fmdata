@@ -295,7 +295,7 @@ namespace FMData
         /// <param name="layout"></param>
         /// <param name="req"></param>
         /// <returns></returns>
-        [Obsolete("Use SendAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/326")]
+        [Obsolete("Use SendFindRequestAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/328")]
         Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
         #endregion
 
@@ -444,7 +444,7 @@ namespace FMData
         /// Find a record or records matching the request.
         /// </summary>
         /// <param name="req">Find request.</param>
-        [Obsolete("Use SendAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/326")]
+        [Obsolete("Use SendFindRequestAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/328")]
         Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req);
 
         /// <summary>
@@ -501,7 +501,7 @@ namespace FMData
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         /// <remarks>The data info portion of the response is always returned when correctly parsed.</remarks>
         /// <remarks>This method allows using separate Request and Response generics, which is useful when querying with dynamic input, but static output.</remarks>
-        Task<(IEnumerable<TResponse>, DataInfoModel)> SendAsync<TResponse, TRequest>(
+        Task<(IEnumerable<TResponse>, DataInfoModel)> SendFindRequestAsync<TResponse, TRequest>(
             IFindRequest<TRequest> req,
             Func<TResponse, int, object> fmId,
             Func<TResponse, int, object> modId) where TResponse : class, new();
