@@ -324,7 +324,6 @@ namespace FMData.Rest.Tests
             Func<User, int, object> IdMap = (o, id) => o.FileMakerRecordId = id;
             Func<User, int, object> ModMap = (o, id) => o.FileMakerModId = id;
 
-
             var layout = "the-layout";
 
             mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/sessions")
@@ -356,7 +355,6 @@ namespace FMData.Rest.Tests
             Func<User, int, object> IdMap = (o, id) => o.FileMakerRecordId = id;
             Func<User, int, object> ModMap = (o, id) => o.FileMakerModId = id;
 
-
             var layout = "the-layout";
 
             mockHttp.When(HttpMethod.Post, $"{FindTestsHelpers.Server}/fmi/data/v1/databases/{FindTestsHelpers.File}/sessions")
@@ -387,7 +385,6 @@ namespace FMData.Rest.Tests
             var mockHttp = new MockHttpMessageHandler();
             Func<User, int, object> IdMap = (o, id) => o.FileMakerRecordId = id;
             Func<User, int, object> ModMap = (o, id) => o.FileMakerModId = id;
-
 
             var layout = "the-layout";
 
