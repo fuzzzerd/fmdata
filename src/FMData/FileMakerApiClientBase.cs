@@ -628,6 +628,7 @@ namespace FMData
         /// <summary>
         /// Send a Find Record request to the FileMaker API.
         /// </summary>
+        [Obsolete("Use SendAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/326")]
         public abstract Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req);
 
         /// <summary>
@@ -673,7 +674,9 @@ namespace FMData
             Func<TResponse, int, object> modId = null) where TResponse : class, new();
 
         #endregion
+
         /// <inheritdoc />
+        [Obsolete("Use SendAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/326")]
         public abstract Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
 
         /// <summary>

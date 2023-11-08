@@ -166,7 +166,7 @@ namespace FMData
         /// </summary>
         /// <param name="database">The database to query.</param>
         /// <returns>The names of the layouts in the specified database.</returns>
-        [Obsolete]
+        [Obsolete("Cannot call Metadata method on different file than open file. https://github.com/fuzzzerd/fmdata/issues/117")]
         Task<IReadOnlyCollection<LayoutListItem>> GetLayoutsAsync(string database);
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace FMData
         /// <param name="layout">The layout to get data about.</param>
         /// <param name="recordId">Optional RecordId, for getting layout data specific to a record. ValueLists, etc.</param>
         /// <returns>An instance of the LayoutMetadata class for the specified layout.</returns>
-        [Obsolete]
+        [Obsolete("Cannot call Metadata method on different file than open file. https://github.com/fuzzzerd/fmdata/issues/117")]
         Task<LayoutMetadata> GetLayoutAsync(string database, string layout, int? recordId = null);
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace FMData
         /// </summary>
         /// <param name="database">The database to query.</param>
         /// <returns>The names of the scripts in the specified database.</returns>
-        [Obsolete]
+        [Obsolete("Cannot call Metadata method on different file than open file. https://github.com/fuzzzerd/fmdata/issues/117")]
         Task<IReadOnlyCollection<ScriptListItem>> GetScriptsAsync(string database);
 
         /// <summary>
@@ -295,6 +295,7 @@ namespace FMData
         /// <param name="layout"></param>
         /// <param name="req"></param>
         /// <returns></returns>
+        [Obsolete("Use SendAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/326")]
         Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
         #endregion
 
@@ -443,6 +444,7 @@ namespace FMData
         /// Find a record or records matching the request.
         /// </summary>
         /// <param name="req">Find request.</param>
+        [Obsolete("Use SendAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/326")]
         Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req);
 
         /// <summary>
