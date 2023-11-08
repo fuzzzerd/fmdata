@@ -20,7 +20,7 @@ namespace FMData
         /// </summary>
         /// <param name="data">The initial find request data.</param>
         /// <typeparam name="T">The type used for the create request.</typeparam>
-        /// <returns>An IFindRequest{T} instance setup per the initial query paramater.</returns>
+        /// <returns>An IFindRequest{T} instance setup per the initial query parameter.</returns>
         ICreateRequest<T> GenerateCreateRequest<T>(T data);
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace FMData
         /// </summary>
         /// <param name="data">The initial edit data request.</param>
         /// <typeparam name="T">The type used for the edit request.</typeparam>
-        /// <returns>An IEditRequest{T} instance setup per the initial query paramater.</returns>
+        /// <returns>An IEditRequest{T} instance setup per the initial query parameter.</returns>
         IEditRequest<T> GenerateEditRequest<T>(T data);
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace FMData
         /// </summary>
         /// <param name="initialQuery">The initial find request data.</param>
         /// <typeparam name="T">The type used for the find request.</typeparam>
-        /// <returns>An IFindRequest{T} instance setup per the initial query paramater.</returns>
+        /// <returns>An IFindRequest{T} instance setup per the initial query parameter.</returns>
         IFindRequest<T> GenerateFindRequest<T>(T initialQuery);
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace FMData
         #endregion
 
         /// <summary>
-        /// Runs a script with the specified layout context and with an optional (null/empty OK) paramater.
+        /// Runs a script with the specified layout context and with an optional (null/empty OK) parameter.
         /// </summary>
         /// <param name="layout">The layout to use for the context of the script.</param>
         /// <param name="script">The name of the script to run.</param>
@@ -353,7 +353,7 @@ namespace FMData
         /// <summary>
         /// Delete a record by FileMaker RecordId. 
         /// </summary>
-        /// <param name="recId">The filemaker RecordId to delete.</param>
+        /// <param name="recId">The FileMaker RecordId to delete.</param>
         /// <typeparam name="T">Used to pull the [TableAttribute] value to determine the layout to use.</typeparam>
         /// <returns></returns>
         /// <remarks>Use the other delete overload if the class does not use the [Table] attribute.</remarks>
@@ -487,6 +487,23 @@ namespace FMData
             bool includeDataInfo,
             Func<T, int, object> fmId = null,
             Func<T, int, object> modId = null) where T : class, new();
+
+        /// <summary>
+        /// Find a record or records matching the request and include a data info model as well as the response.
+        /// </summary>
+        /// <typeparam name="TResponse">The Response type.</typeparam>
+        /// <typeparam name="TRequest">The Request type.</typeparam>
+        /// <param name="req">The find request parameters.</param>
+        /// <param name="fmId">Function to assign the FileMaker RecordId to each instance of {T}.</param>
+        /// <param name="modId">Function to assign the FileMaker ModId to each instance of {T}.</param>
+        /// <param name="includeDataInfo">Indicates whether the data information portion should be parsed.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
+        /// <remarks>The data info portion of the response is always returned when correctly parsed.</remarks>
+        Task<(IEnumerable<TResponse>, DataInfoModel)> SendAsync<TResponse, TRequest>(
+            IFindRequest<TRequest> req,
+            bool includeDataInfo,
+            Func<TResponse, int, object> fmId = null,
+            Func<TResponse, int, object> modId = null) where TResponse : class, new();
 
         /// <summary>
         /// Edit record.

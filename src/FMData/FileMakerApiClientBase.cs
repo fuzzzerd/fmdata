@@ -651,28 +651,29 @@ namespace FMData
             Func<T, int, object> fmId,
             Func<T, int, object> modId) where T : class, new()
         {
-            var (data, info) = await SendAsync(req, false, fmId, modId).ConfigureAwait(false);
+            var (data, _) = await SendAsync<T, T>(req, false, fmId, modId).ConfigureAwait(false);
             return data;
         }
 
-        /// <summary>
-        /// Send a Find Record request to the FileMaker API.
-        /// </summary>
-        public abstract Task<(IEnumerable<T>, DataInfoModel)> SendAsync<T>(
+        /// <inheritdoc />
+        public virtual async Task<(IEnumerable<T>, DataInfoModel)> SendAsync<T>(
             IFindRequest<T> req,
             bool includeDataInfo,
             Func<T, int, object> fmId = null,
-            Func<T, int, object> modId = null) where T : class, new();
+            Func<T, int, object> modId = null) where T : class, new()
+        {
+            return await SendAsync<T, T>(req, includeDataInfo, fmId, modId).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc />
+        public abstract Task<(IEnumerable<TResponse>, DataInfoModel)> SendAsync<TResponse, TRequest>(
+            IFindRequest<TRequest> req,
+            bool includeDataInfo,
+            Func<TResponse, int, object> fmId = null,
+            Func<TResponse, int, object> modId = null) where TResponse : class, new();
 
         #endregion
-
-        /// <summary>
-        /// Find a record with utilizing a class instance to define the find request field values.
-        /// </summary>
-        /// <typeparam name="T">The response type to extract and return.</typeparam>
-        /// <param name="layout">The layout to perform the request on.</param>
-        /// <param name="req">The dictionary of key/value pairs to find against.</param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public abstract Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
 
         /// <summary>
