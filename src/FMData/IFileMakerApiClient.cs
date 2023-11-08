@@ -491,21 +491,20 @@ namespace FMData
             Func<T, int, object> modId = null) where T : class, new();
 
         /// <summary>
-        /// Find a record or records matching the request and include a data info model as well as the response.
+        /// Find a record or records matching the request and include a data info model as well as the response. 
         /// </summary>
         /// <typeparam name="TResponse">The Response type.</typeparam>
         /// <typeparam name="TRequest">The Request type.</typeparam>
         /// <param name="req">The find request parameters.</param>
         /// <param name="fmId">Function to assign the FileMaker RecordId to each instance of {T}.</param>
         /// <param name="modId">Function to assign the FileMaker ModId to each instance of {T}.</param>
-        /// <param name="includeDataInfo">Indicates whether the data information portion should be parsed.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         /// <remarks>The data info portion of the response is always returned when correctly parsed.</remarks>
+        /// <remarks>This method allows using separate Request and Response generics, which is useful when querying with dynamic input, but static output.</remarks>
         Task<(IEnumerable<TResponse>, DataInfoModel)> SendAsync<TResponse, TRequest>(
             IFindRequest<TRequest> req,
-            bool includeDataInfo,
-            Func<TResponse, int, object> fmId = null,
-            Func<TResponse, int, object> modId = null) where TResponse : class, new();
+            Func<TResponse, int, object> fmId,
+            Func<TResponse, int, object> modId) where TResponse : class, new();
 
         /// <summary>
         /// Edit record.

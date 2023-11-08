@@ -466,7 +466,7 @@ namespace FMData
                 .SetOffset(skip);
             req.Script = script;
             req.ScriptParameter = scriptParameter;
-            return SendAsync(req, fmIdFunc, fmModIdFunc);
+            return SendAsync<T>(req, fmIdFunc, fmModIdFunc);
         }
 
         /// <summary>
@@ -642,7 +642,7 @@ namespace FMData
         /// </summary>
         public virtual Task<IEnumerable<T>> SendAsync<T>(
             IFindRequest<T> req,
-            Func<T, int, object> fmId) where T : class, new() => SendAsync(req, fmId, null);
+            Func<T, int, object> fmId) where T : class, new() => SendAsync<T>(req, fmId, null);
 
         /// <summary>
         /// Send a Find Record request to the FileMaker API.
@@ -652,7 +652,7 @@ namespace FMData
             Func<T, int, object> fmId,
             Func<T, int, object> modId) where T : class, new()
         {
-            var (data, _) = await SendAsync<T, T>(req, false, fmId, modId).ConfigureAwait(false);
+            var (data, _) = await SendAsync<T, T>(req, fmId, modId).ConfigureAwait(false);
             return data;
         }
 
@@ -663,15 +663,14 @@ namespace FMData
             Func<T, int, object> fmId = null,
             Func<T, int, object> modId = null) where T : class, new()
         {
-            return await SendAsync<T, T>(req, includeDataInfo, fmId, modId).ConfigureAwait(false);
+            return await SendAsync<T, T>(req, fmId, modId).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         public abstract Task<(IEnumerable<TResponse>, DataInfoModel)> SendAsync<TResponse, TRequest>(
             IFindRequest<TRequest> req,
-            bool includeDataInfo,
-            Func<TResponse, int, object> fmId = null,
-            Func<TResponse, int, object> modId = null) where TResponse : class, new();
+            Func<TResponse, int, object> fmId,
+            Func<TResponse, int, object> modId) where TResponse : class, new();
 
         #endregion
 
