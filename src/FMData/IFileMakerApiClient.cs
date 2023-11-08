@@ -295,7 +295,7 @@ namespace FMData
         /// <param name="layout"></param>
         /// <param name="req"></param>
         /// <returns></returns>
-        [Obsolete("Use SendAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/326")]
+        [Obsolete("Use SendFindRequestAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/328")]
         Task<IEnumerable<T>> FindAsync<T>(string layout, Dictionary<string, string> req);
         #endregion
 
@@ -444,7 +444,7 @@ namespace FMData
         /// Find a record or records matching the request.
         /// </summary>
         /// <param name="req">Find request.</param>
-        [Obsolete("Use SendAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/326")]
+        [Obsolete("Use SendFindRequestAsync<TResponse, TRequest>() instead. See also: https://github.com/fuzzzerd/fmdata/pull/328")]
         Task<IFindResponse<Dictionary<string, string>>> SendAsync(IFindRequest<Dictionary<string, string>> req);
 
         /// <summary>
