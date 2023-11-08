@@ -14,6 +14,7 @@ namespace FMData.Rest.Tests
     public class FindRequestTests
     {
         [Fact]
+        [Obsolete]
         public async Task SendAsync_Find_Should_ReturnData()
         {
             var fdc = FindTestsHelpers.GetMockedFDC();
@@ -36,6 +37,7 @@ namespace FMData.Rest.Tests
         }
 
         [Fact]
+        [Obsolete]
         public async Task SendAsync_FindWithoutQuery_ShouldConvertToGetRange_AndReturnMany()
         {
             var fdc = FindTestsHelpers.GetMockedFDC();
@@ -46,7 +48,8 @@ namespace FMData.Rest.Tests
         }
 
         [Fact]
-        public async Task SendAsync_FindWithoutlayout_ShouldThrowArgumentException()
+        [Obsolete]
+        public async Task SendAsync_FindWithoutLayout_ShouldThrowArgumentException()
         {
             var fdc = FindTestsHelpers.GetMockedFDC();
 
@@ -166,6 +169,7 @@ namespace FMData.Rest.Tests
         }
 
         [Fact]
+        [Obsolete]
         public async Task SendAsync_Dictionary_WithPortals_ShouldHaveData()
         {
             // arrange
