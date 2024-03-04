@@ -49,7 +49,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
-    <PackageReference Include="MinVer" Version="4.3.0" PrivateAssets="All" />
+    <PackageReference Include="MinVer" Version="5.0.0" PrivateAssets="All" />
     <PackageReference Include="Amazon.Extensions.CognitoAuthentication" Version="2.5.2" />
     <PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="3.7.6.4" />
   </ItemGroup>
