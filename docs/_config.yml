@@ -1,0 +1,17 @@
+title: A FileMaker Data API Client
+description: >- # this means to ignore newlines until "baseurl:"
+  A simple and flexible FileMaker Data API Client for .NET. Use FMData to integrate your FileMaker data into .NET websites and applications.
+baseurl: "" # the subpath of your site, e.g. /blog
+url: https://fmdata.io # the base hostname & protocol for your site, e.g. http://example.com
+github_username: fuzzzerd
+logo: /images/color-cropped.png
+twitter:
+  username: natebross
+  card: summary
+
+# Build settings
+remote_theme: just-the-docs/just-the-docs
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-avatar
