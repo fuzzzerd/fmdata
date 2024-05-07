@@ -8,7 +8,9 @@ on:   # yamllint disable-line rule:truthy
     # The branches below must be a subset of the branches above
     branches: [master]
 
-permissions: read-all
+permissions: 
+  contents: read
+  statuses: write
 
 jobs:
   analyze:
