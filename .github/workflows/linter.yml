@@ -12,6 +12,8 @@ name: Lint Code Base
 on:   # yamllint disable-line rule:truthy
   pull_request:
 
+permissions: read-all
+
 ###############
 # Set the Job #
 ###############
@@ -40,7 +42,7 @@ jobs:
       # Run Linter against code base #
       ################################
       - name: Lint Code Base
-        uses: github/super-linter@v5.0.0
+        uses: github/super-linter@v6
         env:
           VALIDATE_ALL_CODEBASE: false
           FILTER_REGEX_EXCLUDE: README.md
