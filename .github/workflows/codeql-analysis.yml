@@ -9,8 +9,9 @@ on:   # yamllint disable-line rule:truthy
     branches: [master]
 
 permissions:
+  actions: read
   contents: read
-  statuses: write
+  security-events: write
 
 jobs:
   analyze:
