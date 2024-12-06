@@ -265,24 +265,12 @@ namespace FMData.Rest.Tests
             var file = "test-file";
             var user = "unit";
             var pass = "test";
-            var connectionInfo = new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass };
+            var connectionInfo = new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass, RestTargetVersion = targetVersion };
 
-            if (targetVersion != null)
-            {
-                return new List<FileMakerRestClient>(){
-                    new(server, file, user, pass, targetVersion.Value),
-                    new(mockHttp.ToHttpClient(), connectionInfo, targetVersion.Value),
-                    new(mockHttp.ToHttpClient(), new DefaultAuthTokenProvider(connectionInfo), targetVersion.Value)
-                };
-            }
-            else
-            {
-                return new List<FileMakerRestClient>(){
-                    new(server, file, user, pass),
-                    new(mockHttp.ToHttpClient(), connectionInfo),
-                    new(mockHttp.ToHttpClient(), new DefaultAuthTokenProvider(connectionInfo))
-                };
-            }
+            return [
+                new(mockHttp.ToHttpClient(), connectionInfo),
+                new(mockHttp.ToHttpClient(), new DefaultAuthTokenProvider(connectionInfo))
+                ];
         }
     }
 }

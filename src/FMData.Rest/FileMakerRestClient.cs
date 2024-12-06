@@ -65,16 +65,15 @@ namespace FMData.Rest
         /// <param name="targetVersion">Version of the DataAPI endpoint to use. Default is v1.</param>
         [Obsolete("Creates a new HttpClient for this instance, and is generally not good. Inject a managed client.")]
         public FileMakerRestClient(string fmsUri, string file, string user, string pass, RestTargetVersion targetVersion = RestTargetVersion.v1)
-            : this(new HttpClient(), new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }, targetVersion) { }
+            : this(new HttpClient(), new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass, RestTargetVersion = targetVersion }) { }
 
         /// <summary>
         /// FM Data Constructor with HttpClient and ConnectionInfo. Useful for Dependency Injection situations.
         /// </summary>
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="conn">The connection information for FMS.</param>
-        /// <param name="targetVersion">Version of the DataAPI endpoint to use. Default is v1.</param>
-        public FileMakerRestClient(HttpClient client, ConnectionInfo conn, RestTargetVersion targetVersion = RestTargetVersion.v1)
-            : this(client, new DefaultAuthTokenProvider(conn), targetVersion)
+        public FileMakerRestClient(HttpClient client, ConnectionInfo conn)
+            : this(client, new DefaultAuthTokenProvider(conn))
         { }
 
         /// <summary>
@@ -82,11 +81,9 @@ namespace FMData.Rest
         /// </summary>
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="authTokenProvider">Authentication provider</param>
-        /// <param name="targetVersion">Version of the DataAPI endpoint to use. Default is v1.</param>
         public FileMakerRestClient(
             HttpClient client,
-            IAuthTokenProvider authTokenProvider,
-            RestTargetVersion targetVersion = RestTargetVersion.v1) : this(client, authTokenProvider, false, targetVersion)
+            IAuthTokenProvider authTokenProvider) : this(client, authTokenProvider, false)
         { }
 
         /// <summary>
@@ -95,19 +92,18 @@ namespace FMData.Rest
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="authTokenProvider">Authentication provider</param>
         /// <param name="useNewClientForContainers">When set to true, will use a new http client to load container data that has isolated cookies and can work with ASP.NET Core DI/HttpClientFactory.</param>
-        /// <param name="targetVersion">Version of the DataAPI endpoint to use. Default is v1.</param>
         public FileMakerRestClient(
             HttpClient client,
             IAuthTokenProvider authTokenProvider,
-            bool useNewClientForContainers,
-            RestTargetVersion targetVersion = RestTargetVersion.v1)
+            bool useNewClientForContainers)
             : base(client, authTokenProvider.ConnectionInfo)
         {
             _authTokenProvider = authTokenProvider;
             _useNewClientForContainers = useNewClientForContainers;
-            switch (targetVersion)
+            switch (_authTokenProvider.ConnectionInfo?.RestTargetVersion)
             {
                 case RestTargetVersion.v1:
+                case null:
                     _targetVersion = "v1";
                     break;
                 case RestTargetVersion.v2:
