@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
@@ -6,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using FMData.Rest.Requests;
 using FMData.Rest.Tests.TestModels;
+using Newtonsoft.Json.Linq;
 using RichardSzalay.MockHttp;
 using Xunit;
 
@@ -196,6 +198,91 @@ namespace FMData.Rest.Tests
             // assert
             var responseDataContainsResult = response.Any(r => r.Created == DateTime.ParseExact("03/29/2018 15:22:09", "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture));
             Assert.True(responseDataContainsResult);
+        }
+
+
+        [Fact]
+        public void Test_EndpointVersion_Default()
+        {
+            // arrange
+            var expected = "http://localhost/fmi/data/v1/databases/test-file/sessions";
+            var testClients = CreateEndpointTestClients(null);
+
+            // assert
+            foreach (var client in testClients)
+            {
+                Assert.Equal(expected, client.AuthEndpoint());
+            }
+        }
+
+        [Fact]
+        public void Test_EndpointVersion_v1()
+        {
+            // arrange
+            var expected = "http://localhost/fmi/data/v1/databases/test-file/sessions";
+            var testClients = CreateEndpointTestClients(RestTargetVersion.v1);
+
+            // assert
+            foreach (var client in testClients)
+            {
+                Assert.Equal(expected, client.AuthEndpoint());
+            }
+        }
+
+        [Fact]
+        public void Test_EndpointVersion_v2()
+        {
+            // arrange
+            var expected = "http://localhost/fmi/data/v2/databases/test-file/sessions";
+            var testClients = CreateEndpointTestClients(RestTargetVersion.v2);
+
+            // assert
+            foreach (var client in testClients)
+            {
+                Assert.Equal(expected, client.AuthEndpoint());
+            }
+        }
+
+        [Fact]
+        public void Test_EndpointVersion_vLatest()
+        {
+            // arrange
+            var expected = "http://localhost/fmi/data/vLatest/databases/test-file/sessions";
+            var testClients = CreateEndpointTestClients(RestTargetVersion.vLatest);
+
+            // assert
+            foreach (var client in testClients)
+            {
+                Assert.Equal(expected, client.AuthEndpoint());
+            }
+        }
+
+        private IEnumerable<FileMakerRestClient> CreateEndpointTestClients(RestTargetVersion? targetVersion)
+        {
+
+            var mockHttp = new MockHttpMessageHandler();
+            var server = "http://localhost";
+            var file = "test-file";
+            var user = "unit";
+            var pass = "test";
+            var connectionInfo = new ConnectionInfo { FmsUri = server, Database = file, Username = user, Password = pass };
+
+            if (targetVersion != null)
+            {
+                return new List<FileMakerRestClient>(){
+                    new(server, file, user, pass, targetVersion.Value),
+                    new(mockHttp.ToHttpClient(), connectionInfo, targetVersion.Value),
+                    new(mockHttp.ToHttpClient(), new DefaultAuthTokenProvider(connectionInfo), targetVersion.Value)
+                };
+            }
+            else
+            {
+                return new List<FileMakerRestClient>(){
+                    new(server, file, user, pass),
+                    new(mockHttp.ToHttpClient(), connectionInfo),
+                    new(mockHttp.ToHttpClient(), new DefaultAuthTokenProvider(connectionInfo))
+                };
+            }
         }
     }
 }

@@ -52,6 +52,7 @@ namespace FMData.Rest
 
         private readonly IAuthTokenProvider _authTokenProvider;
         private readonly bool _useNewClientForContainers = false;
+        private readonly string _targetVersion = "v1";
 
         #region Constructors
         /// <summary>
@@ -61,17 +62,19 @@ namespace FMData.Rest
         /// <param name="file">Name of the FileMaker Database to connect to.</param>
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
+        /// <param name="targetVersion">Version of the DataAPI endpoint to use. Default is v1.</param>
         [Obsolete("Creates a new HttpClient for this instance, and is generally not good. Inject a managed client.")]
-        public FileMakerRestClient(string fmsUri, string file, string user, string pass)
-            : this(new HttpClient(), new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }) { }
+        public FileMakerRestClient(string fmsUri, string file, string user, string pass, RestTargetVersion targetVersion = RestTargetVersion.v1)
+            : this(new HttpClient(), new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }, targetVersion) { }
 
         /// <summary>
         /// FM Data Constructor with HttpClient and ConnectionInfo. Useful for Dependency Injection situations.
         /// </summary>
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="conn">The connection information for FMS.</param>
-        public FileMakerRestClient(HttpClient client, ConnectionInfo conn)
-            : this(client, new DefaultAuthTokenProvider(conn))
+        /// <param name="targetVersion">Version of the DataAPI endpoint to use. Default is v1.</param>
+        public FileMakerRestClient(HttpClient client, ConnectionInfo conn, RestTargetVersion targetVersion = RestTargetVersion.v1)
+            : this(client, new DefaultAuthTokenProvider(conn), targetVersion)
         { }
 
         /// <summary>
@@ -79,9 +82,11 @@ namespace FMData.Rest
         /// </summary>
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="authTokenProvider">Authentication provider</param>
+        /// <param name="targetVersion">Version of the DataAPI endpoint to use. Default is v1.</param>
         public FileMakerRestClient(
             HttpClient client,
-            IAuthTokenProvider authTokenProvider) : this(client, authTokenProvider, false)
+            IAuthTokenProvider authTokenProvider,
+            RestTargetVersion targetVersion = RestTargetVersion.v1) : this(client, authTokenProvider, false, targetVersion)
         { }
 
         /// <summary>
@@ -90,14 +95,28 @@ namespace FMData.Rest
         /// <param name="client">The HttpClient instance to use.</param>
         /// <param name="authTokenProvider">Authentication provider</param>
         /// <param name="useNewClientForContainers">When set to true, will use a new http client to load container data that has isolated cookies and can work with ASP.NET Core DI/HttpClientFactory.</param>
+        /// <param name="targetVersion">Version of the DataAPI endpoint to use. Default is v1.</param>
         public FileMakerRestClient(
             HttpClient client,
             IAuthTokenProvider authTokenProvider,
-            bool useNewClientForContainers)
+            bool useNewClientForContainers,
+            RestTargetVersion targetVersion = RestTargetVersion.v1)
             : base(client, authTokenProvider.ConnectionInfo)
         {
             _authTokenProvider = authTokenProvider;
             _useNewClientForContainers = useNewClientForContainers;
+            switch (targetVersion)
+            {
+                case RestTargetVersion.v1:
+                    _targetVersion = "v1";
+                    break;
+                case RestTargetVersion.v2:
+                    _targetVersion = "v2";
+                    break;
+                default:
+                    _targetVersion = "vLatest";
+                    break;
+            }
 #if NETSTANDARD1_3
             var header = new System.Net.Http.Headers.ProductHeaderValue("FMData.Rest", "4");
             var userAgent = new System.Net.Http.Headers.ProductInfoHeaderValue(header);
@@ -116,7 +135,7 @@ namespace FMData.Rest
         /// <summary>
         /// Note we assume _fmsUri has no trailing slash as its cut off in the constructor.
         /// </summary>
-        private string BaseEndPoint => $"{FmsUri}/fmi/data/v1/databases/{FileName}";
+        private string BaseEndPoint => $"{FmsUri}/fmi/data/{_targetVersion}/databases/{FileName}";
 
         /// <summary>
         /// Generate the appropriate Authentication endpoint uri for this instance of the data client.
@@ -639,7 +658,7 @@ namespace FMData.Rest
             await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // generate request url
-            var uri = $"{FmsUri}/fmi/data/v1"
+            var uri = $"{FmsUri}/fmi/data/{_targetVersion}"
                     + $"/databases/{Uri.EscapeDataString(FileName)}"
                     + $"/layouts/{Uri.EscapeDataString(layout)}"
                     + $"/script/{Uri.EscapeDataString(script)}";
@@ -835,7 +854,7 @@ namespace FMData.Rest
         public override async Task<ProductInformation> GetProductInformationAsync()
         {
             // generate request url
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{FmsUri}/fmi/data/v1/productinfo");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{FmsUri}/fmi/data/{_targetVersion}/productinfo");
 
             // run the patch action
             var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
@@ -869,7 +888,7 @@ namespace FMData.Rest
             // don't need to refresh the token, because this is a basic authentication request
 
             // generate request url
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{FmsUri}/fmi/data/v1/databases");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{FmsUri}/fmi/data/{_targetVersion}/databases");
 
             // special non-token auth to list databases
             requestMessage.Headers.Authorization = await _authTokenProvider.GetAuthenticationHeaderValue().ConfigureAwait(false);
@@ -906,7 +925,7 @@ namespace FMData.Rest
             await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // generate request url
-            var uri = $"{FmsUri}/fmi/data/v1/"
+            var uri = $"{FmsUri}/fmi/data/{_targetVersion}/"
                     + $"databases/{Uri.EscapeDataString(FileName)}/layouts";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
@@ -945,7 +964,7 @@ namespace FMData.Rest
             await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // generate request url
-            var uri = $"{FmsUri}/fmi/data/v1"
+            var uri = $"{FmsUri}/fmi/data/{_targetVersion}"
                     + $"/databases/{Uri.EscapeDataString(FileName)}/scripts";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
@@ -986,7 +1005,7 @@ namespace FMData.Rest
             await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // generate request url
-            var uri = $"{FmsUri}/fmi/data/v1"
+            var uri = $"{FmsUri}/fmi/data/{_targetVersion}"
                     + $"/databases/{Uri.EscapeDataString(FileName)}"
                     + $"/layouts/{Uri.EscapeDataString(layout)}";
             if (recordId.HasValue)
