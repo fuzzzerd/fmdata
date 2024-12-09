@@ -21,6 +21,10 @@
         /// Password to use when making the connection.
         /// </summary>
         public string Password { get; set; }
+        /// <summary>
+        /// Gets or sets the <see cref="RestTargetVersion"/> to use.
+        /// </summary>
+        public RestTargetVersion? RestTargetVersion { get; set; }
 
         #region FileMaker Cloud
 

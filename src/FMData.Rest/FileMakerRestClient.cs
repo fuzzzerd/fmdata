@@ -52,6 +52,7 @@ namespace FMData.Rest
 
         private readonly IAuthTokenProvider _authTokenProvider;
         private readonly bool _useNewClientForContainers = false;
+        private readonly string _targetVersion = "v1";
 
         #region Constructors
         /// <summary>
@@ -98,6 +99,21 @@ namespace FMData.Rest
         {
             _authTokenProvider = authTokenProvider;
             _useNewClientForContainers = useNewClientForContainers;
+            switch (_authTokenProvider.ConnectionInfo?.RestTargetVersion)
+            {
+                case RestTargetVersion.v1:
+                    _targetVersion = "v1";
+                    break;
+                case RestTargetVersion.v2:
+                    _targetVersion = "v2";
+                    break;
+                case RestTargetVersion.vLatest:
+                    _targetVersion = "vLatest";
+                    break;
+                default:
+                    _targetVersion = "v1";
+                    break;
+            }
 #if NETSTANDARD1_3
             var header = new System.Net.Http.Headers.ProductHeaderValue("FMData.Rest", "4");
             var userAgent = new System.Net.Http.Headers.ProductInfoHeaderValue(header);
@@ -116,7 +132,7 @@ namespace FMData.Rest
         /// <summary>
         /// Note we assume _fmsUri has no trailing slash as its cut off in the constructor.
         /// </summary>
-        private string BaseEndPoint => $"{FmsUri}/fmi/data/v1/databases/{FileName}";
+        private string BaseEndPoint => $"{FmsUri}/fmi/data/{_targetVersion}/databases/{FileName}";
 
         /// <summary>
         /// Generate the appropriate Authentication endpoint uri for this instance of the data client.
@@ -639,7 +655,7 @@ namespace FMData.Rest
             await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // generate request url
-            var uri = $"{FmsUri}/fmi/data/v1"
+            var uri = $"{FmsUri}/fmi/data/{_targetVersion}"
                     + $"/databases/{Uri.EscapeDataString(FileName)}"
                     + $"/layouts/{Uri.EscapeDataString(layout)}"
                     + $"/script/{Uri.EscapeDataString(script)}";
@@ -835,7 +851,7 @@ namespace FMData.Rest
         public override async Task<ProductInformation> GetProductInformationAsync()
         {
             // generate request url
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{FmsUri}/fmi/data/v1/productinfo");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{FmsUri}/fmi/data/{_targetVersion}/productinfo");
 
             // run the patch action
             var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
@@ -869,7 +885,7 @@ namespace FMData.Rest
             // don't need to refresh the token, because this is a basic authentication request
 
             // generate request url
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{FmsUri}/fmi/data/v1/databases");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{FmsUri}/fmi/data/{_targetVersion}/databases");
 
             // special non-token auth to list databases
             requestMessage.Headers.Authorization = await _authTokenProvider.GetAuthenticationHeaderValue().ConfigureAwait(false);
@@ -906,7 +922,7 @@ namespace FMData.Rest
             await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // generate request url
-            var uri = $"{FmsUri}/fmi/data/v1/"
+            var uri = $"{FmsUri}/fmi/data/{_targetVersion}/"
                     + $"databases/{Uri.EscapeDataString(FileName)}/layouts";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
@@ -945,7 +961,7 @@ namespace FMData.Rest
             await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // generate request url
-            var uri = $"{FmsUri}/fmi/data/v1"
+            var uri = $"{FmsUri}/fmi/data/{_targetVersion}"
                     + $"/databases/{Uri.EscapeDataString(FileName)}/scripts";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
@@ -986,7 +1002,7 @@ namespace FMData.Rest
             await UpdateTokenDateAsync().ConfigureAwait(false); // we're about to use the token so update date used
 
             // generate request url
-            var uri = $"{FmsUri}/fmi/data/v1"
+            var uri = $"{FmsUri}/fmi/data/{_targetVersion}"
                     + $"/databases/{Uri.EscapeDataString(FileName)}"
                     + $"/layouts/{Uri.EscapeDataString(layout)}";
             if (recordId.HasValue)
