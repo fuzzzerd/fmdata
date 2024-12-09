@@ -259,7 +259,6 @@ namespace FMData.Rest.Tests
 
         private IEnumerable<FileMakerRestClient> CreateEndpointTestClients(RestTargetVersion? targetVersion)
         {
-
             var mockHttp = new MockHttpMessageHandler();
             var server = "http://localhost";
             var file = "test-file";

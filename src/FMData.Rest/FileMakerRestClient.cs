@@ -62,10 +62,9 @@ namespace FMData.Rest
         /// <param name="file">Name of the FileMaker Database to connect to.</param>
         /// <param name="user">Account to connect with.</param>
         /// <param name="pass">Account to connect with.</param>
-        /// <param name="targetVersion">Version of the DataAPI endpoint to use. Default is v1.</param>
         [Obsolete("Creates a new HttpClient for this instance, and is generally not good. Inject a managed client.")]
-        public FileMakerRestClient(string fmsUri, string file, string user, string pass, RestTargetVersion targetVersion = RestTargetVersion.v1)
-            : this(new HttpClient(), new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass, RestTargetVersion = targetVersion }) { }
+        public FileMakerRestClient(string fmsUri, string file, string user, string pass)
+            : this(new HttpClient(), new ConnectionInfo { FmsUri = fmsUri, Database = file, Username = user, Password = pass }) { }
 
         /// <summary>
         /// FM Data Constructor with HttpClient and ConnectionInfo. Useful for Dependency Injection situations.
@@ -103,14 +102,16 @@ namespace FMData.Rest
             switch (_authTokenProvider.ConnectionInfo?.RestTargetVersion)
             {
                 case RestTargetVersion.v1:
-                case null:
                     _targetVersion = "v1";
                     break;
                 case RestTargetVersion.v2:
                     _targetVersion = "v2";
                     break;
-                default:
+                case RestTargetVersion.vLatest:
                     _targetVersion = "vLatest";
+                    break;
+                default:
+                    _targetVersion = "v1";
                     break;
             }
 #if NETSTANDARD1_3
