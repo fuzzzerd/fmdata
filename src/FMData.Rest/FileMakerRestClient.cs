@@ -114,15 +114,17 @@ namespace FMData.Rest
                     _targetVersion = "v1";
                     break;
             }
+
 #if NETSTANDARD1_3
-            var header = new System.Net.Http.Headers.ProductHeaderValue("FMData.Rest", "4");
-            var userAgent = new System.Net.Http.Headers.ProductInfoHeaderValue(header);
+            var assembly = typeof(FileMakerRestClient).GetTypeInfo().Assembly;
+            var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "5";
 #else
             var assembly = Assembly.GetExecutingAssembly();
             var version = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location).ProductVersion;
-            var header = new System.Net.Http.Headers.ProductHeaderValue(assembly.GetName().Name, version);
-            var userAgent = new System.Net.Http.Headers.ProductInfoHeaderValue(header);
 #endif
+            var header = new ProductHeaderValue(assembly.GetName().Name, version);
+            var userAgent = new ProductInfoHeaderValue(header);
+
             Client.DefaultRequestHeaders.UserAgent.Add(userAgent);
         }
 
