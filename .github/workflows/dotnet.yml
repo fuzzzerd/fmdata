@@ -11,7 +11,9 @@ on:   # yamllint disable-line rule:truthy
     branches:
       - master
 
-permissions: read-all
+permissions:
+  contents: read
+  pull-requests: write
 
 env:
   DOTNET_NOLOGO: true
@@ -51,7 +53,18 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Run tests
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test --no-build --verbosity normal --logger trx --collect:"XPlat Code Coverage"
+
+      - name: Generate test report
+        uses: bibipkins/dotnet-test-reporter@v1.4.1
+        if: ${{ always() }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment-title: 'Test Results'
+          results-path: tests/FMData.Rest.Tests/**/*.trx
+          coverage-path: tests/FMData.Rest.Tests/**/*.cobertura.xml
+          coverage-type: cobertura
+          coverage-threshold: 70
 
       - name: Push to MyGet
         env:
