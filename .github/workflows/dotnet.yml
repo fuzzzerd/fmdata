@@ -1,7 +1,7 @@
 name: .NET CI Build
 
 # https://github.com/adrienverge/yamllint/issues/430
-on:   # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   push:
     branches:
       - master
@@ -56,11 +56,11 @@ jobs:
         run: dotnet test --no-build --verbosity normal --logger trx --collect:"XPlat Code Coverage"
 
       - name: Generate test report
-        uses: bibipkins/dotnet-test-reporter@v1.4.1
+        uses: bibipkins/dotnet-test-reporter@v1.5.0
         if: ${{ always() }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          comment-title: 'Test Results'
+          comment-title: "Test Results"
           results-path: tests/FMData.Rest.Tests/**/*.trx
           coverage-path: tests/FMData.Rest.Tests/**/*.cobertura.xml
           coverage-type: cobertura
