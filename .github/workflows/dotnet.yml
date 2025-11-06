@@ -56,7 +56,7 @@ jobs:
         run: dotnet test --no-build --verbosity normal --logger trx --collect:"XPlat Code Coverage"
 
       - name: Generate test report
-        uses: bibipkins/dotnet-test-reporter@v1.5.4
+        uses: bibipkins/dotnet-test-reporter@v1.6.0
         if: ${{ always() }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
