@@ -485,7 +485,12 @@ namespace FMData.Rest
             try
             {
                 var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<CreateResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<CreateResponse>(responseJson);
+
+                var joResponse = JObject.Parse(responseJson);
+                PopulateScriptResults(responseObject.Response, joResponse["response"]);
+
+                return responseObject;
             }
             catch (Exception ex)
             {
@@ -532,6 +537,9 @@ namespace FMData.Rest
                 var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var responseObject = JsonConvert.DeserializeObject<EditResponse>(responseJson);
 
+                var joResponse = JObject.Parse(responseJson);
+                PopulateScriptResults(responseObject.Response, joResponse["response"]);
+
                 return responseObject;
             }
             catch (Exception ex)
@@ -546,7 +554,7 @@ namespace FMData.Rest
         /// </summary>
         /// <param name="req">The delete record request.</param>
         /// <returns></returns>
-        public override async Task<IResponse> SendAsync(IDeleteRequest req)
+        public override async Task<IDeleteResponse> SendAsync(IDeleteRequest req)
         {
             if (string.IsNullOrEmpty(req.Layout)) throw new ArgumentException("Layout is required on the request.");
             if (req.RecordId == 0) throw new ArgumentException("RecordId is required on the request and must not be zero.");
@@ -555,7 +563,7 @@ namespace FMData.Rest
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                return new BaseResponse("404", "Error");
+                return new Responses.DeleteResponse { Messages = new List<ResponseMessage> { new ResponseMessage { Code = "404", Message = "Error" } } };
             }
 
             if (response.StatusCode == HttpStatusCode.InternalServerError)
@@ -576,7 +584,11 @@ namespace FMData.Rest
             try
             {
                 var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var responseObject = JsonConvert.DeserializeObject<BaseResponse>(responseJson);
+                var responseObject = JsonConvert.DeserializeObject<Responses.DeleteResponse>(responseJson);
+
+                var joResponse = JObject.Parse(responseJson);
+                PopulateScriptResults(responseObject.Response, joResponse["response"]);
+
                 return responseObject;
             }
             catch (Exception ex)
@@ -587,7 +599,7 @@ namespace FMData.Rest
         }
 
         /// <inheritdoc />
-        public override async Task<(IEnumerable<TResponse>, DataInfoModel)> SendFindRequestAsync<TResponse, TRequest>(
+        public override async Task<(IEnumerable<TResponse>, DataInfoModel, ActionResponse)> SendFindRequestAsync<TResponse, TRequest>(
             IFindRequest<TRequest> req,
             Func<TResponse, int, object> fmId = null,
             Func<TResponse, int, object> modId = null)
@@ -612,15 +624,28 @@ namespace FMData.Rest
 
                 var joResponse = JObject.Parse(responseJson);
 
+                var responseToken = joResponse["response"];
+
                 // get JSON result objects into a list
-                IList<JToken> results = joResponse["response"]["data"].Children().ToList();
+                IList<JToken> results = responseToken["data"].Children().ToList();
 
                 DataInfoModel dataInfo = null;
-                var infoDataToken = joResponse["response"]["dataInfo"];
+                var infoDataToken = responseToken["dataInfo"];
                 if (infoDataToken != null)
                 {
                     dataInfo = infoDataToken.ToObject<DataInfoModel>();
                 }
+
+                // extract script results from response
+                var scriptResponse = new ActionResponse
+                {
+                    ScriptError = responseToken["scriptError"]?.ToObject<int>() ?? 0,
+                    ScriptResult = responseToken["scriptResult"]?.ToString(),
+                    ScriptErrorPreRequest = responseToken["scriptError.prerequest"]?.ToObject<int>() ?? 0,
+                    ScriptResultPreRequest = responseToken["scriptResult.prerequest"]?.ToString(),
+                    ScriptErrorPreSort = responseToken["scriptError.presort"]?.ToObject<int>() ?? 0,
+                    ScriptResultPreSort = responseToken["scriptResult.presort"]?.ToString(),
+                };
 
                 // serialize JSON results into .NET objects
                 IList<TResponse> searchResults = new List<TResponse>();
@@ -638,7 +663,7 @@ namespace FMData.Rest
                     await ProcessContainers(searchResults).ConfigureAwait(false);
                 }
 
-                return (searchResults, dataInfo);
+                return (searchResults, dataInfo, scriptResponse);
             }
 
             if (response.StatusCode == HttpStatusCode.InternalServerError)
@@ -651,7 +676,7 @@ namespace FMData.Rest
                 if (responseObject.Messages.Any(m => m.Code == "401"))
                 {
                     // FileMaker no records match the find request => empty list.
-                    return (new List<TResponse>(), new DataInfoModel());
+                    return (new List<TResponse>(), new DataInfoModel(), null);
                 }
                 // throw FMDataException for anything not a 401.
                 throw new FMDataException(
@@ -663,7 +688,7 @@ namespace FMData.Rest
             // not found, so return empty list
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                return (new List<TResponse>(), new DataInfoModel());
+                return (new List<TResponse>(), new DataInfoModel(), null);
             }
 
             // other error
@@ -1197,6 +1222,22 @@ namespace FMData.Rest
         /// <param name="modId">Modification Id map function.</param>
         /// <param name="input">JSON.NET JToken instance from Data Api Response.</param>
         /// <returns></returns>
+        /// <summary>
+        /// Extracts script result fields (including pre-request and pre-sort) from a response JToken.
+        /// Handles dotted property names that cannot be mapped via attributes.
+        /// </summary>
+        private static void PopulateScriptResults(ActionResponse target, JToken responseToken)
+        {
+            if (target == null || responseToken == null) return;
+
+            target.ScriptError = responseToken["scriptError"]?.ToObject<int>() ?? 0;
+            target.ScriptResult = responseToken["scriptResult"]?.ToString();
+            target.ScriptErrorPreRequest = responseToken["scriptError.prerequest"]?.ToObject<int>() ?? 0;
+            target.ScriptResultPreRequest = responseToken["scriptResult.prerequest"]?.ToString();
+            target.ScriptErrorPreSort = responseToken["scriptError.presort"]?.ToObject<int>() ?? 0;
+            target.ScriptResultPreSort = responseToken["scriptResult.presort"]?.ToString();
+        }
+
         private static T ConvertJTokenToInstance<T>(Func<T, int, object> fmId, Func<T, int, object> modId, JToken input) where T : class, new()
         {
             // JToken.ToObject is a helper method that uses JsonSerializer internally
