@@ -137,13 +137,40 @@ var results = await client.FindAsync(toFind, FMRecordIdMapper);
 // results is IEnumerable<Model> matching with Name field matching "someName" as a FileMaker FindRequest.
 ```
 
-### Find with Data Info
+### Find with Data Info and Script Results
 
 ```csharp
 var toFind = new Model { Name = "someName" };
 var req = new FindRequest<Model>() { Layout = layout };
 req.AddQuery(toFind, false);
-var (data, info) = await fdc.SendAsync(req, true);
+var (data, info, scriptResponse) = await fdc.SendAsync(req, true);
+// scriptResponse.ScriptResult contains the post-request script result
+// scriptResponse.ScriptErrorPreRequest / ScriptResultPreRequest for pre-request scripts
+// scriptResponse.ScriptErrorPreSort / ScriptResultPreSort for pre-sort scripts
+```
+
+### Running Scripts with Requests
+
+All operations (Create, Edit, Delete, Find) return script results when scripts are specified on the request.
+
+```csharp
+// Create with scripts
+var response = await client.CreateAsync(input, "MyScript", "param",
+    "PreRequestScript", "preReqParam", "PreSortScript", "preSortParam");
+// response.Response.ScriptResult, ScriptResultPreRequest, ScriptResultPreSort
+
+// Edit with scripts
+var editResponse = await client.EditAsync(recordId, "MyScript", "param", input);
+// editResponse.Response.ScriptResult, ScriptResultPreRequest, ScriptResultPreSort
+
+// Delete with scripts (via IDeleteRequest)
+var deleteReq = client.GenerateDeleteRequest();
+deleteReq.Layout = "layout";
+deleteReq.RecordId = recordId;
+deleteReq.Script = "MyScript";
+deleteReq.ScriptParameter = "param";
+var deleteResponse = await client.SendAsync(deleteReq);
+// deleteResponse.Response.ScriptResult, ScriptResultPreRequest, ScriptResultPreSort
 ```
 
 Alternatively, if you create a calculated field `Get(RecordID)` and put it on your layout then map it the normal way.
