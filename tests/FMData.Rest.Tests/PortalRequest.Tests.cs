@@ -268,7 +268,7 @@ namespace FMData.Rest.Tests
             req.AddQuery(new User { Id = 1 }, false);
 
             req.WithPortal("Orders").Limit(100).Offset(5)
-               .WithPortal("LineItems").Limit(200);
+                .WithPortal("LineItems").Limit(200);
 
             Assert.Equal(2, req.Portals.Count);
 
@@ -388,7 +388,7 @@ namespace FMData.Rest.Tests
             var req = new FindRequest<Dictionary<string, string>> { Layout = layout };
             req.AddQuery(new Dictionary<string, string> { { "ES_RECORD_ID", "111" } }, false);
             req.WithPortal("action").Limit(50).Offset(1)
-               .WithPortal("another-portal").Limit(100);
+                .WithPortal("another-portal").Limit(100);
 
             // act
             var response = await fdc.SendAsync(req);

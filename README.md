@@ -117,7 +117,7 @@ services.AddSingleton<IFileMakerApiClient, FileMakerRestClient>(s => {
 });
 ```
 
-Behind the scenes, the injected `HttpClient` is kept alive for the lifetime of the FMData client (rest/xml) and reused throughout. This is useful to manage the lifetime of `IFileMakerApiClient` as a singleton, since it stores data about FileMaker Data API tokens and reuses them as much as possible.  Simply using `services.AddHttpClient<IFileMakerApiClient, FileMakerRestClient>();` keeps the lifetime of our similar to that of a 'managed `HttpClient`' which works for simple scenarios.
+Behind the scenes, the injected `HttpClient` is kept alive for the lifetime of the FMData client (rest/xml) and reused throughout. This is useful to manage the lifetime of `IFileMakerApiClient` as a singleton, since it stores data about FileMaker Data API tokens and reuses them as much as possible. Simply using `services.AddHttpClient<IFileMakerApiClient, FileMakerRestClient>();` keeps the lifetime of our similar to that of a 'managed `HttpClient`' which works for simple scenarios.
 
 Test both approaches in your solution and use what works.
 
