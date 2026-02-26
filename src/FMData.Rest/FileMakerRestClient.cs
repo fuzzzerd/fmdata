@@ -46,6 +46,7 @@ namespace FMData.Rest
 
         #region FM DATA SPECIFIC
         private readonly int _tokenExpiration = 15;
+        private readonly int _maxAuthRetries = 1;
         private string _dataToken;
         private AuthenticationHeaderValue _authHeader;
         private DateTime _dataTokenLastUse = DateTime.MinValue;
@@ -666,13 +667,13 @@ namespace FMData.Rest
             {
                 uri += $"?script.param={Uri.EscapeDataString(scriptParameter)}";
             }
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
-            // include auth token
-            requestMessage.Headers.Authorization = _authHeader;
-
-            // run the patch action
-            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await RetryOnUnauthorizedAsync(async () =>
+            {
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+                requestMessage.Headers.Authorization = _authHeader;
+                return await Client.SendAsync(requestMessage).ConfigureAwait(false);
+            }).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -734,28 +735,9 @@ namespace FMData.Rest
             // we're about to use the token so update date used, and refresh if needed.
             await UpdateTokenDateAsync().ConfigureAwait(false);
 
-            var str = req.SerializeRequest();
-            var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
-
-            // do not pass character set. 
-            // this is due to fms 18 returning Bad Request when specified
-            // this hack is backward compatible for FMS17
-            httpContent.Headers.ContentType.CharSet = null;
-
-            var httpRequest = new HttpRequestMessage(method, requestUri);
-
-            // don't include body content on requests for http get
-            if (method != HttpMethod.Get)
-            {
-                httpRequest.Content = httpContent;
-            }
-
-            // include our authorization header
-            httpRequest.Headers.Authorization = _authHeader;
-
-            // run and return the action
-            var response = await Client.SendAsync(httpRequest).ConfigureAwait(false);
-            return response;
+            return await RetryOnUnauthorizedAsync(
+                async () => await SendDataApiRequestAsync(method, requestUri, req).ConfigureAwait(false)
+            ).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -812,21 +794,19 @@ namespace FMData.Rest
 
             var method = new HttpMethod("PATCH");
 
-            var requestMessage = new HttpRequestMessage(method, $"{BaseEndPoint}/globals")
+            var response = await RetryOnUnauthorizedAsync(async () =>
             {
-                Content = new StringContent(json, Encoding.UTF8, "application/json")
-            };
-
-            // include auth token
-            requestMessage.Headers.Authorization = _authHeader;
-
-            // do not pass character set. 
-            // this is due to fms 18 returning Bad Request when specified
-            // this hack is backward compatible for FMS17
-            requestMessage.Content.Headers.ContentType.CharSet = null;
-
-            // run the patch action
-            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
+                var requestMessage = new HttpRequestMessage(method, $"{BaseEndPoint}/globals")
+                {
+                    Content = new StringContent(json, Encoding.UTF8, "application/json")
+                };
+                requestMessage.Headers.Authorization = _authHeader;
+                // do not pass character set.
+                // this is due to fms 18 returning Bad Request when specified
+                // this hack is backward compatible for FMS17
+                requestMessage.Content.Headers.ContentType.CharSet = null;
+                return await Client.SendAsync(requestMessage).ConfigureAwait(false);
+            }).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -926,13 +906,13 @@ namespace FMData.Rest
             // generate request url
             var uri = $"{FmsUri}/fmi/data/{_targetVersion}/"
                     + $"databases/{Uri.EscapeDataString(FileName)}/layouts";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
-            // include auth token
-            requestMessage.Headers.Authorization = _authHeader;
-
-            // run the patch action
-            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await RetryOnUnauthorizedAsync(async () =>
+            {
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+                requestMessage.Headers.Authorization = _authHeader;
+                return await Client.SendAsync(requestMessage).ConfigureAwait(false);
+            }).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -965,13 +945,13 @@ namespace FMData.Rest
             // generate request url
             var uri = $"{FmsUri}/fmi/data/{_targetVersion}"
                     + $"/databases/{Uri.EscapeDataString(FileName)}/scripts";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
-            // include auth token
-            requestMessage.Headers.Authorization = _authHeader;
-
-            // run the patch action
-            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await RetryOnUnauthorizedAsync(async () =>
+            {
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+                requestMessage.Headers.Authorization = _authHeader;
+                return await Client.SendAsync(requestMessage).ConfigureAwait(false);
+            }).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -1011,13 +991,13 @@ namespace FMData.Rest
             {
                 uri += $"?recordId={recordId}";
             }
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
-            // include auth token
-            requestMessage.Headers.Authorization = _authHeader;
-
-            // run the patch action
-            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await RetryOnUnauthorizedAsync(async () =>
+            {
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+                requestMessage.Headers.Authorization = _authHeader;
+                return await Client.SendAsync(requestMessage).ConfigureAwait(false);
+            }).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -1061,26 +1041,22 @@ namespace FMData.Rest
         {
             await UpdateTokenDateAsync().ConfigureAwait(false); // about to use token, so update
 
-            var form = new MultipartFormDataContent();
-
-            //var stream = new MemoryStream(content);
-            //var streamContent = new StreamContent(stream);
             var uri = ContainerEndpoint(layout, recordId, fieldName, repetition);
 
-            var containerContent = new ByteArrayContent(content);
-            containerContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
-
-            form.Add(containerContent, "upload", Path.GetFileName(fileName));
-
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri)
+            var response = await RetryOnUnauthorizedAsync(async () =>
             {
-                Content = form
-            };
+                var form = new MultipartFormDataContent();
+                var containerContent = new ByteArrayContent(content);
+                containerContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+                form.Add(containerContent, "upload", Path.GetFileName(fileName));
 
-            // include auth token
-            requestMessage.Headers.Authorization = _authHeader;
-
-            var response = await Client.SendAsync(requestMessage).ConfigureAwait(false);
+                var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri)
+                {
+                    Content = form
+                };
+                requestMessage.Headers.Authorization = _authHeader;
+                return await Client.SendAsync(requestMessage).ConfigureAwait(false);
+            }).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -1132,6 +1108,62 @@ namespace FMData.Rest
         }
 
         #region Private Helpers and utility methods
+        /// <summary>
+        /// Invalidates the current token so the next authentication check triggers a refresh.
+        /// </summary>
+        private void InvalidateToken()
+        {
+            _dataToken = null;
+            _authHeader = null;
+        }
+
+        /// <summary>
+        /// Serializes an <see cref="IFileMakerRequest"/> to JSON, builds a fresh <see cref="HttpRequestMessage"/>,
+        /// and sends it to the Data API with the current auth header.
+        /// </summary>
+        private async Task<HttpResponseMessage> SendDataApiRequestAsync(HttpMethod method, string requestUri, IFileMakerRequest req)
+        {
+            var str = req.SerializeRequest();
+            var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
+
+            // do not pass character set.
+            // this is due to fms 18 returning Bad Request when specified
+            // this hack is backward compatible for FMS17
+            httpContent.Headers.ContentType.CharSet = null;
+
+            var httpRequest = new HttpRequestMessage(method, requestUri);
+
+            // don't include body content on requests for http get
+            if (method != HttpMethod.Get)
+            {
+                httpRequest.Content = httpContent;
+            }
+
+            // include our authorization header
+            httpRequest.Headers.Authorization = _authHeader;
+
+            // run and return the action
+            return await Client.SendAsync(httpRequest).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Sends a request and retries up to <see cref="_maxAuthRetries"/> times on 401 Unauthorized,
+        /// refreshing the auth token before each retry.
+        /// </summary>
+        private async Task<HttpResponseMessage> RetryOnUnauthorizedAsync(Func<Task<HttpResponseMessage>> sendRequest)
+        {
+            var response = await sendRequest().ConfigureAwait(false);
+            var retries = 0;
+            while (response.StatusCode == HttpStatusCode.Unauthorized && retries < _maxAuthRetries)
+            {
+                retries++;
+                InvalidateToken();
+                await RefreshTokenAsync().ConfigureAwait(false);
+                response = await sendRequest().ConfigureAwait(false);
+            }
+            return response;
+        }
+
         /// <summary>
         /// Converts a JToken instance and maps it to the generic type.
         /// </summary>
