@@ -73,7 +73,7 @@ services.AddSingleton<IFileMakerApiClient, FileMakerRestClient>(s => {
 });
 ```
 
-Behind the scenes, the injected `HttpClient` is kept alive for the lifetime of the FMData client (rest/xml) and reused throughout. This is useful to manage the lifetime of `IFileMakerApiClient` as a singleton, since it stores data about FileMaker Data API tokens and reuses them as much as possible.  Simply using `services.AddHttpClient<IFileMakerApiClient, FileMakerRestClient>();` keeps the lifetime of our similar to that of a 'managed `HttpClient`' which works for simple scenarios.
+Behind the scenes, the injected `HttpClient` is kept alive for the lifetime of the FMData client (rest/XML) and reused throughout. This is useful to manage the lifetime of `IFileMakerApiClient` as a singleton, since it stores data about FileMaker Data API tokens and reuses them as much as possible. Simply using `services.AddHttpClient<IFileMakerApiClient, FileMakerRestClient>();` keeps the lifetime of our similar to that of a 'managed `HttpClient`' which works for simple scenarios.
 
 Test both approaches in your solution and use what works.
 
@@ -147,6 +147,43 @@ var (data, info) = await fdc.SendAsync(req, true);
 ```
 
 Alternatively, if you create a calculated field `Get(RecordID)` and put it on your layout then map it the normal way.
+
+### Find with Portal Limit and Offset
+
+By default, the FileMaker Data API limits portal records to 50 per request. You can control per-portal `limit` and `offset` using the fluent `WithPortal` builder or `ConfigurePortal` method on `FindRequest<T>`.
+
+Use the fluent builder to chain portal configuration:
+
+```csharp
+var req = new FindRequest<Model>() { Layout = "layout" };
+req.AddQuery(new Model { Name = "someName" }, false);
+
+// configure portals with limit and offset
+req.WithPortal("RelatedInvoices").Limit(100).Offset(1)
+   .WithPortal("LineItems").Limit(200);
+
+var results = await client.SendAsync(req);
+```
+
+Or use `ConfigurePortal` directly:
+
+```csharp
+var req = new FindRequest<Model>() { Layout = "layout" };
+req.AddQuery(new Model { Name = "someName" }, false);
+req.ConfigurePortal("RelatedInvoices", limit: 100, offset: 1);
+var results = await client.SendAsync(req);
+```
+
+To include specific portals in the response without setting limits:
+
+```csharp
+var req = new FindRequest<Model>() { Layout = "layout" };
+req.AddQuery(new Model { Name = "someName" }, false);
+req.IncludePortals("RelatedInvoices", "LineItems");
+var results = await client.SendAsync(req);
+```
+
+Portal parameters work with both find requests (POST to `_find`) and empty-query get-records requests (GET).
 
 ### Find and load Container Data
 

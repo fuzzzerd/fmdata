@@ -37,6 +37,16 @@ namespace FMData.Xml.Requests
         public bool LoadContainerData { get; set; }
 
         /// <summary>
+        /// Portal configurations. Not supported by the XML API; included for interface compatibility.
+        /// </summary>
+        public ICollection<PortalRequestData> Portals { get; set; }
+
+        /// <summary>
+        /// Configure a portal. Not supported by the XML API; this is a no-op stub for interface compatibility.
+        /// </summary>
+        public void ConfigurePortal(string portalName, int? limit = null, int? offset = null) { }
+
+        /// <summary>
         /// Serialize the request. 
         /// </summary>
         /// <returns>The string representation for this request to be sent along the wire to FMS.</returns>
