@@ -358,7 +358,7 @@ namespace FMData
         /// <typeparam name="T">Used to pull the [TableAttribute] value to determine the layout to use.</typeparam>
         /// <returns></returns>
         /// <remarks>Use the other delete overload if the class does not use the [Table] attribute.</remarks>
-        Task<IResponse> DeleteAsync<T>(int recId) where T : class, new();
+        Task<IDeleteResponse> DeleteAsync<T>(int recId) where T : class, new();
 
         /// <summary>
         /// Delete a record.
@@ -366,7 +366,7 @@ namespace FMData
         /// <param name="recId">The FileMaker RecordId to delete.</param>
         /// <param name="layout">The layout to use for the delete.</param>
         /// <returns></returns>
-        Task<IResponse> DeleteAsync(int recId, string layout);
+        Task<IDeleteResponse> DeleteAsync(int recId, string layout);
         #endregion
 
         #region Set Globals
@@ -484,7 +484,7 @@ namespace FMData
         /// <param name="includeDataInfo">Indicates whether the data information portion should be parsed.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         /// <remarks>The data info portion of the response is always returned when correctly parsed.</remarks>
-        Task<(IEnumerable<T>, DataInfoModel)> SendAsync<T>(
+        Task<(IEnumerable<T>, DataInfoModel, ActionResponse)> SendAsync<T>(
             IFindRequest<T> req,
             bool includeDataInfo,
             Func<T, int, object> fmId = null,
@@ -501,7 +501,7 @@ namespace FMData
         /// <returns>An <see cref="IEnumerable{T}"/> matching the request parameters.</returns>
         /// <remarks>The data info portion of the response is always returned when correctly parsed.</remarks>
         /// <remarks>This method allows using separate Request and Response generics, which is useful when querying with dynamic input, but static output.</remarks>
-        Task<(IEnumerable<TResponse>, DataInfoModel)> SendFindRequestAsync<TResponse, TRequest>(
+        Task<(IEnumerable<TResponse>, DataInfoModel, ActionResponse)> SendFindRequestAsync<TResponse, TRequest>(
             IFindRequest<TRequest> req,
             Func<TResponse, int, object> fmId,
             Func<TResponse, int, object> modId) where TResponse : class, new();
@@ -516,7 +516,7 @@ namespace FMData
         /// Delete record
         /// </summary>
         /// <param name="req">Delete record request.</param>
-        Task<IResponse> SendAsync(IDeleteRequest req);
+        Task<IDeleteResponse> SendAsync(IDeleteRequest req);
         #endregion
     }
 }

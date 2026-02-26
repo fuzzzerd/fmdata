@@ -245,7 +245,7 @@ namespace FMData.Rest.Tests
             req.AddQuery(toFind, false);
 
             // act
-            var (data, info) = await fdc.SendAsync(req, true);
+            var (data, info, _) = await fdc.SendAsync(req, true);
 
             // assert
             Assert.NotEmpty(data);
@@ -275,7 +275,7 @@ namespace FMData.Rest.Tests
             req.AddQuery(toFind, false);
 
             // act
-            var (data, info) = await fdc.SendAsync(req, true, FMRecordIdMapper, null);
+            var (data, info, _) = await fdc.SendAsync(req, true, FMRecordIdMapper, null);
 
             // assert
             Assert.NotEmpty(data);
@@ -305,7 +305,7 @@ namespace FMData.Rest.Tests
             req.AddQuery(toFind, false);
 
             // act
-            var (data, info) = await fdc.SendAsync(req, true, null, ModMap);
+            var (data, info, _) = await fdc.SendAsync(req, true, null, ModMap);
 
             // assert
             Assert.NotEmpty(data);
@@ -334,7 +334,7 @@ namespace FMData.Rest.Tests
             req.AddQuery(toFind, false);
 
             // act
-            var (data, info) = await fdc.SendFindRequestAsync<User, Dictionary<string, string>>(req, null, null);
+            var (data, info, _) = await fdc.SendFindRequestAsync<User, Dictionary<string, string>>(req, null, null);
 
             // assert
             Assert.NotEmpty(data);
@@ -365,7 +365,7 @@ namespace FMData.Rest.Tests
             req.AddQuery(toFind, false);
 
             // act
-            var (data, info) = await fdc.SendFindRequestAsync<User, Dictionary<string, string>>(req, IdMap, null);
+            var (data, info, _) = await fdc.SendFindRequestAsync<User, Dictionary<string, string>>(req, IdMap, null);
 
             // assert
             Assert.NotEmpty(data);
@@ -396,7 +396,7 @@ namespace FMData.Rest.Tests
             req.AddQuery(toFind, false);
 
             // act
-            var (data, info) = await fdc.SendFindRequestAsync<User, Dictionary<string, string>>(req, null, ModMap);
+            var (data, info, _) = await fdc.SendFindRequestAsync<User, Dictionary<string, string>>(req, null, ModMap);
 
             // assert
             Assert.NotEmpty(data);
@@ -427,7 +427,7 @@ namespace FMData.Rest.Tests
             req.AddQuery(toFind, false);
 
             // act
-            var (data, info) = await fdc.SendFindRequestAsync<User, Dictionary<string, string>>(req, IdMap, ModMap);
+            var (data, info, _) = await fdc.SendFindRequestAsync<User, Dictionary<string, string>>(req, IdMap, ModMap);
 
             // assert
             Assert.NotEmpty(data);

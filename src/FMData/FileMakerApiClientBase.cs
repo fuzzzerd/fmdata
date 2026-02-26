@@ -587,7 +587,7 @@ namespace FMData
         /// <typeparam name="T">Class with the [Table] attribute specifying the layout to use.</typeparam>
         /// <param name="recId">The FileMaker RecordId of the record to delete.</param>
         /// <returns></returns>
-        public Task<IResponse> DeleteAsync<T>(int recId) where T : class, new()
+        public Task<IDeleteResponse> DeleteAsync<T>(int recId) where T : class, new()
         {
             var request = GenerateDeleteRequest();
             request.Layout = FileMakerApiClientBase.GetLayoutName(new T());
@@ -598,7 +598,7 @@ namespace FMData
         /// <summary>
         /// Delete a record by id and layout.
         /// </summary>
-        public Task<IResponse> DeleteAsync(
+        public Task<IDeleteResponse> DeleteAsync(
             int recId,
             string layout)
         {
@@ -618,7 +618,7 @@ namespace FMData
         /// <summary>
         /// Send a Delete Record request to the FileMaker API.
         /// </summary>
-        public abstract Task<IResponse> SendAsync(IDeleteRequest req);
+        public abstract Task<IDeleteResponse> SendAsync(IDeleteRequest req);
 
         /// <summary>
         /// Send an Edit Record request to the FileMaker API.
@@ -652,12 +652,12 @@ namespace FMData
             Func<T, int, object> fmId,
             Func<T, int, object> modId) where T : class, new()
         {
-            var (data, _) = await SendFindRequestAsync(req, fmId, modId).ConfigureAwait(false);
+            var (data, _, _) = await SendFindRequestAsync(req, fmId, modId).ConfigureAwait(false);
             return data;
         }
 
         /// <inheritdoc />
-        public virtual async Task<(IEnumerable<T>, DataInfoModel)> SendAsync<T>(
+        public virtual async Task<(IEnumerable<T>, DataInfoModel, ActionResponse)> SendAsync<T>(
             IFindRequest<T> req,
             bool includeDataInfo,
             Func<T, int, object> fmId = null,
@@ -667,7 +667,7 @@ namespace FMData
         }
 
         /// <inheritdoc />
-        public abstract Task<(IEnumerable<TResponse>, DataInfoModel)> SendFindRequestAsync<TResponse, TRequest>(
+        public abstract Task<(IEnumerable<TResponse>, DataInfoModel, ActionResponse)> SendFindRequestAsync<TResponse, TRequest>(
             IFindRequest<TRequest> req,
             Func<TResponse, int, object> fmId,
             Func<TResponse, int, object> modId) where TResponse : class, new();

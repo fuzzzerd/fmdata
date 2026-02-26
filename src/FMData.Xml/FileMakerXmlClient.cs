@@ -143,14 +143,14 @@ namespace FMData.Xml
         /// <summary>
         /// Executes a delete request.
         /// </summary>
-        public override async Task<IResponse> SendAsync(IDeleteRequest req)
+        public override async Task<IDeleteResponse> SendAsync(IDeleteRequest req)
         {
             var response = await ExecuteRequestAsync(req).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
             {
                 // process response data return OK
-                var resp = new CreateResponse
+                var resp = new DeleteResponse
                 {
                     Messages = new List<ResponseMessage> { new ResponseMessage { Code = "", Message = "OK" } }
                 };
@@ -181,7 +181,7 @@ namespace FMData.Xml
         }
 
         /// <inheritdoc />
-        public override async Task<(IEnumerable<TResponse>, DataInfoModel)> SendFindRequestAsync<TResponse, TRequest>(
+        public override async Task<(IEnumerable<TResponse>, DataInfoModel, ActionResponse)> SendFindRequestAsync<TResponse, TRequest>(
             IFindRequest<TRequest> req,
             Func<TResponse, int, object> fmId = null,
             Func<TResponse, int, object> modId = null)
@@ -286,10 +286,10 @@ namespace FMData.Xml
                     await ProcessContainers(results).ConfigureAwait(false);
                 }
 
-                return (results, new DataInfoModel());
+                return (results, new DataInfoModel(), null);
             }
 
-            return (null, new DataInfoModel());
+            return (null, new DataInfoModel(), null);
         }
         #endregion
 

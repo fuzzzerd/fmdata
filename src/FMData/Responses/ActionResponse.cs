@@ -24,5 +24,25 @@
         /// Result of the script that was run as part of this action.
         /// </summary>
         public string ScriptResult { get; set; }
+
+        /// <summary>
+        /// Pre-request script error (if any).
+        /// </summary>
+        public int ScriptErrorPreRequest { get; set; }
+
+        /// <summary>
+        /// Result of the pre-request script that was run as part of this action.
+        /// </summary>
+        public string ScriptResultPreRequest { get; set; }
+
+        /// <summary>
+        /// Pre-sort script error (if any).
+        /// </summary>
+        public int ScriptErrorPreSort { get; set; }
+
+        /// <summary>
+        /// Result of the pre-sort script that was run as part of this action.
+        /// </summary>
+        public string ScriptResultPreSort { get; set; }
     }
 }
