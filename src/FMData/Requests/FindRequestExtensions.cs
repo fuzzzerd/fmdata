@@ -1,4 +1,7 @@
-﻿namespace FMData
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace FMData
 {
     /// <summary>
     /// Extension (utility and helper) methods for IFindRequest.
@@ -145,6 +148,38 @@
         {
             request.Script = scriptName;
             if (!string.IsNullOrEmpty(scriptParameter)) request.ScriptParameter = scriptParameter;
+            return request;
+        }
+
+        /// <summary>
+        /// Start configuring a portal for this request using the fluent builder.
+        /// </summary>
+        /// <typeparam name="T">The type used for the find request/response.</typeparam>
+        /// <param name="request">The request. This is the 'this' parameter.</param>
+        /// <param name="portalName">The name of the portal (table occurrence).</param>
+        /// <returns>A portal builder for configuring limit and offset on the named portal.</returns>
+        public static PortalBuilder<T> WithPortal<T>(
+            this IFindRequest<T> request,
+            string portalName)
+        {
+            return new PortalBuilder<T>(request, portalName);
+        }
+
+        /// <summary>
+        /// Include specific portals in the response (filtering only, no limit/offset).
+        /// </summary>
+        /// <typeparam name="T">The type used for the find request/response.</typeparam>
+        /// <param name="request">The request. This is the 'this' parameter.</param>
+        /// <param name="portalNames">The names of the portals to include.</param>
+        /// <returns>The request instance that was implicitly passed in which is useful for method chaining.</returns>
+        public static IFindRequest<T> IncludePortals<T>(
+            this IFindRequest<T> request,
+            params string[] portalNames)
+        {
+            foreach (var name in portalNames)
+            {
+                request.ConfigurePortal(name);
+            }
             return request;
         }
     }

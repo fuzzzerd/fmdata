@@ -174,6 +174,31 @@ namespace FMData.Rest
         /// <returns>The FileMaker Data API Endpoint for Get Records requests.</returns>
         public string GetRecordsEndpoint(string layout, int limit, int offset) => $"{BaseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records?_limit={limit}&_offset={offset}";
 
+        /// <inheritdoc />
+        public string GetRecordsEndpoint(string layout, int limit, int offset, ICollection<PortalRequestData> portals)
+        {
+            var url = $"{BaseEndPoint}/layouts/{Uri.EscapeDataString(layout)}/records?_limit={limit}&_offset={offset}";
+
+            if (portals != null && portals.Count > 0)
+            {
+                url += $"&portal={Uri.EscapeDataString($"[{string.Join(",", portals.Select(p => $"\"{p.PortalName}\""))}]")}";
+
+                foreach (var portal in portals)
+                {
+                    if (portal.Limit.HasValue)
+                    {
+                        url += $"&_limit.{Uri.EscapeDataString(portal.PortalName)}={portal.Limit.Value}";
+                    }
+                    if (portal.Offset.HasValue)
+                    {
+                        url += $"&_offset.{Uri.EscapeDataString(portal.PortalName)}={portal.Offset.Value}";
+                    }
+                }
+            }
+
+            return url;
+        }
+
         /// <summary>
         /// Generate the appropriate Edit/Update endpoint uri for this instance of the data client.
         /// </summary>
@@ -575,7 +600,7 @@ namespace FMData.Rest
             if (req.Query == null || req.Query.Count() == 0)
             {
                 // if this is an empty query, just punch it in to the Records API instead of the Find API.
-                uri = GetRecordsEndpoint(req.Layout, req.Limit, req.Offset);
+                uri = GetRecordsEndpoint(req.Layout, req.Limit, req.Offset, req.Portals);
                 method = HttpMethod.Get;
             }
 

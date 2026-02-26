@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using FMData.Rest.Responses;
 
@@ -53,6 +54,16 @@ namespace FMData.Rest
         /// <param name="offset">The offset number of records to skip before starting to return records.</param>
         /// <returns>The FileMaker Data API Endpoint for Get Records requests.</returns>
         string GetRecordsEndpoint(string layout, int range, int offset);
+
+        /// <summary>
+        /// Generate the appropriate Get Records endpoint with per-portal parameters.
+        /// </summary>
+        /// <param name="layout">The layout to use as the context for the response.</param>
+        /// <param name="range">The number of records to return.</param>
+        /// <param name="offset">The offset number of records to skip before starting to return records.</param>
+        /// <param name="portals">The portal configurations to include in the request.</param>
+        /// <returns>The FileMaker Data API Endpoint for Get Records requests.</returns>
+        string GetRecordsEndpoint(string layout, int range, int offset, ICollection<PortalRequestData> portals);
 
         /// <summary>
         /// Generate the appropriate Create endpoint uri for this instance of the data client.
