@@ -126,5 +126,89 @@ namespace FMData.Rest.Tests
         {
             return System.IO.File.ReadAllText(Path.Combine("ResponseData", "fms-find-with-datainfo.json"));
         }
+
+        public static string SuccessfulCreateWithScript(int createdId = 254) => $@"{{
+    ""response"": {{
+        ""recordId"": {createdId},
+        ""scriptError"": 0,
+        ""scriptResult"": ""create-script-result"",
+        ""scriptError.prerequest"": 0,
+        ""scriptResult.prerequest"": ""create-prerequest-result"",
+        ""scriptError.presort"": 0,
+        ""scriptResult.presort"": ""create-presort-result""
+    }},
+    ""messages"":[{{""code"":""0"",""message"":""OK""}}]
+}}";
+
+        public static string SuccessfulEditWithScript(int modId = 3) => $@"{{
+    ""response"": {{
+        ""modId"": ""{modId}"",
+        ""scriptError"": 0,
+        ""scriptResult"": ""edit-script-result"",
+        ""scriptError.prerequest"": 0,
+        ""scriptResult.prerequest"": ""edit-prerequest-result"",
+        ""scriptError.presort"": 0,
+        ""scriptResult.presort"": ""edit-presort-result""
+    }},
+    ""messages"":[{{""code"":""0"",""message"":""OK""}}]
+}}";
+
+        public static string SuccessfulDeleteWithScript() => @"{
+    ""response"": {
+        ""scriptError"": 0,
+        ""scriptResult"": ""delete-script-result"",
+        ""scriptError.prerequest"": 0,
+        ""scriptResult.prerequest"": ""delete-prerequest-result"",
+        ""scriptError.presort"": 0,
+        ""scriptResult.presort"": ""delete-presort-result""
+    },
+    ""messages"":[{""code"":""0"",""message"":""OK""}]
+}";
+
+        public static string SuccessfulFindWithScript() => $@"{{
+    ""response"": {{
+        ""dataInfo"": {{
+            ""database"": ""DATABASE"",
+            ""layout"": ""Layout"",
+            ""table"": ""Table"",
+            ""totalRecordCount"": 100,
+            ""foundCount"": 1,
+            ""returnedCount"": 1
+        }},
+        ""scriptError"": 0,
+        ""scriptResult"": ""find-script-result"",
+        ""scriptError.prerequest"": 0,
+        ""scriptResult.prerequest"": ""find-prerequest-result"",
+        ""scriptError.presort"": 0,
+        ""scriptResult.presort"": ""find-presort-result"",
+        ""data"": [
+            {{
+                ""fieldData"": {{
+                    ""Id"": ""4"",
+                    ""Name"": ""fuzzzerd"",
+                    ""Created"": ""03/29/2018 15:22:09"",
+                    ""Modified"": ""03/29/2018 15:22:12""
+                }},
+                ""portalData"": {{}},
+                ""recordId"": ""4"",
+                ""modId"": ""0""
+            }}
+        ]
+    }},
+    ""messages"":[{{""code"":""0"",""message"":""OK""}}]
+}}";
+
+        public static string SuccessfulCreateWithScriptError() => @"{
+    ""response"": {
+        ""recordId"": 254,
+        ""scriptError"": 3,
+        ""scriptResult"": """",
+        ""scriptError.prerequest"": 5,
+        ""scriptResult.prerequest"": """",
+        ""scriptError.presort"": 7,
+        ""scriptResult.presort"": """"
+    },
+    ""messages"":[{""code"":""0"",""message"":""OK""}]
+}";
     }
 }
