@@ -83,9 +83,63 @@ public class Model
 }
 ```
 
-### Using IHttpClientFactory
+### Using Dependency Injection (Recommended)
 
-Constructors take an `HttpClient` and you can setup the DI pipeline in Startup.cs like so for standard use:
+The simplest way to register FMData with dependency injection is using the built-in extension method. This sets up `IHttpClientFactory`, registers `ConnectionInfo`, and configures the client as a singleton (preserving auth token state across requests):
+
+```csharp
+services.AddFMDataRest(conn =>
+{
+    conn.FmsUri = "https://example.com";
+    conn.Database = "FILE_NAME";
+    conn.Username = "user";
+    conn.Password = "password";
+});
+```
+
+This registers both `IFileMakerApiClient` and `IFileMakerRestClient`. You can also pass a callback to configure the underlying `HttpClient` (e.g., to set timeouts):
+
+```csharp
+services.AddFMDataRest(
+    conn =>
+    {
+        conn.FmsUri = "https://example.com";
+        conn.Database = "FILE_NAME";
+        conn.Username = "user";
+        conn.Password = "password";
+    },
+    httpClient =>
+    {
+        httpClient.Timeout = TimeSpan.FromSeconds(30);
+    });
+```
+
+The method returns an `IHttpClientBuilder`, so you can chain additional configuration like retry policies.
+
+For the XML client, use `AddFMDataXml` from the `FMData.Xml` namespace:
+
+```csharp
+services.AddFMDataXml(conn =>
+{
+    conn.FmsUri = "https://example.com";
+    conn.Database = "FILE_NAME";
+    conn.Username = "user";
+    conn.Password = "password";
+});
+```
+
+> **Note:** The `AddFMDataRest` and `AddFMDataXml` extension methods require netstandard2.0 or later. If you are targeting netstandard1.3 or net45, use the manual approach below.
+
+#### Manual Registration
+
+You can also construct the client with an `IHttpClientFactory` directly:
+
+```csharp
+var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+var client = new FileMakerRestClient(factory, connectionInfo);
+```
+
+Or use the traditional `HttpClient`-based approach:
 
 ```csharp
 services.AddSingleton<FMData.ConnectionInfo>(ci => new FMData.ConnectionInfo
@@ -98,28 +152,7 @@ services.AddSingleton<FMData.ConnectionInfo>(ci => new FMData.ConnectionInfo
 services.AddHttpClient<IFileMakerApiClient, FileMakerRestClient>();
 ```
 
-If you prefer to use a singleton instance of `IFileMakerApiClient` you have to do a little bit more work in startup. This can improve performance if you're making lots of hits to the Data API over a single request to your application:
-
-```csharp
-services.AddHttpClient(); // setup IHttpClientFactory in the DI container
-services.AddSingleton<FMData.ConnectionInfo>(ci => new FMData.ConnectionInfo
-{
-    FmsUri = "https://example.com",
-    Username = "user",
-    Password = "password",
-    Database = "FILE_NAME"
-});
-// Keep the FileMaker client as a singleton for speed
-services.AddSingleton<IFileMakerApiClient, FileMakerRestClient>(s => {
-    var hcf = s.GetRequiredService<IHttpClientFactory>();
-    var ci = s.GetRequiredService<ConnectionInfo>();
-    return new FileMakerRestClient(hcf.CreateClient(), ci);
-});
-```
-
-Behind the scenes, the injected `HttpClient` is kept alive for the lifetime of the FMData client (rest/xml) and reused throughout. This is useful to manage the lifetime of `IFileMakerApiClient` as a singleton, since it stores data about FileMaker Data API tokens and reuses them as much as possible. Simply using `services.AddHttpClient<IFileMakerApiClient, FileMakerRestClient>();` keeps the lifetime of our similar to that of a 'managed `HttpClient`' which works for simple scenarios.
-
-Test both approaches in your solution and use what works.
+Behind the scenes, the injected `HttpClient` is kept alive for the lifetime of the FMData client (rest/xml) and reused throughout. The client stores FileMaker Data API tokens and reuses them as much as possible.
 
 ### Authentication with FileMaker Cloud
 
