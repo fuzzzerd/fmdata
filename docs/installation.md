@@ -45,9 +45,9 @@ dotnet add package FMData.Xml
 | FMData.Rest.Auth.FileMakerCloud | `netstandard2.0`, `net6.0`, `net8.0` |
 | FMData.Xml | `netstandard2.0`, `net6.0`, `net8.0` |
 
-### Pre-release Builds
+### Prerelease Builds
 
-Pre-release packages are published to MyGet. Add the feed to your NuGet sources:
+Prerelease packages are published to MyGet. Add the feed to your NuGet sources:
 
 ```sh
 dotnet nuget add source https://www.myget.org/F/filemaker/api/v3/index.json -n filemaker-myget
