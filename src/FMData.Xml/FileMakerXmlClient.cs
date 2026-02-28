@@ -40,7 +40,28 @@ namespace FMData.Xml
 
         private readonly List<string> _globalsToAdd = new List<string>();
 
+#if NETSTANDARD2_0_OR_GREATER || NET6_0_OR_GREATER
+        private readonly System.Net.Http.IHttpClientFactory _httpClientFactory;
+#endif
+
         #region Constructors
+
+#if NETSTANDARD2_0_OR_GREATER || NET6_0_OR_GREATER
+        /// <summary>
+        /// FM Data Constructor with IHttpClientFactory and ConnectionInfo.
+        /// Uses the factory to create the primary HttpClient.
+        /// </summary>
+        /// <param name="httpClientFactory">The IHttpClientFactory to use for creating HttpClient instances.</param>
+        /// <param name="conn">The connection information for FMS.</param>
+        public FileMakerXmlClient(
+            System.Net.Http.IHttpClientFactory httpClientFactory,
+            ConnectionInfo conn)
+            : this(httpClientFactory.CreateClient(), conn)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
+#endif
+
         /// <summary>
         /// FM Data Constructor. Injects a new plain old <see ref="HttpClient"/> instance to the class.
         /// </summary>
@@ -419,7 +440,14 @@ namespace FMData.Xml
         /// <returns>An array of bytes with the data from the container field.</returns>
         protected override async Task<byte[]> GetContainerOnClient(string containerEndPoint)
         {
-            var data = await Client.GetAsync(containerEndPoint).ConfigureAwait(false);
+#if NETSTANDARD2_0_OR_GREATER || NET6_0_OR_GREATER
+            var client = _httpClientFactory != null
+                ? _httpClientFactory.CreateClient()
+                : Client;
+#else
+            var client = Client;
+#endif
+            var data = await client.GetAsync(containerEndPoint).ConfigureAwait(false);
             var dataBytes = await data.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             return dataBytes;
         }

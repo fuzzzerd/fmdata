@@ -12,6 +12,9 @@ using FMData.Rest.Requests;
 using FMData.Rest.Responses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+#if NETSTANDARD2_0_OR_GREATER || NET6_0_OR_GREATER
+using Microsoft.Extensions.DependencyInjection;
+#endif
 
 namespace FMData.Rest
 {
@@ -55,7 +58,40 @@ namespace FMData.Rest
         private readonly bool _useNewClientForContainers = false;
         private readonly string _targetVersion = "v1";
 
+#if NETSTANDARD2_0_OR_GREATER || NET6_0_OR_GREATER
+        private readonly IHttpClientFactory _httpClientFactory;
+#endif
+
         #region Constructors
+
+#if NETSTANDARD2_0_OR_GREATER || NET6_0_OR_GREATER
+        /// <summary>
+        /// FM Data Constructor with IHttpClientFactory and ConnectionInfo.
+        /// Uses the factory to create the primary HttpClient and for container downloads.
+        /// </summary>
+        /// <param name="httpClientFactory">The IHttpClientFactory to use for creating HttpClient instances.</param>
+        /// <param name="conn">The connection information for FMS.</param>
+        public FileMakerRestClient(
+            IHttpClientFactory httpClientFactory,
+            ConnectionInfo conn)
+            : this(httpClientFactory, new DefaultAuthTokenProvider(conn))
+        { }
+
+        /// <summary>
+        /// FM Data Constructor with IHttpClientFactory and an authentication provider.
+        /// Uses the factory to create the primary HttpClient and for container downloads.
+        /// </summary>
+        /// <param name="httpClientFactory">The IHttpClientFactory to use for creating HttpClient instances.</param>
+        /// <param name="authTokenProvider">Authentication provider.</param>
+        public FileMakerRestClient(
+            IHttpClientFactory httpClientFactory,
+            IAuthTokenProvider authTokenProvider)
+            : this(httpClientFactory.CreateClient(), authTokenProvider, false)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
+#endif
+
         /// <summary>
         /// Create a FileMakerRestClient with a new instance of HttpClient.
         /// </summary>
@@ -1137,11 +1173,20 @@ namespace FMData.Rest
             // build the request message
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, containerEndPoint);
 
+            // determine the client to use for container downloads
+#if NETSTANDARD2_0_OR_GREATER || NET6_0_OR_GREATER
+            // prefer factory-created clients when available (proper handler pooling)
+            var client = _httpClientFactory != null
+                ? _httpClientFactory.CreateClient()
+                : (_useNewClientForContainers
+                    ? new HttpClient(new HttpClientHandler() { CookieContainer = new CookieContainer() })
+                    : Client);
+#else
             // if we're supposed to use new clients for processing containers or not
-            var client = _useNewClientForContainers ? new HttpClient(new HttpClientHandler()
-            {
-                CookieContainer = new CookieContainer()
-            }) : Client;
+            var client = _useNewClientForContainers
+                ? new HttpClient(new HttpClientHandler() { CookieContainer = new CookieContainer() })
+                : Client;
+#endif
 
             // send the request out
             var data = await client.SendAsync(requestMessage).ConfigureAwait(false);
@@ -1215,17 +1260,11 @@ namespace FMData.Rest
         }
 
         /// <summary>
-        /// Converts a JToken instance and maps it to the generic type.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="fmId">FileMaker Record Id map function.</param>
-        /// <param name="modId">Modification Id map function.</param>
-        /// <param name="input">JSON.NET JToken instance from Data Api Response.</param>
-        /// <returns></returns>
-        /// <summary>
         /// Extracts script result fields (including pre-request and pre-sort) from a response JToken.
         /// Handles dotted property names that cannot be mapped via attributes.
         /// </summary>
+        /// <param name="target">The <see cref="ActionResponse"/> to populate with script results.</param>
+        /// <param name="responseToken">JSON.NET JToken from the Data API response body.</param>
         private static void PopulateScriptResults(ActionResponse target, JToken responseToken)
         {
             if (target == null || responseToken == null) return;
