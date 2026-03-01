@@ -161,14 +161,14 @@ namespace FMData.Rest.Tests
             var req = new FindRequest<User>();
 
             req.UseLayout("Users")
-               .AddCriteria(new User { Name = "test" }, false)
-               .SetLimit(10)
-               .SetOffset(5)
-               .AddSortFieldDirection("Name", "ascend")
-               .SetScript("PostScript", "postParam")
-               .SetPreRequestScript("PreScript")
-               .SetPreSortScript("SortScript")
-               .LoadContainers();
+                .AddCriteria(new User { Name = "test" }, false)
+                .SetLimit(10)
+                .SetOffset(5)
+                .AddSortFieldDirection("Name", "ascend")
+                .SetScript("PostScript", "postParam")
+                .SetPreRequestScript("PreScript")
+                .SetPreSortScript("SortScript")
+                .LoadContainers();
 
             Assert.Equal("Users", req.Layout);
             Assert.Single(req.Query);
@@ -415,7 +415,7 @@ namespace FMData.Rest.Tests
             var req = new FindRequest<User> { Layout = "Users" };
 
             req.WithPortal("Portal1").Limit(10)
-               .WithPortal("Portal2").Offset(3);
+                .WithPortal("Portal2").Offset(3);
 
             Assert.Equal(2, req.Portals.Count);
 
@@ -447,7 +447,7 @@ namespace FMData.Rest.Tests
             req.AddQuery(new User { Name = "test" }, false);
 
             req.WithPortal("Portal1").Limit(10)
-               .WithPortal("Portal2").Limit(20).Offset(5);
+                .WithPortal("Portal2").Limit(20).Offset(5);
 
             var json = req.SerializeRequest();
 
