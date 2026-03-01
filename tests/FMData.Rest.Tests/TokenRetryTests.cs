@@ -43,7 +43,9 @@ namespace FMData.Rest.Tests
             using var fdc = new FileMakerRestClient(mockHttp.ToHttpClient(),
                 new ConnectionInfo { FmsUri = Server, Database = File, Username = User, Password = Pass });
 
+#pragma warning disable CS0618 // intentionally testing the obsolete overload
             var response = await fdc.FindAsync<User>(Layout, new Dictionary<string, string> { { "Name", "test" } });
+#pragma warning restore CS0618
 
             Assert.NotNull(response);
             mockHttp.VerifyNoOutstandingExpectation();
